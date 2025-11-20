@@ -9,6 +9,27 @@ export async function POST(request) {
     const body = await request.json();
     const { conversationHistory, currentAnswer } = body;
 
+    // Hard limit: If already 10 questions asked, force completion
+    const questionCount = conversationHistory ? conversationHistory.length : 0;
+    if (questionCount >= 10) {
+      return NextResponse.json({
+        isComplete: true,
+        nextQuestion: '',
+        questionType: 'text',
+        choices: null,
+        placeholderText: null,
+        allowMultipleSelections: false,
+        reasoning: 'Informasi yang dikumpulkan sudah cukup untuk melakukan triase.',
+        collectedInfo: {
+          keluhanUtama: 'Informasi lengkap telah terkumpul',
+          durasi: '',
+          intensitas: '',
+          gejalaLain: [],
+          faktorRisiko: []
+        }
+      });
+    }
+
     // Initialize the model
     const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
 
@@ -23,13 +44,14 @@ export async function POST(request) {
     // Create prompt for generating next question
     const prompt = `Anda adalah asisten medis AI yang melakukan triase pasien melalui pertanyaan adaptif.
 
-${conversationContext ? `Riwayat percakapan sejauh ini:\n${conversationContext}\n\nJawaban terakhir pasien: ${currentAnswer}\n\n` : 'Ini adalah awal percakapan triase.\n\n'}
+${conversationContext ? `Riwayat percakapan sejauh ini:\n${conversationContext}\n\nJawaban terakhir pasien: ${currentAnswer}\n\n**PENTING: Ini adalah pertanyaan ke-${questionCount + 1}. Maksimal 10 pertanyaan!**\n\n` : 'Ini adalah awal percakapan triase (Pertanyaan 1 dari maksimal 10).\n\n'}
 
 Tugas Anda:
 1. **PRIORITAS UTAMA**: Dalam 1-3 pertanyaan pertama, identifikasi apakah ini kondisi GAWAT DARURAT yang memerlukan IGD SEGERA
 2. Jika terdeteksi gejala darurat (seperti: pendarahan hebat, nyeri dada, sesak napas berat, stroke, trauma kepala, penurunan kesadaran, kejang), LANGSUNG set isComplete=true tanpa pertanyaan tambahan
 3. Jika BUKAN gawat darurat, lanjutkan dengan pertanyaan untuk menentukan tingkat keparahan
-4. Maksimal 5-7 pertanyaan total untuk kasus non-emergency
+4. **BATAS MAKSIMAL: 10 pertanyaan total** - Setelah pertanyaan ke-8, Anda HARUS mulai mempertimbangkan untuk menyelesaikan triase
+5. **WAJIB SELESAI** pada pertanyaan ke-10 - Jika sudah 10 pertanyaan, set isComplete=true
 
 **GEJALA DARURAT yang harus langsung dihentikan (isComplete=true):**
 - Pendarahan yang tidak terkontrol/hebat
@@ -45,7 +67,14 @@ Tugas Anda:
 
 Pertimbangan penting:
 - **3 pertanyaan pertama HARUS fokus pada RED FLAGS untuk deteksi emergency**
-- Jika pasien menyebutkan kata kunci seperti "pendarahan", "tidak sadar", "nyeri dada", "sesak napas", "kejang" → gali lebih dalam SEGERA di pertanyaan berikutnya
+- **WAJIB GALI LEBIH DALAM** sebelum mengakhiri triase untuk gejala berikut:
+  * Sakit kepala mendadak/parah: Tanya tentang leher kaku, muntah proyektil, gangguan kesadaran, gangguan penglihatan
+  * Nyeri dada: Tanya tentang penjalaran ke lengan/rahang, sesak napas, keringat dingin
+  * Pendarahan: Tanya jumlah, bisa dikontrol atau tidak, ada trauma atau tidak
+  * Sesak napas: Tanya bisa berbicara atau tidak, nyeri dada, batuk darah
+  * Nyeri perut: Tanya lokasi, keparahan, muntah, demam
+- **JANGAN langsung selesaikan triase** jika ada indikasi RED FLAG tanpa konfirmasi tambahan (minimal 1 pertanyaan lanjutan)
+- Jika pasien menyebutkan kata kunci seperti "pendarahan", "tidak sadar", "nyeri dada", "sesak napas", "kejang", "sakit kepala parah" → gali lebih dalam SEGERA di pertanyaan berikutnya
 - Jangan mengulang pertanyaan yang sudah dijawab
 - Gunakan bahasa yang mudah dipahami, tidak terlalu medis
 
