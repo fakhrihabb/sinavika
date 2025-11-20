@@ -123,7 +123,8 @@ export default function TriagePage() {
       }
 
       if (data.isComplete) {
-        await performFinalTriage();
+        // Pass the updated history that includes the last answer
+        await performFinalTriage(newHistory);
       } else {
         setCurrentQuestion(data);
         setQuestionHistory(prev => [...prev, data]);
@@ -193,7 +194,8 @@ export default function TriagePage() {
       }
 
       if (data.isComplete) {
-        await performFinalTriage();
+        // Pass the updated history that includes the last answer
+        await performFinalTriage(newHistory);
       } else {
         setCurrentQuestion(data);
         setQuestionHistory(prev => [...prev, data]);
@@ -246,7 +248,8 @@ export default function TriagePage() {
       }
 
       if (data.isComplete) {
-        await performFinalTriage();
+        // Pass the updated history that includes the last answer
+        await performFinalTriage(newHistory);
       } else {
         setCurrentQuestion(data);
         setQuestionHistory(prev => [...prev, data]);
@@ -258,9 +261,12 @@ export default function TriagePage() {
     }
   };
 
-  const performFinalTriage = async () => {
+  const performFinalTriage = async (finalHistory = null) => {
     setLoading(true);
     setError(null);
+
+    // Use provided history or fall back to state
+    const historyToUse = finalHistory || conversationHistory;
 
     try {
       const response = await fetch('/api/triage', {
@@ -269,7 +275,7 @@ export default function TriagePage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          conversationHistory,
+          conversationHistory: historyToUse,
         }),
       });
 
