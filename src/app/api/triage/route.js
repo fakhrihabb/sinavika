@@ -54,13 +54,24 @@ Berdasarkan informasi di atas, berikan analisis triase dalam format JSON dengan 
 }
 
 Pertimbangan penting:
-1. Prioritaskan keselamatan pasien - jika ragu, kategorikan sebagai lebih urgent
-2. Untuk gejala seperti nyeri dada, sesak napas berat, pendarahan hebat, stroke, atau trauma berat → emergency/IGD
-3. Untuk infeksi, demam tinggi persisten, nyeri akut → high/Poli Spesialis atau Poli Umum
-4. Untuk keluhan ringan, kronis stabil → medium/low
+1. **PRIORITAS KESELAMATAN**: Jika ragu, kategorikan sebagai lebih urgent
+2. **KONDISI GAWAT DARURAT (emergency)** - Segera ke IGD:
+   - Pendarahan tidak terkontrol/hebat
+   - Nyeri dada (terutama menjalar ke lengan/rahang)
+   - Sesak napas berat/tidak bisa berbicara
+   - Penurunan kesadaran/pingsan
+   - Stroke (kelemahan satu sisi, bicara pelo, wajah asimetris)
+   - Trauma kepala dengan pendarahan/muntah/pusing berat
+   - Kejang
+   - Nyeri perut hebat mendadak
+   - Luka bakar luas
+   - Patah tulang terbuka
+3. **Tingkat High** - Perlu dokter hari ini: Infeksi akut, demam tinggi persisten, nyeri akut → Poli Spesialis atau Poli Umum
+4. **Tingkat Medium/Low** - Keluhan ringan, kronis stabil → dapat dijadwalkan
 5. Sesuaikan dengan sistem rujukan berjenjang JKN Indonesia (Faskes I → Faskes II/RS)
 6. Berikan rekomendasi spesialis yang spesifik jika memungkinkan (misalnya "Poli Spesialis Penyakit Dalam" bukan hanya "Poli Spesialis")
 7. Ringkasan klinis harus mencakup: keluhan utama, durasi, gejala penyerta, faktor risiko/riwayat penyakit yang relevan
+8. **PENTING**: Untuk emergency, tanggalKunjunganDisarankan harus "Segera", rekomendasiLayanan harus "IGD"
 
 Berikan HANYA output JSON tanpa teks tambahan.`;
 

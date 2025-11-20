@@ -26,18 +26,27 @@ export async function POST(request) {
 ${conversationContext ? `Riwayat percakapan sejauh ini:\n${conversationContext}\n\nJawaban terakhir pasien: ${currentAnswer}\n\n` : 'Ini adalah awal percakapan triase.\n\n'}
 
 Tugas Anda:
-1. Analisis informasi yang sudah dikumpulkan
-2. Tentukan apakah sudah cukup informasi untuk membuat keputusan triase yang akurat
-3. Jika BELUM cukup, buatkan 1 pertanyaan lanjutan yang SPESIFIK dan RELEVAN untuk menggali informasi penting yang masih kurang
-4. Jika SUDAH cukup, tandai bahwa triase siap dilakukan
+1. **PRIORITAS UTAMA**: Dalam 1-3 pertanyaan pertama, identifikasi apakah ini kondisi GAWAT DARURAT yang memerlukan IGD SEGERA
+2. Jika terdeteksi gejala darurat (seperti: pendarahan hebat, nyeri dada, sesak napas berat, stroke, trauma kepala, penurunan kesadaran, kejang), LANGSUNG set isComplete=true tanpa pertanyaan tambahan
+3. Jika BUKAN gawat darurat, lanjutkan dengan pertanyaan untuk menentukan tingkat keparahan
+4. Maksimal 5-7 pertanyaan total untuk kasus non-emergency
+
+**GEJALA DARURAT yang harus langsung dihentikan (isComplete=true):**
+- Pendarahan yang tidak terkontrol/hebat
+- Nyeri dada yang menjalar ke lengan/rahang
+- Sesak napas berat/tidak bisa berbicara
+- Penurunan kesadaran/pingsan
+- Stroke (kelemahan mendadak satu sisi tubuh, bicara pelo, wajah tidak simetris)
+- Trauma kepala dengan pendarahan/muntah/pusing berat
+- Kejang
+- Nyeri perut hebat mendadak
+- Luka bakar luas
+- Patah tulang terbuka
 
 Pertimbangan penting:
-- Prioritaskan pertanyaan tentang gejala darurat (nyeri dada, sesak napas berat, pendarahan, dll)
-- Tanyakan durasi, intensitas, faktor yang memperburuk/memperbaiki
-- Tanyakan gejala penyerta yang relevan
-- Tanyakan riwayat penyakit jika relevan dengan keluhan
+- **3 pertanyaan pertama HARUS fokus pada RED FLAGS untuk deteksi emergency**
+- Jika pasien menyebutkan kata kunci seperti "pendarahan", "tidak sadar", "nyeri dada", "sesak napas", "kejang" → gali lebih dalam SEGERA di pertanyaan berikutnya
 - Jangan mengulang pertanyaan yang sudah dijawab
-- Maksimal 5-7 pertanyaan total untuk menghindari kelelahan pasien
 - Gunakan bahasa yang mudah dipahami, tidak terlalu medis
 
 Berikan output dalam format JSON:
