@@ -112,6 +112,54 @@ export default function BPJSPage() {
           </p>
         </div>
 
+        {/* Primary Quick Actions - Highlighted at Top */}
+        <div className="mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Link
+              href="/bpjs/verifikasi"
+              className="group block bg-gradient-to-r from-[#03974a] to-[#144782] rounded-xl p-6 shadow-md hover:shadow-lg transition-all transform hover:scale-105"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <FileText className="w-10 h-10 text-white/90 group-hover:scale-110 transition-transform" strokeWidth={2} />
+                <ChevronRight className="w-5 h-5 text-white/70 group-hover:translate-x-1 transition-transform" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">Verifikasi Klaim</h3>
+              <p className="text-white/90 text-sm leading-relaxed">
+                328 klaim menunggu verifikasi dan proses Anda
+              </p>
+            </Link>
+
+            <Link
+              href="/bpjs/fraud"
+              className="group block bg-white rounded-xl p-6 border-2 border-[#03974a] shadow-md hover:shadow-lg transition-all transform hover:scale-105"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <Shield className="w-10 h-10 text-[#03974a] group-hover:scale-110 transition-transform" strokeWidth={2} />
+                <ChevronRight className="w-5 h-5 text-[#03974a] group-hover:translate-x-1 transition-transform" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Fraud Analytics</h3>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                42 AI fraud alert baru terdeteksi hari ini
+              </p>
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 gap-4 mt-4">
+            <Link
+              href="/bpjs/insight"
+              className="group flex items-center gap-4 bg-white rounded-xl p-6 border border-gray-200 shadow-md hover:shadow-lg transition-all"
+            >
+              <div className="p-3 bg-[#03974a] rounded-lg group-hover:scale-110 transition-transform">
+                <TrendingUp className="w-6 h-6 text-white" strokeWidth={2} />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-gray-900 mb-1">Insight & Feedback</h3>
+                <p className="text-gray-600 text-sm">Analisis pola klaim dan feedback dari rumah sakit</p>
+              </div>
+              <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-[#03974a] transition-colors" />
+            </Link>
+          </div>
+        </div>
+
         {/* KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {kpis.map((kpi, index) => {
@@ -248,54 +296,6 @@ export default function BPJSPage() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Quick Actions */}
-            <div className="bg-white rounded-xl border border-gray-200 p-5">
-              <h3 className="text-sm font-semibold text-gray-900 mb-4">Aksi Cepat</h3>
-              <div className="space-y-2">
-                <Link
-                  href="/bpjs/verifikasi"
-                  className="group flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <div className="p-2 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors">
-                    <FileText className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">Verifikasi Klaim</p>
-                    <p className="text-xs text-gray-500">328 menunggu</p>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-gray-400" />
-                </Link>
-
-                <Link
-                  href="/bpjs/fraud"
-                  className="group flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <div className="p-2 bg-red-50 rounded-lg group-hover:bg-red-100 transition-colors">
-                    <Shield className="w-5 h-5 text-red-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">Fraud Analytics</p>
-                    <p className="text-xs text-gray-500">42 alert baru</p>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-gray-400" />
-                </Link>
-
-                <Link
-                  href="/bpjs/insight"
-                  className="group flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <div className="p-2 bg-green-50 rounded-lg group-hover:bg-green-100 transition-colors">
-                    <TrendingUp className="w-5 h-5 text-green-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">Insight & Feedback</p>
-                    <p className="text-xs text-gray-500">Analisis pola klaim</p>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-gray-400" />
-                </Link>
-              </div>
-            </div>
-
             {/* Today's Summary */}
             <div className="bg-white rounded-xl border border-gray-200 p-5">
               <h3 className="text-sm font-semibold text-gray-900 mb-4">Ringkasan Hari Ini</h3>
