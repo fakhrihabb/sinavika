@@ -481,19 +481,28 @@ export default function TriagePage() {
               )}
 
               {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 pt-4">
+              <div className="flex flex-col gap-3 pt-4">
                 <Link
-                  href="/peserta/riwayat"
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-[#03974a] to-[#144782] text-white rounded-lg font-semibold hover:shadow-lg transition-all text-center"
+                  href={`/peserta/triage/pilih-rumah-sakit?triageId=${triageResult.triageId}&serviceType=${encodeURIComponent(triageResult.rekomendasiLayanan)}`}
+                  className="w-full px-6 py-3 bg-gradient-to-r from-[#03974a] to-[#144782] text-white rounded-lg font-semibold hover:shadow-lg transition-all text-center flex items-center justify-center gap-2"
                 >
-                  Lihat Riwayat Triase
+                  <MapPin className="w-5 h-5" />
+                  Cari Rumah Sakit Terdekat
                 </Link>
-                <button
-                  onClick={resetTriage}
-                  className="flex-1 px-6 py-3 bg-white border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:border-gray-400 transition-all text-center"
-                >
-                  Triase Baru
-                </button>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Link
+                    href="/peserta/riwayat"
+                    className="flex-1 px-6 py-3 bg-white border-2 border-[#03974a] text-[#03974a] rounded-lg font-semibold hover:bg-green-50 transition-all text-center"
+                  >
+                    Lihat Riwayat Triase
+                  </Link>
+                  <button
+                    onClick={resetTriage}
+                    className="flex-1 px-6 py-3 bg-white border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:border-gray-400 transition-all text-center"
+                  >
+                    Triase Baru
+                  </button>
+                </div>
               </div>
             </div>
           </div>

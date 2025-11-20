@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import PesertaNavbar from '@/components/PesertaNavbar';
 import {
   Calendar,
@@ -11,11 +12,16 @@ import {
   ChevronRight,
   Loader2,
   Search,
-  Filter
+  Filter,
+  CalendarCheck,
+  MapPin
 } from 'lucide-react';
 import Link from 'next/link';
 
 export default function RiwayatPage() {
+  const searchParams = useSearchParams();
+  const triageIdParam = searchParams.get('triageId');
+
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -26,6 +32,16 @@ export default function RiwayatPage() {
   useEffect(() => {
     fetchHistory();
   }, []);
+
+  useEffect(() => {
+    // Auto-select triage if triageId is in URL params
+    if (triageIdParam && history.length > 0 && !selectedTriage) {
+      const triage = history.find(t => t.triage_id === triageIdParam);
+      if (triage) {
+        setSelectedTriage(triage);
+      }
+    }
+  }, [triageIdParam, history, selectedTriage]);
 
   const fetchHistory = async () => {
     setLoading(true);
@@ -220,6 +236,27 @@ export default function RiwayatPage() {
                   </div>
                 </div>
               )}
+
+              {/* Action Buttons */}
+              <div className="pt-4">
+                {selectedTriage.appointment_status === 'Sudah Atur Janji Temu' ? (
+                  <Link
+                    href="/peserta/janji-temu"
+                    className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                  >
+                    <CalendarCheck className="w-5 h-5" />
+                    Lihat Janji Temu
+                  </Link>
+                ) : (
+                  <Link
+                    href={`/peserta/triage/pilih-rumah-sakit?triageId=${selectedTriage.triage_id}&serviceType=${encodeURIComponent(selectedTriage.rekomendasi_layanan)}`}
+                    className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#03974a] to-[#144782] text-white rounded-lg font-semibold hover:shadow-lg transition-all"
+                  >
+                    <MapPin className="w-5 h-5" />
+                    Cari Rumah Sakit Terdekat
+                  </Link>
+                )}
+              </div>
             </div>
           </div>
         </main>
@@ -326,10 +363,16 @@ export default function RiwayatPage() {
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="flex items-center gap-2 mb-2 flex-wrap">
                       <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getSeverityColor(item.tingkat_keparahan)}`}>
                         {item.label_keparahan}
                       </span>
+                      {item.appointment_status === 'Sudah Atur Janji Temu' && (
+                        <span className="px-3 py-1 rounded-full text-xs font-semibold border bg-blue-100 text-blue-700 border-blue-200 flex items-center gap-1">
+                          <CalendarCheck className="w-3 h-3" />
+                          Sudah Atur Janji
+                        </span>
+                      )}
                       <span className="text-xs text-gray-500">ID: {item.triage_id}</span>
                     </div>
                     <h3 className="font-semibold text-gray-900 mb-1">

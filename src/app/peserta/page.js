@@ -1,5 +1,5 @@
 import PesertaNavbar from '@/components/PesertaNavbar';
-import { Stethoscope, FileText, Clock, AlertCircle, CheckCircle, MapPin, ChevronRight, Activity, Calendar } from 'lucide-react';
+import { Stethoscope, FileText, Clock, AlertCircle, CheckCircle, MapPin, ChevronRight, Activity, Calendar, CalendarCheck } from 'lucide-react';
 import Link from 'next/link';
 
 export default function PesertaPage() {
@@ -56,8 +56,8 @@ export default function PesertaPage() {
 
         {/* Primary Quick Actions - Highlighted at Top */}
         <div className="mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Link 
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Link
               href="/peserta/triage"
               className="group block bg-gradient-to-r from-[#03974a] to-[#144782] rounded-xl p-6 shadow-md hover:shadow-lg transition-all transform hover:scale-105"
             >
@@ -71,7 +71,21 @@ export default function PesertaPage() {
               </p>
             </Link>
 
-            <Link 
+            <Link
+              href="/peserta/janji-temu"
+              className="group block bg-white rounded-xl p-6 border-2 border-blue-500 shadow-md hover:shadow-lg transition-all transform hover:scale-105"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <CalendarCheck className="w-10 h-10 text-blue-600 group-hover:scale-110 transition-transform" strokeWidth={2} />
+                <ChevronRight className="w-5 h-5 text-blue-600 group-hover:translate-x-1 transition-transform" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Janji Temu Saya</h3>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                Lihat dan kelola janji temu Anda dengan rumah sakit
+              </p>
+            </Link>
+
+            <Link
               href="/peserta/riwayat"
               className="group block bg-white rounded-xl p-6 border-2 border-[#03974a] shadow-md hover:shadow-lg transition-all transform hover:scale-105"
             >
