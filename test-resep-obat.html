@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resep Obat - Test SINAVIKA</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', serif;
+            margin: 40px;
+            line-height: 1.6;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #144782;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        .hospital-name {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #144782;
+        }
+        .pharmacy-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: #03974a;
+            margin-top: 10px;
+        }
+        .rx-symbol {
+            font-size: 48px;
+            font-family: Georgia, serif;
+            font-weight: bold;
+            color: #144782;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .document-title {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .patient-box {
+            border: 2px solid #144782;
+            padding: 15px;
+            margin: 20px 0;
+            background-color: #f0f9ff;
+        }
+        .patient-box table {
+            width: 100%;
+        }
+        .patient-box td {
+            padding: 3px 5px;
+        }
+        .prescription-box {
+            border: 3px solid #03974a;
+            padding: 25px;
+            margin: 30px 0;
+            min-height: 400px;
+            background-color: #fff;
+        }
+        .medicine-item {
+            margin: 25px 0;
+            padding: 15px;
+            border-left: 4px solid #144782;
+            background-color: #f9f9f9;
+        }
+        .medicine-number {
+            font-size: 20px;
+            font-weight: bold;
+            color: #144782;
+            margin-bottom: 10px;
+        }
+        .medicine-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 5px;
+        }
+        .medicine-details {
+            margin-left: 20px;
+            line-height: 2;
+        }
+        .signa {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+        .warning-box {
+            background-color: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .signature-section {
+            margin-top: 50px;
+            text-align: right;
+        }
+        .signature-box {
+            display: inline-block;
+            text-align: center;
+            min-width: 250px;
+        }
+        .signature-line {
+            margin-top: 70px;
+            border-top: 2px solid #000;
+            padding-top: 5px;
+            font-weight: bold;
+        }
+        .pharmacy-stamp {
+            width: 150px;
+            height: 100px;
+            border: 2px dashed #ccc;
+            margin: 10px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 11px;
+        }
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px dashed #ccc;
+            font-size: 12px;
+            color: #666;
+        }
+        .iter-box {
+            background-color: #e3f2fd;
+            border: 2px solid #1976d2;
+            padding: 10px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="hospital-name">RUMAH SAKIT UMUM CIPTO MANGUNKUSUMO</div>
+        <div>Jl. Diponegoro No. 71, Jakarta Pusat 10430</div>
+        <div>Telp: (021) 31900924 | Emergency: (021) 31900925</div>
+        <div class="pharmacy-name">INSTALASI FARMASI RAWAT INAP</div>
+    </div>
+
+    <div class="rx-symbol">℞</div>
+    <div class="document-title">RESEP OBAT PASIEN RAWAT INAP</div>
+
+    <div style="text-align: right; font-family: monospace; font-size: 12px; color: #666; margin-bottom: 10px;">
+        No. Resep: RX-2020-09-005678 | Tanggal: 5 September 2020
+    </div>
+
+    <div class="patient-box">
+        <table>
+            <tr>
+                <td style="width: 20%; font-weight: bold;">Nama Pasien</td>
+                <td style="width: 30%;">Ahmad Fauzi</td>
+                <td style="width: 20%; font-weight: bold;">No. RM</td>
+                <td style="width: 30%;">00-12-34-56</td>
+            </tr>
+            <tr>
+                <td style="font-weight: bold;">Umur / JK</td>
+                <td>49 Tahun / Laki-laki</td>
+                <td style="font-weight: bold;">Berat Badan</td>
+                <td>68 kg</td>
+            </tr>
+            <tr>
+                <td style="font-weight: bold;">Ruang Rawat</td>
+                <td>Melati 3 - Kelas 3</td>
+                <td style="font-weight: bold;">No. BPJS</td>
+                <td>0001234567890</td>
+            </tr>
+            <tr>
+                <td style="font-weight: bold;">Diagnosis</td>
+                <td colspan="3">Pneumonia + Hipertensi + Anemia</td>
+            </tr>
+            <tr>
+                <td style="font-weight: bold;">Dokter</td>
+                <td colspan="3">dr. Budi Santoso, Sp.PD, FINASIM</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="prescription-box">
+        <div class="medicine-item">
+            <div class="medicine-number">R/ 1.</div>
+            <div class="medicine-name">Ceftriaxone Injeksi 1 gram (IV)</div>
+            <div class="medicine-details">
+                <div><strong>Jumlah:</strong> 10 vial</div>
+                <div><strong>Sediaan:</strong> Injeksi 1 gram/vial (powder for injection)</div>
+                <div class="signa"><strong>S:</strong> 2 x 1 gram IV (diberikan setiap 12 jam)</div>
+                <div><strong>Durasi:</strong> 5 hari</div>
+                <div style="color: #666; font-size: 14px; margin-top: 5px;">
+                    <em>Catatan: Larutkan dalam NS 10ml, berikan dalam 3-5 menit (IV bolus) atau
+                    campurkan dalam infus drip selama 30 menit</em>
+                </div>
+            </div>
+        </div>
+
+        <div class="medicine-item">
+            <div class="medicine-number">R/ 2.</div>
+            <div class="medicine-name">Amlodipine 10 mg (Tablet)</div>
+            <div class="medicine-details">
+                <div><strong>Jumlah:</strong> 5 tablet</div>
+                <div><strong>Sediaan:</strong> Tablet 10 mg</div>
+                <div class="signa"><strong>S:</strong> 1 x 1 tab (pagi hari sebelum makan)</div>
+                <div><strong>Durasi:</strong> 5 hari</div>
+                <div style="color: #666; font-size: 14px; margin-top: 5px;">
+                    <em>Untuk kontrol tekanan darah. Diminum rutin setiap hari.</em>
+                </div>
+            </div>
+        </div>
+
+        <div class="medicine-item">
+            <div class="medicine-number">R/ 3.</div>
+            <div class="medicine-name">Ambroxol Syrup 30 mg/5 ml</div>
+            <div class="medicine-details">
+                <div><strong>Jumlah:</strong> 1 botol (60 ml)</div>
+                <div><strong>Sediaan:</strong> Sirup 30 mg/5 ml</div>
+                <div class="signa"><strong>S:</strong> 3 x 1 sendok takar (5 ml) setelah makan</div>
+                <div><strong>Durasi:</strong> Sampai habis</div>
+                <div style="color: #666; font-size: 14px; margin-top: 5px;">
+                    <em>Untuk mengencerkan dahak. Perbanyak minum air putih.</em>
+                </div>
+            </div>
+        </div>
+
+        <div class="medicine-item">
+            <div class="medicine-number">R/ 4.</div>
+            <div class="medicine-name">Paracetamol 500 mg (Tablet)</div>
+            <div class="medicine-details">
+                <div><strong>Jumlah:</strong> 15 tablet</div>
+                <div><strong>Sediaan:</strong> Tablet 500 mg</div>
+                <div class="signa"><strong>S:</strong> 3 x 1 tab (bila demam, suhu > 38°C)</div>
+                <div><strong>Durasi:</strong> Pro re nata (bila perlu)</div>
+                <div style="color: #666; font-size: 14px; margin-top: 5px;">
+                    <em>Jarak pemberian minimal 4 jam. Maksimal 4 gram/hari.</em>
+                </div>
+            </div>
+        </div>
+
+        <div class="medicine-item">
+            <div class="medicine-number">R/ 5.</div>
+            <div class="medicine-name">Ranitidine Injeksi 50 mg (IV)</div>
+            <div class="medicine-details">
+                <div><strong>Jumlah:</strong> 10 ampul</div>
+                <div><strong>Sediaan:</strong> Injeksi 50 mg/2 ml</div>
+                <div class="signa"><strong>S:</strong> 2 x 50 mg IV (pagi dan malam)</div>
+                <div><strong>Durasi:</strong> 5 hari</div>
+                <div style="color: #666; font-size: 14px; margin-top: 5px;">
+                    <em>Proteksi lambung. Berikan 30 menit sebelum makan.</em>
+                </div>
+            </div>
+        </div>
+
+        <div class="medicine-item">
+            <div class="medicine-number">R/ 6.</div>
+            <div class="medicine-name">IVFD NaCl 0.9% 500 ml</div>
+            <div class="medicine-details">
+                <div><strong>Jumlah:</strong> 3 kolf</div>
+                <div><strong>Sediaan:</strong> Infus 500 ml</div>
+                <div class="signa"><strong>S:</strong> 20 tetes per menit (maintenance)</div>
+                <div><strong>Durasi:</strong> 2 hari atau sesuai kebutuhan</div>
+                <div style="color: #666; font-size: 14px; margin-top: 5px;">
+                    <em>Untuk maintenance cairan. Monitor balance cairan.</em>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="warning-box">
+        <strong style="font-size: 15px;">⚠️ PERHATIAN PENTING:</strong><br>
+        • Antibiotik harus dihabiskan meskipun gejala sudah membaik<br>
+        • Jangan menghentikan obat tanpa sepengetahuan dokter<br>
+        • Bila timbul reaksi alergi (ruam, gatal, sesak), segera hubungi perawat/dokter<br>
+        • Simpan obat di tempat sejuk dan kering, jauh dari jangkauan anak-anak<br>
+        • Obat ini khusus untuk pasien yang tertera di resep, tidak untuk orang lain
+    </div>
+
+    <div class="iter-box">
+        <div style="font-size: 16px;">ITER (PENGULANGAN)</div>
+        <div style="font-size: 14px; margin-top: 5px;">Resep ini TIDAK boleh diulang tanpa resep baru dari dokter</div>
+    </div>
+
+    <div class="signature-section">
+        <div class="signature-box">
+            <div>Jakarta, 5 September 2020, 10:30 WIB</div>
+            <div style="margin-top: 10px; font-weight: bold;">Dokter yang Meresepkan</div>
+            <div class="signature-line">dr. Budi Santoso, Sp.PD, FINASIM</div>
+            <div style="font-size: 11px; color: #666; margin-top: 5px;">
+                SIP: 503/2018/RSCM
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top: 30px; border-top: 2px dashed #ccc; padding-top: 20px;">
+        <div style="display: flex; justify-content: space-between;">
+            <div style="width: 48%;">
+                <strong>Diserahkan oleh Apoteker:</strong><br>
+                <div class="pharmacy-stamp">
+                    [TANDA TANGAN<br>& CAP APOTEKER]
+                </div>
+                <div style="text-align: center; margin-top: 10px;">
+                    Apt. Dewi Lestari, S.Farm<br>
+                    <span style="font-size: 11px; color: #666;">SIPA: 123/FARM/2019</span>
+                </div>
+                <div style="margin-top: 10px; font-size: 12px;">
+                    Tanggal: ____________ Pukul: ______
+                </div>
+            </div>
+            <div style="width: 48%;">
+                <strong>Diterima oleh Pasien/Keluarga:</strong><br>
+                <div class="pharmacy-stamp">
+                    [TANDA TANGAN<br>PENERIMA]
+                </div>
+                <div style="text-align: center; margin-top: 10px;">
+                    Nama: ______________________<br>
+                    <span style="font-size: 11px; color: #666;">Hubungan: _______________</span>
+                </div>
+                <div style="margin-top: 10px; font-size: 12px;">
+                    Tanggal: ____________ Pukul: ______
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <strong>INFORMASI FARMASI KLINIS:</strong><br>
+        • Konsultasi mengenai penggunaan obat dapat menghubungi Apoteker Instalasi Farmasi<br>
+        • Telp Farmasi: (021) 31900924 ext. 4567<br>
+        • Jam pelayanan farmasi: 24 jam (Rawat Inap)<br><br>
+
+        <div style="background-color: #ffebee; padding: 10px; border-left: 4px solid #d32f2f;">
+            <strong>KEAMANAN OBAT:</strong> Jangan menggunakan obat yang sudah kadaluarsa.
+            Pastikan obat disimpan dengan benar sesuai petunjuk.
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,83 @@
+{
+  "documentType": "FPK",
+  "fileName": "FPK-KLINIK-PERMATA-1017.pdf",
+  "metadata": {
+    "uploadedAt": "2024-11-20T10:00:00Z",
+    "fileSize": "412KB",
+    "fileType": "application/pdf"
+  },
+  "extractedData": {
+    "header": {
+      "judul": "FORMULIR PENGAJUAN KLAIM (FPK)",
+      "subjudul": "BIAYA PELAYANAN KESEHATAN",
+      "cabang": "BPJS KESEHATAN CABANG BANDA ACEH"
+    },
+    "dataRegistrasi": {
+      "tanggalMasuk": "",
+      "tglTerimaMPKP": "",
+      "tglTerimaKEU": "",
+      "noRegMasuk": "",
+      "noRegKlaimMPKP": "",
+      "noRegKlaimKEU": ""
+    },
+    "dataPengaju": {
+      "jenisPenagihan": "KOLEKTIF",
+      "namaPPK": "KLINIK PERMATA",
+      "kodePPK": "0457U003",
+      "jenisPelayanan": "RITP(RAWAT INAP TINGKAT PERTAMA)",
+      "blnThnPelayanan": "OKTOBER/2017",
+      "namaPengaju": "KLINIK PERMATA",
+      "peserta": "P",
+      "namaPenderita": "NOFI YANTI dkk",
+      "noKartuPeserta": "0001285923813",
+      "alamat": "GP. PAYA, KEC. TRIENGGADENG, KAB. PIDIE JAYA",
+      "telponHP": "-"
+    },
+    "uraianBiaya": [
+      {
+        "no": 1,
+        "uraianBiaya": "RITP",
+        "kasus": 42,
+        "hrTindakan": "105 HARI",
+        "biayaRp": 12600000,
+        "kodeAkun": ""
+      }
+    ],
+    "totalBiaya": {
+      "jumlahKasus": 42,
+      "jumlahHRTindakan": "105 HARI",
+      "totalBiaya": 12600000
+    },
+    "penandatangan": {
+      "lokasi": "Trienggadeng",
+      "tanggal": "2017-11-06",
+      "nama": "TEUKU DIAN, SE",
+      "jabatan": "Penanggung Jawab Klaim"
+    },
+    "distribusi": [
+      "Lembar Asli: Unit Keuangan",
+      "Lembar ke 2: Unit MPK",
+      "Lembar ke 3: Pengaju Klaim"
+    ]
+  },
+  "aiAnalysis": {
+    "readinessScore": 75,
+    "canAutoFill": false,
+    "documentPurpose": "OUTPUT",
+    "notes": [
+      "FPK adalah dokumen OUTPUT (hasil dari pre-check), bukan INPUT",
+      "Dokumen ini dibuat SETELAH verifikasi klaim selesai",
+      "Data yang bisa divalidasi: No Kartu, Jenis Pelayanan, Total Biaya"
+    ],
+    "fieldsToValidate": [
+      "noKartuPeserta",
+      "jenisPelayanan",
+      "totalBiaya"
+    ],
+    "issues": [],
+    "suggestions": [
+      "Dokumen ini untuk referensi format output saja",
+      "Untuk auto-fill form, gunakan Resume Medis sebagai input utama"
+    ]
+  }
+}

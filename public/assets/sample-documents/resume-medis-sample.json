@@ -1,0 +1,270 @@
+{
+  "documentType": "RESUME_MEDIS",
+  "fileName": "Resume-Medis-Ahmad-Fauzi-20200905.pdf",
+  "metadata": {
+    "uploadedAt": "2024-11-20T10:00:00Z",
+    "fileSize": "1.2MB",
+    "fileType": "application/pdf"
+  },
+  "extractedData": {
+    "dataPasien": {
+      "nama": "Ahmad Fauzi",
+      "noRM": "0001234567890",
+      "nik": "3201234567890123",
+      "tglLahir": "1968-03-15",
+      "umur": "52 tahun",
+      "jenisKelamin": "L",
+      "alamat": "Jl. Merdeka No. 45, Jakarta Pusat",
+      "noTelp": "081234567890",
+      "pekerjaan": "Pegawai Swasta",
+      "noBPJS": "0001285923813"
+    },
+    "dataRawat": {
+      "jenisRawat": "Rawat Jalan",
+      "tanggalMasuk": "2020-09-05",
+      "tanggalKeluar": "2020-09-05",
+      "lamaDirawat": "0 hari",
+      "kelasRawat": "3",
+      "ruangRawat": "Poli Penyakit Dalam",
+      "caraMasuk": "Rujukan dari Puskesmas",
+      "caraPulang": "Atas Persetujuan Dokter"
+    },
+    "dpjp": {
+      "nama": "dr. Budi Santoso, Sp.PD",
+      "nip": "198501012010011001",
+      "sip": "SIP/001/2020/DINKES"
+    },
+    "keluhanUtama": "Pasien datang dengan keluhan sering haus, sering buang air kecil, dan badan terasa lemas sejak 2 minggu terakhir. Pasien juga mengeluh penglihatan kabur dan berat badan turun drastis.",
+    "riwayatPenyakitSekarang": "Pasien mengeluh polidipsia, poliuria, dan lemah badan sejak 2 minggu SMRS. Keluhan disertai penurunan berat badan ±5 kg dalam 1 bulan. Pasien juga mengeluh pandangan kabur sejak 1 minggu SMRS. Riwayat luka di kaki yang sulit sembuh (+). Pasien belum pernah memeriksa gula darah sebelumnya.",
+    "riwayatPenyakitDahulu": [
+      "Hipertensi sejak 5 tahun yang lalu, tidak rutin minum obat",
+      "Riwayat kolesterol tinggi (+)",
+      "Riwayat stroke (-)",
+      "Riwayat penyakit jantung (-)"
+    ],
+    "riwayatKeluarga": "Ayah pasien menderita diabetes mellitus, Ibu hipertensi",
+    "pemeriksaanFisik": {
+      "keadaanUmum": "Tampak sakit sedang",
+      "kesadaran": "Compos mentis (GCS 15)",
+      "tanda_vital": {
+        "tekananDarah": "140/90 mmHg",
+        "nadi": "88 x/menit, reguler",
+        "respirasi": "20 x/menit",
+        "suhu": "36.5°C",
+        "beratBadan": "65 kg",
+        "tinggiBadan": "165 cm",
+        "imt": "23.9 kg/m²"
+      },
+      "pemeriksaanKhusus": {
+        "kepala": "Konjungtiva anemis (-), sklera ikterik (-)",
+        "leher": "JVP tidak meningkat, pembesaran KGB (-)",
+        "thorax": "Cor: BJ I-II regular, murmur (-), gallop (-). Pulmo: vesikuler +/+, ronkhi -/-, wheezing -/-",
+        "abdomen": "Supel, bising usus (+) normal, nyeri tekan (-), hepatomegali (-), splenomegali (-)",
+        "ekstremitas": "Akral hangat, CRT <2 detik, edema (-), luka di kaki kanan (+)"
+      }
+    },
+    "pemeriksaanPenunjang": {
+      "laboratorium": {
+        "tanggal": "2020-09-05",
+        "hasil": [
+          {
+            "pemeriksaan": "Gula Darah Sewaktu",
+            "hasil": "280",
+            "satuan": "mg/dL",
+            "nilaiNormal": "< 200",
+            "keterangan": "TINGGI"
+          },
+          {
+            "pemeriksaan": "HbA1c",
+            "hasil": "8.5",
+            "satuan": "%",
+            "nilaiNormal": "< 5.7",
+            "keterangan": "TIDAK TERKONTROL"
+          },
+          {
+            "pemeriksaan": "Kolesterol Total",
+            "hasil": "240",
+            "satuan": "mg/dL",
+            "nilaiNormal": "< 200",
+            "keterangan": "TINGGI"
+          },
+          {
+            "pemeriksaan": "Ureum",
+            "hasil": "35",
+            "satuan": "mg/dL",
+            "nilaiNormal": "15-40",
+            "keterangan": "NORMAL"
+          },
+          {
+            "pemeriksaan": "Kreatinin",
+            "hasil": "1.1",
+            "satuan": "mg/dL",
+            "nilaiNormal": "0.6-1.2",
+            "keterangan": "NORMAL"
+          }
+        ]
+      }
+    },
+    "diagnosa": {
+      "diagnosaMasuk": "Suspek Diabetes Mellitus + Hipertensi",
+      "diagnosisKerja": [
+        {
+          "urutan": "UTAMA",
+          "kode": "1",
+          "namaDiagnosa": "Diabetes Mellitus Tipe 2",
+          "icd10": "E11.9",
+          "keterangan": "Diagnosa Utama"
+        },
+        {
+          "urutan": "SEKUNDER",
+          "kode": "2",
+          "namaDiagnosa": "Hipertensi Esensial",
+          "icd10": "I10",
+          "keterangan": "Diagnosa Sekunder"
+        },
+        {
+          "urutan": "PENYERTA",
+          "kode": "3",
+          "namaDiagnosa": "Anemia",
+          "icd10": "D64.9",
+          "keterangan": "Diagnosa Penyerta"
+        }
+      ]
+    },
+    "prosedurTindakan": [
+      {
+        "namaTindakan": "Konsultasi Spesialis Penyakit Dalam",
+        "icd9cm": "99.10",
+        "tanggal": "2020-09-05"
+      },
+      {
+        "namaTindakan": "Pemeriksaan Laboratorium",
+        "icd9cm": "90.59",
+        "tanggal": "2020-09-05"
+      }
+    ],
+    "tatalaksana": {
+      "farmakologi": [
+        "Metformin 500mg tablet 2x1 (setelah makan)",
+        "Glimepiride 2mg tablet 1x1 (sebelum makan)",
+        "Captopril 25mg tablet 2x1",
+        "Simvastatin 20mg tablet 1x0-1 (malam)"
+      ],
+      "nonFarmakologi": [
+        "Diet DM 1700 kkal/hari",
+        "Olahraga teratur 30 menit/hari",
+        "Edukasi tentang diabetes mellitus",
+        "Perawatan luka kaki",
+        "Kontrol gula darah rutin"
+      ]
+    },
+    "kondisiKeluar": {
+      "keadaanPulang": "Membaik",
+      "caraPulang": "Atas Persetujuan Dokter",
+      "anjuran": [
+        "Kontrol poliklinik 1 minggu lagi",
+        "Cek gula darah puasa dan 2 jam PP",
+        "Periksa funduskopi",
+        "Jika keluhan memberat segera ke IGD"
+      ]
+    },
+    "hasilGrouper": {
+      "inaCbgCode": "N-4-10-I",
+      "inaCbgDescription": "Diabetes Mellitus Tanpa Komplikasi",
+      "kelasRawat": "3",
+      "tarifINA": "2500000",
+      "groupingMethod": "AUTO",
+      "groupingDate": "2020-09-05"
+    }
+  },
+  "aiAnalysis": {
+    "readinessScore": 98,
+    "canAutoFill": true,
+    "confidence": "HIGH",
+    "fieldsExtracted": {
+      "dataPasien": ["nama", "noRM", "tglLahir", "jenisKelamin", "noBPJS"],
+      "dataRawat": ["jenisRawat", "tanggalMasuk", "tanggalKeluar", "kelasRawat", "caraPulang"],
+      "dpjp": ["nama"],
+      "diagnosa": [
+        {
+          "type": "PRIMARY",
+          "diagnosa": "Diabetes Mellitus Tipe 2",
+          "icd10": "E11.9",
+          "confidence": 0.98
+        },
+        {
+          "type": "SECONDARY",
+          "diagnosa": "Hipertensi Esensial",
+          "icd10": "I10",
+          "confidence": 0.95
+        },
+        {
+          "type": "TERTIARY",
+          "diagnosa": "Anemia",
+          "icd10": "D64.9",
+          "confidence": 0.90
+        }
+      ],
+      "prosedur": [
+        {
+          "nama": "Konsultasi",
+          "icd9cm": "99.10"
+        },
+        {
+          "nama": "Pemeriksaan Lab",
+          "icd9cm": "90.59"
+        }
+      ],
+      "inaCbg": {
+        "code": "N-4-10-I",
+        "description": "Diabetes Mellitus Tanpa Komplikasi",
+        "tarif": "2500000",
+        "autoGenerated": true,
+        "basedOn": "ICD-10: E11.9 + Rawat Jalan + Kelas 3"
+      }
+    },
+    "autoFillData": {
+      "treatmentType": "Rawat Jalan",
+      "admissionDate": "2020-09-05",
+      "dischargeDate": "2020-09-05",
+      "los": "0",
+      "kelasRawat": "3",
+      "caraPulang": "Atas Persetujuan Dokter",
+      "dpjp": "dr. Budi Santoso, Sp.PD",
+      "diagnosisPrimary": "Diabetes Mellitus Tipe 2",
+      "icd10Primary": "E11.9",
+      "diagnosisSecondary": "Hipertensi Esensial",
+      "icd10Secondary": "I10",
+      "diagnosisTertiary": "Anemia",
+      "icd10Tertiary": "D64.9",
+      "procedures": [
+        {
+          "name": "Konsultasi",
+          "icd9cm": "99.10"
+        },
+        {
+          "name": "Pemeriksaan Lab",
+          "icd9cm": "90.59"
+        }
+      ],
+      "inaCbgCode": "N-4-10-I",
+      "inaCbgDescription": "Diabetes Mellitus Tanpa Komplikasi",
+      "tarifInaCbg": "2500000"
+    },
+    "validation": {
+      "icd10Valid": true,
+      "icd9cmValid": true,
+      "inaCbgValid": true,
+      "mappingCorrect": true,
+      "tarifCorrect": true
+    },
+    "issues": [],
+    "suggestions": [
+      "✅ Semua data lengkap dan valid",
+      "✅ Kode ICD-10 sesuai dengan diagnosa",
+      "✅ INA-CBG berhasil di-generate otomatis",
+      "✅ Tarif sudah sesuai dengan kelas rawat 3",
+      "✅ Ready untuk submit ke BPJS"
+    ]
+  }
+}
