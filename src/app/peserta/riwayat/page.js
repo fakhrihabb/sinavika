@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import PesertaNavbar from '@/components/PesertaNavbar';
 import {
@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
-export default function RiwayatPage() {
+function RiwayatPageContent() {
   const searchParams = useSearchParams();
   const triageIdParam = searchParams.get('triageId');
 
@@ -411,5 +411,23 @@ export default function RiwayatPage() {
         )}
       </main>
     </div>
+  );
+}
+
+export default function RiwayatPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50">
+        <PesertaNavbar />
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+          <div className="text-center py-12">
+            <Loader2 className="w-12 h-12 animate-spin text-[#03974a] mx-auto mb-4" />
+            <p className="text-gray-600">Memuat riwayat triase...</p>
+          </div>
+        </main>
+      </div>
+    }>
+      <RiwayatPageContent />
+    </Suspense>
   );
 }
