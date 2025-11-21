@@ -3,7 +3,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRoleModal } from '@/contexts/RoleModalContext';
-import { User, FileText, BookOpen, Menu, X } from 'lucide-react';
+import { User, FileText, BookOpen, Menu, X, CalendarCheck } from 'lucide-react';
 
 export default function PesertaNavbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -44,9 +44,13 @@ export default function PesertaNavbar() {
             </Link>
             <Link href="/peserta/riwayat" className="flex items-center gap-2 text-gray-700 hover:text-[#03974a] transition-colors">
               <BookOpen className="w-4 h-4" />
-              <span>Riwayat</span>
+              <span>Riwayat Keluhan</span>
             </Link>
-            <button 
+            <Link href="/peserta/janji-temu" className="flex items-center gap-2 text-gray-700 hover:text-[#03974a] transition-colors">
+              <CalendarCheck className="w-4 h-4" />
+              <span>Janji Temu</span>
+            </Link>
+            <button
               onClick={openModal}
               className="px-4 py-2 bg-gradient-to-r from-[#03974a] to-[#144782] text-white rounded-full hover:shadow-lg transition-all duration-300 text-sm"
             >
@@ -80,9 +84,13 @@ export default function PesertaNavbar() {
             </Link>
             <Link href="/peserta/riwayat" className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:text-[#03974a] hover:bg-gray-50 rounded-md">
               <BookOpen className="w-4 h-4" />
-              <span>Riwayat</span>
+              <span>Riwayat Keluhan</span>
             </Link>
-            <button 
+            <Link href="/peserta/janji-temu" className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:text-[#03974a] hover:bg-gray-50 rounded-md">
+              <CalendarCheck className="w-4 h-4" />
+              <span>Janji Temu</span>
+            </Link>
+            <button
               onClick={openModal}
               className="w-full mt-2 px-4 py-2 bg-gradient-to-r from-[#03974a] to-[#144782] text-white rounded-full text-sm"
             >

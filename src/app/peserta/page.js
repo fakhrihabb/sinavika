@@ -1,5 +1,5 @@
 import PesertaNavbar from '@/components/PesertaNavbar';
-import { Stethoscope, FileText, Clock, AlertCircle, CheckCircle, MapPin, ChevronRight, Activity, Calendar } from 'lucide-react';
+import { Stethoscope, FileText, Clock, AlertCircle, CheckCircle, MapPin, ChevronRight, Activity, Calendar, CalendarCheck } from 'lucide-react';
 import Link from 'next/link';
 
 export default function PesertaPage() {
@@ -52,6 +52,53 @@ export default function PesertaPage() {
           <p className="text-gray-600">
             Cek keluhan kesehatan Anda dan dapatkan rekomendasi layanan yang tepat
           </p>
+        </div>
+
+        {/* Primary Quick Actions - Highlighted at Top */}
+        <div className="mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Link
+              href="/peserta/triage"
+              className="group block bg-gradient-to-r from-[#03974a] to-[#144782] rounded-xl p-6 shadow-md hover:shadow-lg transition-all transform hover:scale-105"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <Stethoscope className="w-10 h-10 text-white/90 group-hover:scale-110 transition-transform" strokeWidth={2} />
+                <ChevronRight className="w-5 h-5 text-white/70 group-hover:translate-x-1 transition-transform" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">Mulai Cek Keluhan</h3>
+              <p className="text-white/90 text-sm leading-relaxed">
+                Jawab pertanyaan sederhana tentang keluhan Anda dan dapatkan rekomendasi layanan yang tepat
+              </p>
+            </Link>
+
+            <Link
+              href="/peserta/janji-temu"
+              className="group block bg-white rounded-xl p-6 border-2 border-blue-500 shadow-md hover:shadow-lg transition-all transform hover:scale-105"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <CalendarCheck className="w-10 h-10 text-blue-600 group-hover:scale-110 transition-transform" strokeWidth={2} />
+                <ChevronRight className="w-5 h-5 text-blue-600 group-hover:translate-x-1 transition-transform" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Janji Temu Saya</h3>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                Lihat dan kelola janji temu Anda dengan rumah sakit
+              </p>
+            </Link>
+
+            <Link
+              href="/peserta/riwayat"
+              className="group block bg-white rounded-xl p-6 border-2 border-[#03974a] shadow-md hover:shadow-lg transition-all transform hover:scale-105"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <FileText className="w-10 h-10 text-[#03974a] group-hover:scale-110 transition-transform" strokeWidth={2} />
+                <ChevronRight className="w-5 h-5 text-[#03974a] group-hover:translate-x-1 transition-transform" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Lihat Riwayat Triage</h3>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                Akses semua hasil triage sebelumnya dan dokumentasi kesehatan Anda
+              </p>
+            </Link>
+          </div>
         </div>
 
         {/* Quick Stats */}
@@ -142,41 +189,8 @@ export default function PesertaPage() {
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Primary Actions */}
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Aksi Cepat</h3>
-            
-            <Link 
-              href="/peserta/triage"
-              className="group block bg-gradient-to-r from-[#03974a] to-[#144782] rounded-xl p-6 shadow-sm hover:shadow-md transition-all"
-            >
-              <div className="flex items-start justify-between mb-3">
-                <Stethoscope className="w-10 h-10 text-white/90 group-hover:scale-110 transition-transform" strokeWidth={2} />
-                <ChevronRight className="w-5 h-5 text-white/70 group-hover:translate-x-1 transition-transform" />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-2">Mulai Cek Keluhan</h3>
-              <p className="text-white/90 text-sm leading-relaxed">
-                Jawab pertanyaan sederhana tentang keluhan Anda dan dapatkan rekomendasi layanan yang tepat
-              </p>
-            </Link>
-
-            <Link 
-              href="/peserta/riwayat"
-              className="group block bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all"
-            >
-              <div className="flex items-start justify-between mb-3">
-                <FileText className="w-10 h-10 text-[#144782] group-hover:scale-110 transition-transform" strokeWidth={2} />
-                <ChevronRight className="w-5 h-5 text-gray-400 group-hover:translate-x-1 transition-transform" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Lihat Riwayat Triage</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                Akses semua hasil triage sebelumnya dan dokumentasi kesehatan Anda
-              </p>
-            </Link>
-          </div>
-
           {/* Tips & Information */}
-          <div className="space-y-4">
+          <div className="lg:col-span-2 space-y-4">
             <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Tips Penggunaan</h3>
             
             <div className="bg-white rounded-xl border border-gray-200 divide-y divide-gray-100">

@@ -110,6 +110,54 @@ export default function RumahSakitPage() {
           </p>
         </div>
 
+        {/* Primary Quick Actions - Highlighted at Top */}
+        <div className="mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Link
+              href="/rumah-sakit/antrian"
+              className="group block bg-gradient-to-r from-[#03974a] to-[#144782] rounded-xl p-6 shadow-md hover:shadow-lg transition-all transform hover:scale-105"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <Users className="w-10 h-10 text-white/90 group-hover:scale-110 transition-transform" strokeWidth={2} />
+                <ChevronRight className="w-5 h-5 text-white/70 group-hover:translate-x-1 transition-transform" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">Kelola Antrian</h3>
+              <p className="text-white/90 text-sm leading-relaxed">
+                Lihat dan atur pasien SINAVIKA dengan hasil triage
+              </p>
+            </Link>
+
+            <Link
+              href="/rumah-sakit/klaim"
+              className="group block bg-white rounded-xl p-6 border-2 border-[#03974a] shadow-md hover:shadow-lg transition-all transform hover:scale-105"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <FileCheck className="w-10 h-10 text-[#03974a] group-hover:scale-110 transition-transform" strokeWidth={2} />
+                <ChevronRight className="w-5 h-5 text-[#03974a] group-hover:translate-x-1 transition-transform" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Pre-check Klaim</h3>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                Validasi klaim sebelum dikirim ke BPJS
+              </p>
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 gap-4 mt-4">
+            <Link
+              href="/rumah-sakit/notifikasi"
+              className="group flex items-center gap-4 bg-white rounded-xl p-6 border border-gray-200 shadow-md hover:shadow-lg transition-all"
+            >
+              <div className="p-3 bg-[#03974a] rounded-lg group-hover:scale-110 transition-transform">
+                <Bell className="w-6 h-6 text-white" strokeWidth={2} />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-gray-900 mb-1">Notifikasi</h3>
+                <p className="text-gray-600 text-sm">8 notifikasi baru memerlukan tindakan</p>
+              </div>
+              <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-[#03974a] transition-colors" />
+            </Link>
+          </div>
+        </div>
+
         {/* KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {kpis.map((kpi, index) => {
@@ -251,54 +299,6 @@ export default function RumahSakitPage() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Quick Actions */}
-            <div className="bg-white rounded-xl border border-gray-200 p-5">
-              <h3 className="text-sm font-semibold text-gray-900 mb-4">Aksi Cepat</h3>
-              <div className="space-y-2">
-                <Link
-                  href="/rumah-sakit/antrian"
-                  className="group flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <div className="p-2 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors">
-                    <Users className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">Kelola Antrian</p>
-                    <p className="text-xs text-gray-500">Lihat & atur pasien</p>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-gray-400" />
-                </Link>
-
-                <Link
-                  href="/rumah-sakit/klaim"
-                  className="group flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <div className="p-2 bg-green-50 rounded-lg group-hover:bg-green-100 transition-colors">
-                    <FileCheck className="w-5 h-5 text-green-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">Pre-check Klaim</p>
-                    <p className="text-xs text-gray-500">Validasi sebelum kirim</p>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-gray-400" />
-                </Link>
-
-                <Link
-                  href="/rumah-sakit/notifikasi"
-                  className="group flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <div className="p-2 bg-orange-50 rounded-lg group-hover:bg-orange-100 transition-colors">
-                    <Bell className="w-5 h-5 text-orange-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">Notifikasi</p>
-                    <p className="text-xs text-gray-500">8 notifikasi baru</p>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-gray-400" />
-                </Link>
-              </div>
-            </div>
-
             {/* Claim Status Summary */}
             <div className="bg-white rounded-xl border border-gray-200 p-5">
               <h3 className="text-sm font-semibold text-gray-900 mb-4">Ringkasan Klaim</h3>
