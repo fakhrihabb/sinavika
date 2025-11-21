@@ -121,6 +121,8 @@ function HospitalSelectionContent() {
           durationText: hospital.duration.text,
           appointmentType: serviceType,
           specialty: hospital.availability.availableSpecialties?.[0] || null,
+          estimatedWaitTime: hospital.availability?.estimatedWaitTime || null,
+          operationalHours: hospital.availability?.operationalHours || null,
         }),
       });
 
@@ -149,9 +151,17 @@ function HospitalSelectionContent() {
       'IGD': 'Instalasi Gawat Darurat (IGD)',
       'Poli Spesialis': 'Poli Spesialis',
       'Poli Umum': 'Poli Umum',
+      'Faskes Tingkat Pertama': 'Fasilitas Kesehatan Tingkat Pertama',
       'Perawatan Mandiri': 'Perawatan Mandiri',
     };
     return labels[type] || type;
+  };
+
+  const getFacilityTypeLabel = (type) => {
+    if (type === 'Faskes Tingkat Pertama') {
+      return 'faskes';
+    }
+    return 'rumah sakit';
   };
 
   if (loading) {
@@ -162,7 +172,7 @@ function HospitalSelectionContent() {
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center">
               <Loader2 className="w-8 h-8 text-[#03974a] animate-spin mx-auto mb-4" />
-              <p className="text-gray-600">Mencari rumah sakit terdekat...</p>
+              <p className="text-gray-600">Mencari {serviceType === 'Faskes Tingkat Pertama' ? 'faskes' : 'rumah sakit'} terdekat...</p>
             </div>
           </div>
         </div>
@@ -202,7 +212,7 @@ function HospitalSelectionContent() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Pilih Rumah Sakit
+            {serviceType === 'Faskes Tingkat Pertama' ? 'Pilih Faskes' : 'Pilih Rumah Sakit'}
           </h1>
           <p className="text-gray-600">
             Berdasarkan hasil triage, Anda direkomendasikan untuk:{' '}
@@ -211,7 +221,7 @@ function HospitalSelectionContent() {
             </span>
           </p>
           <p className="text-sm text-gray-500 mt-1">
-            Menampilkan {hospitals.length} rumah sakit terdekat
+            Menampilkan {hospitals.length} {serviceType === 'Faskes Tingkat Pertama' ? 'faskes' : 'rumah sakit'} terdekat
           </p>
         </div>
 
@@ -276,13 +286,25 @@ function HospitalSelectionContent() {
                         <span>{hospital.phone}</span>
                       </div>
                     )}
+                    {hospital.availability?.estimatedWaitTime && (
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <Clock className="w-4 h-4 flex-shrink-0" />
+                        <span>Estimasi tunggu: <span className="font-semibold">{hospital.availability.estimatedWaitTime}</span></span>
+                      </div>
+                    )}
+                    {hospital.availability?.operationalHours && (
+                      <div className="flex items-start gap-2 text-sm text-gray-600">
+                        <Clock className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                        <span>Jam operasional: {hospital.availability.operationalHours}</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Why This Hospital is Recommended */}
                   <div className="mb-4 p-5 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 border-2 border-green-300 rounded-xl">
                     <h4 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
                       <CheckCircle className="w-5 h-5 text-[#03974a]" />
-                      Mengapa rumah sakit ini direkomendasikan
+                      Mengapa {serviceType === 'Faskes Tingkat Pertama' ? 'faskes' : 'rumah sakit'} ini direkomendasikan
                     </h4>
                     <ul className="space-y-2.5 text-sm">
                       {/* Service availability */}

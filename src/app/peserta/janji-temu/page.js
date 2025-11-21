@@ -251,6 +251,22 @@ function JanjiTemuContent() {
                       </div>
                     )}
 
+                    {/* Clinical Summary for Hospital */}
+                    {appointment.clinical_summary && (
+                      <div className="mb-5 p-5 bg-purple-50 border-2 border-purple-200 rounded-xl">
+                        <h4 className="font-bold text-purple-900 mb-3 flex items-center gap-2">
+                          <FileText className="w-5 h-5 text-purple-600" />
+                          Ringkasan Klinis yang Dikirim ke Faskes
+                        </h4>
+                        <p className="text-sm text-purple-800 leading-relaxed whitespace-pre-line">
+                          {appointment.clinical_summary}
+                        </p>
+                        <p className="text-xs text-purple-600 mt-3 italic">
+                          Ringkasan ini telah dibagikan ke rumah sakit/faskes untuk mempercepat proses pelayanan Anda.
+                        </p>
+                      </div>
+                    )}
+
                     {/* Hospital Details */}
                     <div className="space-y-3 mb-5 p-5 bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-xl">
                       <h4 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
@@ -266,6 +282,18 @@ function JanjiTemuContent() {
                           <div className="flex items-center gap-3 text-gray-700">
                             <Phone className="w-4 h-4 flex-shrink-0 text-[#03974a]" />
                             <span>{appointment.hospital_phone}</span>
+                          </div>
+                        )}
+                        {appointment.estimated_wait_time && (
+                          <div className="flex items-center gap-3 text-gray-700">
+                            <Clock className="w-4 h-4 flex-shrink-0 text-[#03974a]" />
+                            <span>Estimasi tunggu: <span className="font-semibold">{appointment.estimated_wait_time}</span></span>
+                          </div>
+                        )}
+                        {appointment.operational_hours && (
+                          <div className="flex items-start gap-3 text-gray-700">
+                            <Clock className="w-4 h-4 flex-shrink-0 mt-0.5 text-[#03974a]" />
+                            <span>Jam operasional: {appointment.operational_hours}</span>
                           </div>
                         )}
                         <div className="flex items-center gap-6 text-gray-700 pt-2 border-t border-gray-200">

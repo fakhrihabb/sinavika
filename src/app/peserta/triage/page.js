@@ -401,14 +401,31 @@ export default function TriagePage() {
               <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-6 border border-green-200">
                 <div className="flex items-start gap-3 mb-3">
                   <Activity className="w-6 h-6 text-green-600 mt-0.5 flex-shrink-0" />
-                  <div>
+                  <div className="flex-1">
                     <p className="text-xs text-gray-600 mb-1">Rekomendasi Layanan</p>
                     <p className="text-xl font-bold text-gray-900">{triageResult.rekomendasiLayanan}</p>
+                    {triageResult.namaSpesialis && (
+                      <p className="text-sm text-gray-600 mt-1">Spesialisasi: {triageResult.namaSpesialis}</p>
+                    )}
                   </div>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-700 pt-3 border-t border-green-100">
-                  <Calendar className="w-4 h-4" />
-                  <span>Waktu kunjungan: {triageResult.tanggalKunjunganDisarankan}</span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-green-100">
+                  <div className="flex items-center gap-2 text-sm text-gray-700">
+                    <Calendar className="w-4 h-4 flex-shrink-0" />
+                    <span>Waktu: {triageResult.tanggalKunjunganDisarankan}</span>
+                  </div>
+                  {triageResult.estimasiWaktuTunggu && (
+                    <div className="flex items-center gap-2 text-sm text-gray-700">
+                      <Clock className="w-4 h-4 flex-shrink-0" />
+                      <span>Est. tunggu: {triageResult.estimasiWaktuTunggu}</span>
+                    </div>
+                  )}
+                  {triageResult.jamOperasionalDisarankan && (
+                    <div className="flex items-center gap-2 text-sm text-gray-700 sm:col-span-2">
+                      <Info className="w-4 h-4 flex-shrink-0" />
+                      <span>Jam operasional: {triageResult.jamOperasionalDisarankan}</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -464,14 +481,28 @@ export default function TriagePage() {
                 </div>
               )}
 
+              {/* Clinical Summary for Hospital */}
+              {triageResult.ringkasanUntukRS && (
+                <div className="bg-blue-50 rounded-xl p-5 border border-blue-200">
+                  <h3 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
+                    <FileText className="w-5 h-5" />
+                    Ringkasan Klinis untuk Rumah Sakit/Faskes
+                  </h3>
+                  <p className="text-blue-800 text-sm leading-relaxed whitespace-pre-line">{triageResult.ringkasanUntukRS}</p>
+                  <p className="text-xs text-blue-600 mt-3 italic">
+                    Ringkasan ini akan otomatis dibagikan ke rumah sakit/faskes yang Anda pilih untuk mempercepat proses pelayanan.
+                  </p>
+                </div>
+              )}
+
               {/* Referral Info */}
               {triageResult.perluRujukan && (
-                <div className="bg-blue-50 rounded-xl p-5 border border-blue-200">
+                <div className="bg-purple-50 rounded-xl p-5 border border-purple-200">
                   <div className="flex items-start gap-3">
-                    <MapPin className="w-5 h-5 text-blue-600 mt-0.5" />
+                    <MapPin className="w-5 h-5 text-purple-600 mt-0.5" />
                     <div>
-                      <h3 className="font-semibold text-blue-900 mb-1">Perlu Rujukan</h3>
-                      <p className="text-blue-800 text-sm">
+                      <h3 className="font-semibold text-purple-900 mb-1">Perlu Rujukan</h3>
+                      <p className="text-purple-800 text-sm">
                         Berdasarkan keluhan Anda, kemungkinan diperlukan rujukan ke fasilitas kesehatan tingkat lanjut.
                         Konsultasikan dengan dokter di Faskes tingkat I terlebih dahulu.
                       </p>
@@ -487,7 +518,11 @@ export default function TriagePage() {
                   className="w-full px-6 py-3 bg-gradient-to-r from-[#03974a] to-[#144782] text-white rounded-lg font-semibold hover:shadow-lg transition-all text-center flex items-center justify-center gap-2"
                 >
                   <MapPin className="w-5 h-5" />
-                  Cari Rumah Sakit Terdekat
+                  {triageResult.rekomendasiLayanan === 'Faskes Tingkat Pertama'
+                    ? 'Cari Faskes Terdekat'
+                    : triageResult.rekomendasiLayanan === 'Perawatan Mandiri'
+                    ? 'Lihat Tips Perawatan'
+                    : 'Cari Rumah Sakit Terdekat'}
                 </Link>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Link

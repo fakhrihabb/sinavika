@@ -30,6 +30,24 @@ export async function POST(request) {
       );
     }
 
+    // Fetch triage data to get clinical summary and other info
+    const { data: triageData, error: triageError } = await supabase
+      .from('triage_history')
+      .select('ringkasan_untuk_rs, estimasi_waktu_tunggu, jam_operasional_disarankan')
+      .eq('triage_id', triageId)
+      .single();
+
+    if (triageError) {
+      console.error('Error fetching triage data:', triageError);
+      // Continue anyway, clinical summary is optional
+    }
+
+    // Extract facility availability info from request (if available)
+    const {
+      estimatedWaitTime,
+      operationalHours,
+    } = bookingData;
+
     // Insert booking into janji_temu table
     const { data: appointment, error: insertError } = await supabase
       .from('janji_temu')
@@ -49,6 +67,9 @@ export async function POST(request) {
         appointment_type: appointmentType,
         specialty: specialty || null,
         status: 'scheduled',
+        clinical_summary: triageData?.ringkasan_untuk_rs || null,
+        estimated_wait_time: estimatedWaitTime || triageData?.estimasi_waktu_tunggu || null,
+        operational_hours: operationalHours || triageData?.jam_operasional_disarankan || null,
       })
       .select()
       .single();
