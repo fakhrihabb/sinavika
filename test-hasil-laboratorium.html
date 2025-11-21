@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hasil Laboratorium - Test SINAVIKA</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', serif;
+            margin: 40px;
+            line-height: 1.6;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #000;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .hospital-name {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .lab-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #144782;
+            margin-top: 10px;
+        }
+        .document-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+            text-decoration: underline;
+        }
+        .patient-info {
+            background-color: #f0f0f0;
+            padding: 15px;
+            margin: 20px 0;
+            border-left: 4px solid #144782;
+        }
+        .patient-info table {
+            width: 100%;
+        }
+        .patient-info td {
+            padding: 3px 10px;
+        }
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .results-table th {
+            background-color: #144782;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-size: 14px;
+        }
+        .results-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            font-size: 13px;
+        }
+        .results-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .high {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+        .low {
+            color: #1976d2;
+            font-weight: bold;
+        }
+        .normal {
+            color: #388e3c;
+        }
+        .flag {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .notes {
+            background-color: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .footer {
+            margin-top: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+        .signature-box {
+            text-align: center;
+            min-width: 200px;
+        }
+        .signature-line {
+            margin-top: 60px;
+            border-top: 2px solid #000;
+            padding-top: 5px;
+        }
+        .barcode {
+            text-align: right;
+            font-family: monospace;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="hospital-name">RUMAH SAKIT UMUM CIPTO MANGUNKUSUMO</div>
+        <div>Jl. Diponegoro No. 71, Jakarta Pusat 10430</div>
+        <div>Telp: (021) 31900924 | Email: lab@rscm.co.id</div>
+        <div class="lab-name">LABORATORIUM PATOLOGI KLINIK</div>
+        <div class="document-title">HASIL PEMERIKSAAN LABORATORIUM</div>
+    </div>
+
+    <div class="barcode">
+        No. Lab: LAB-2020-09-004567 | Barcode: *LAB004567*
+    </div>
+
+    <div class="patient-info">
+        <table>
+            <tr>
+                <td style="width: 20%;"><strong>Nama Pasien</strong></td>
+                <td style="width: 30%;">Ahmad Fauzi</td>
+                <td style="width: 20%;"><strong>No. RM</strong></td>
+                <td style="width: 30%;">00-12-34-56</td>
+            </tr>
+            <tr>
+                <td><strong>Tanggal Lahir</strong></td>
+                <td>15 Januari 1975 (49 th) / L</td>
+                <td><strong>No. BPJS</strong></td>
+                <td>0001234567890</td>
+            </tr>
+            <tr>
+                <td><strong>Dokter Pengirim</strong></td>
+                <td>dr. Budi Santoso, Sp.PD</td>
+                <td><strong>Ruang/Poli</strong></td>
+                <td>Melati 3</td>
+            </tr>
+            <tr>
+                <td><strong>Tanggal Pengambilan</strong></td>
+                <td>4 September 2020, 15:30 WIB</td>
+                <td><strong>Tanggal Selesai</strong></td>
+                <td>4 September 2020, 18:45 WIB</td>
+            </tr>
+        </table>
+    </div>
+
+    <h3 style="margin-top: 30px; color: #144782;">I. HEMATOLOGI RUTIN</h3>
+    <table class="results-table">
+        <thead>
+            <tr>
+                <th style="width: 35%;">Pemeriksaan</th>
+                <th style="width: 20%;">Hasil</th>
+                <th style="width: 15%;">Satuan</th>
+                <th style="width: 25%;">Nilai Normal</th>
+                <th style="width: 5%;">Flag</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Hemoglobin (Hb)</td>
+                <td class="low">10.2</td>
+                <td>g/dL</td>
+                <td>13.0 - 17.0</td>
+                <td class="flag low">↓</td>
+            </tr>
+            <tr>
+                <td>Hematokrit (Ht)</td>
+                <td class="low">32</td>
+                <td>%</td>
+                <td>40 - 54</td>
+                <td class="flag low">↓</td>
+            </tr>
+            <tr>
+                <td>Eritrosit</td>
+                <td class="low">3.8</td>
+                <td>juta/mm³</td>
+                <td>4.5 - 5.5</td>
+                <td class="flag low">↓</td>
+            </tr>
+            <tr>
+                <td>Leukosit</td>
+                <td class="high">15,400</td>
+                <td>/mm³</td>
+                <td>4,000 - 10,000</td>
+                <td class="flag high">↑</td>
+            </tr>
+            <tr>
+                <td>Trombosit</td>
+                <td class="normal">285,000</td>
+                <td>/mm³</td>
+                <td>150,000 - 400,000</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>MCV</td>
+                <td class="low">76</td>
+                <td>fL</td>
+                <td>80 - 100</td>
+                <td class="flag low">↓</td>
+            </tr>
+            <tr>
+                <td>MCH</td>
+                <td class="low">24</td>
+                <td>pg</td>
+                <td>27 - 31</td>
+                <td class="flag low">↓</td>
+            </tr>
+            <tr>
+                <td>MCHC</td>
+                <td class="normal">32</td>
+                <td>g/dL</td>
+                <td>32 - 36</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3 style="margin-top: 30px; color: #144782;">II. HITUNG JENIS LEUKOSIT</h3>
+    <table class="results-table">
+        <thead>
+            <tr>
+                <th style="width: 35%;">Pemeriksaan</th>
+                <th style="width: 20%;">Hasil</th>
+                <th style="width: 15%;">Satuan</th>
+                <th style="width: 25%;">Nilai Normal</th>
+                <th style="width: 5%;">Flag</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Basofil</td>
+                <td class="normal">0</td>
+                <td>%</td>
+                <td>0 - 1</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Eosinofil</td>
+                <td class="normal">2</td>
+                <td>%</td>
+                <td>1 - 3</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Neutrofil Batang</td>
+                <td class="high">8</td>
+                <td>%</td>
+                <td>2 - 6</td>
+                <td class="flag high">↑</td>
+            </tr>
+            <tr>
+                <td>Neutrofil Segmen</td>
+                <td class="high">72</td>
+                <td>%</td>
+                <td>50 - 70</td>
+                <td class="flag high">↑</td>
+            </tr>
+            <tr>
+                <td>Limfosit</td>
+                <td class="low">15</td>
+                <td>%</td>
+                <td>20 - 40</td>
+                <td class="flag low">↓</td>
+            </tr>
+            <tr>
+                <td>Monosit</td>
+                <td class="normal">3</td>
+                <td>%</td>
+                <td>2 - 8</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3 style="margin-top: 30px; color: #144782;">III. KIMIA KLINIK</h3>
+    <table class="results-table">
+        <thead>
+            <tr>
+                <th style="width: 35%;">Pemeriksaan</th>
+                <th style="width: 20%;">Hasil</th>
+                <th style="width: 15%;">Satuan</th>
+                <th style="width: 25%;">Nilai Normal</th>
+                <th style="width: 5%;">Flag</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Glukosa Darah Sewaktu (GDS)</td>
+                <td class="high">145</td>
+                <td>mg/dL</td>
+                <td>< 140</td>
+                <td class="flag high">↑</td>
+            </tr>
+            <tr>
+                <td>Ureum</td>
+                <td class="normal">42</td>
+                <td>mg/dL</td>
+                <td>10 - 50</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Kreatinin</td>
+                <td class="normal">1.1</td>
+                <td>mg/dL</td>
+                <td>0.6 - 1.3</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>SGOT (AST)</td>
+                <td class="normal">28</td>
+                <td>U/L</td>
+                <td>< 37</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>SGPT (ALT)</td>
+                <td class="normal">32</td>
+                <td>U/L</td>
+                <td>< 41</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="notes">
+        <strong>CATATAN:</strong><br>
+        ↑ = Hasil di atas nilai normal (High)<br>
+        ↓ = Hasil di bawah nilai normal (Low)<br><br>
+        <strong>INTERPRETASI:</strong><br>
+        • Anemia mikrositik hipokromik (Hb ↓, MCV ↓, MCH ↓)<br>
+        • Leukositosis dengan shift to the left (peningkatan neutrofil batang) → sugestif infeksi bakterial akut<br>
+        • GDS meningkat → perlu evaluasi lebih lanjut untuk diabetes melitus<br>
+        • Fungsi ginjal dalam batas normal
+    </div>
+
+    <div class="footer">
+        <div>
+            <p style="font-size: 12px; color: #666;">
+                <strong>Metode:</strong> Hematologi Analyzer Sysmex XN-1000 | Kimia: Cobas c501<br>
+                <strong>Spesimen:</strong> Darah Vena (EDTA & Plain Tube)<br>
+                <strong>Validasi:</strong> 4 September 2020, 18:45 WIB
+            </p>
+        </div>
+        <div class="signature-box">
+            <div>Jakarta, 4 September 2020</div>
+            <div style="margin-top: 10px; font-weight: bold;">Penanggung Jawab Laboratorium</div>
+            <div class="signature-line">dr. Siti Rahayu, Sp.PK</div>
+            <div style="font-size: 11px; color: #666; margin-top: 5px;">
+                SIP: 503/LAB/2019
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top: 40px; padding-top: 20px; border-top: 2px dashed #ccc; font-size: 11px; color: #666;">
+        <strong>PERHATIAN:</strong> Hasil laboratorium harus diinterpretasikan bersama dengan data klinis pasien.
+        Untuk informasi lebih lanjut, hubungi Laboratorium RSCM ext. 2345
+    </div>
+</body>
+</html>

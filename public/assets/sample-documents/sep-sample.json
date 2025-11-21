@@ -1,0 +1,50 @@
+{
+  "documentType": "SEP",
+  "fileName": "SEP-1320R0020516000823.pdf",
+  "metadata": {
+    "uploadedAt": "2024-11-20T10:00:00Z",
+    "fileSize": "245KB",
+    "fileType": "application/pdf"
+  },
+  "extractedData": {
+    "noSEP": "1320R0020516000823",
+    "tglSEP": "2016-05-31",
+    "noKartu": "0001326568037",
+    "noMR": "0",
+    "namaPeserta": "WENDY TRI JAYA",
+    "tglLahir": "1992-12-30",
+    "gender": "L",
+    "umur": "23 tahun",
+    "polTujuan": "Instalasi Gawat Darurat",
+    "asalFaskesTk1": "GEDEG",
+    "diagnosisAwal": "Dyspepsia",
+    "cob": "",
+    "jenisRawat": "Rawat Jalan",
+    "kelasRawat": "",
+    "peserta": "PEGAWAI SWASTA",
+    "catatan": "Pasien Keluarga Pasien: Pasien, Peserta BPJS Kesehatan",
+    "statusAktif": true
+  },
+  "aiAnalysis": {
+    "readinessScore": 85,
+    "canAutoFill": true,
+    "fieldsToFill": [
+      "noKartu",
+      "namaPeserta",
+      "tglLahir",
+      "gender",
+      "jenisRawat"
+    ],
+    "issues": [
+      {
+        "severity": "warning",
+        "message": "Diagnosa awal 'Dyspepsia' perlu dikonfirmasi dengan resume medis",
+        "field": "diagnosisAwal"
+      }
+    ],
+    "suggestions": [
+      "Upload resume medis untuk mendapatkan kode ICD-10 yang tepat",
+      "Dyspepsia biasanya menggunakan ICD-10: K30"
+    ]
+  }
+}

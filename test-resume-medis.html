@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Medis - Test SINAVIKA</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', serif;
+            margin: 40px;
+            line-height: 1.6;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #000;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .hospital-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .document-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+            text-decoration: underline;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .section-title {
+            font-weight: bold;
+            font-size: 16px;
+            background-color: #f0f0f0;
+            padding: 5px 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid #144782;
+        }
+        .field {
+            margin-bottom: 8px;
+            display: flex;
+        }
+        .field-label {
+            font-weight: bold;
+            min-width: 200px;
+        }
+        .field-value {
+            flex: 1;
+        }
+        .diagnosis-box {
+            border: 2px solid #144782;
+            padding: 15px;
+            margin: 10px 0;
+            background-color: #f9f9f9;
+        }
+        .footer {
+            margin-top: 50px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .signature-box {
+            text-align: center;
+            width: 200px;
+        }
+        .signature-line {
+            margin-top: 60px;
+            border-top: 2px solid #000;
+            padding-top: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        table td {
+            padding: 5px;
+            vertical-align: top;
+        }
+        .stamp-area {
+            width: 150px;
+            height: 150px;
+            border: 2px dashed #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            margin: 10px auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="hospital-name">RUMAH SAKIT UMUM CIPTO MANGUNKUSUMO</div>
+        <div>Jl. Diponegoro No. 71, Jakarta Pusat 10430</div>
+        <div>Telp: (021) 31900924 | Email: info@rscm.co.id</div>
+        <div class="document-title">RESUME MEDIS RAWAT INAP</div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">I. DATA PASIEN</div>
+        <table>
+            <tr>
+                <td style="width: 25%;"><strong>Nama Pasien</strong></td>
+                <td style="width: 25%;">Ahmad Fauzi</td>
+                <td style="width: 25%;"><strong>No. Rekam Medis</strong></td>
+                <td style="width: 25%;">00-12-34-56</td>
+            </tr>
+            <tr>
+                <td><strong>Tanggal Lahir</strong></td>
+                <td>15 Januari 1975 (49 tahun)</td>
+                <td><strong>Jenis Kelamin</strong></td>
+                <td>Laki-laki</td>
+            </tr>
+            <tr>
+                <td><strong>No. BPJS</strong></td>
+                <td>0001234567890</td>
+                <td><strong>No. SEP</strong></td>
+                <td>0301R0011024Y000001</td>
+            </tr>
+            <tr>
+                <td><strong>Alamat</strong></td>
+                <td colspan="3">Jl. Mawar No. 45, RT 03/RW 05, Kelurahan Menteng, Jakarta Pusat</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-title">II. DATA PERAWATAN</div>
+        <table>
+            <tr>
+                <td style="width: 25%;"><strong>Tanggal Masuk</strong></td>
+                <td style="width: 25%;">4 September 2020, 14:30 WIB</td>
+                <td style="width: 25%;"><strong>Tanggal Keluar</strong></td>
+                <td style="width: 25%;">5 September 2020, 10:00 WIB</td>
+            </tr>
+            <tr>
+                <td><strong>Lama Rawat</strong></td>
+                <td>1 Hari</td>
+                <td><strong>Ruang Perawatan</strong></td>
+                <td>Melati 3 - Kelas 3</td>
+            </tr>
+            <tr>
+                <td><strong>Cara Masuk</strong></td>
+                <td>IGD</td>
+                <td><strong>Cara Keluar</strong></td>
+                <td>Atas Persetujuan Dokter</td>
+            </tr>
+            <tr>
+                <td><strong>DPJP</strong></td>
+                <td colspan="3">dr. Budi Santoso, Sp.PD, FINASIM</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-title">III. ANAMNESIS & PEMERIKSAAN FISIK</div>
+        <div class="field">
+            <div class="field-label">Keluhan Utama:</div>
+            <div class="field-value">Sesak nafas, batuk berdahak, demam tinggi sejak 3 hari yang lalu</div>
+        </div>
+        <div class="field">
+            <div class="field-label">Riwayat Penyakit Sekarang:</div>
+            <div class="field-value">
+                Pasien datang dengan keluhan sesak nafas yang memberat sejak 3 hari SMRS. Disertai batuk
+                berdahak warna kuning kehijauan, demam tinggi (39°C), dan nyeri dada saat batuk. Pasien
+                memiliki riwayat hipertensi tidak terkontrol sejak 5 tahun yang lalu.
+            </div>
+        </div>
+        <div class="field">
+            <div class="field-label">Tanda Vital:</div>
+            <div class="field-value">
+                TD: 160/100 mmHg, Nadi: 98 x/menit, RR: 28 x/menit, Suhu: 38.5°C, SpO2: 92% (room air)
+            </div>
+        </div>
+        <div class="field">
+            <div class="field-label">Pemeriksaan Fisik:</div>
+            <div class="field-value">
+                Kesadaran: Compos Mentis, Keadaan Umum: Tampak sakit sedang.
+                Thorax: Ronki basah halus di basal paru kanan, wheezing (-).
+                Cor: BJ I-II reguler, murmur (-).
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">IV. PEMERIKSAAN PENUNJANG</div>
+        <div class="field">
+            <div class="field-label">Laboratorium (4 Sep 2020):</div>
+            <div class="field-value">
+                • Hb: 10.2 g/dL (L) <br>
+                • Leukosit: 15.400/mm³ (H) <br>
+                • GDS: 145 mg/dL <br>
+                • Ureum: 42 mg/dL <br>
+                • Kreatinin: 1.1 mg/dL
+            </div>
+        </div>
+        <div class="field">
+            <div class="field-label">Rontgen Thorax AP (4 Sep 2020):</div>
+            <div class="field-value">
+                Tampak infiltrat di lobus inferior paru kanan. Cor: CTR dalam batas normal.
+                Kesan: Pneumonia lobus inferior dextra.
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">V. DIAGNOSIS</div>
+        <div class="diagnosis-box">
+            <div class="field">
+                <div class="field-label">Diagnosis Utama:</div>
+                <div class="field-value"><strong>Pneumonia</strong> (ICD-10: <strong>J18.9</strong>)</div>
+            </div>
+            <div class="field">
+                <div class="field-label">Diagnosis Sekunder:</div>
+                <div class="field-value"><strong>Hipertensi Esensial</strong> (ICD-10: <strong>I10</strong>)</div>
+            </div>
+            <div class="field">
+                <div class="field-label">Diagnosis Penyerta:</div>
+                <div class="field-value"><strong>Anemia</strong> (ICD-10: <strong>D64.9</strong>)</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">VI. TINDAKAN & PROSEDUR</div>
+        <div class="field">
+            <div class="field-value">
+                • Transfusi PRC 2 kantong (ICD-9-CM: <strong>99.04</strong>)<br>
+                • Foto Rontgen Thorax AP (ICD-9-CM: <strong>87.44</strong>)<br>
+                • Pemasangan O2 Nasal Kanul 3 lpm<br>
+                • Nebulisasi dengan bronkodilator<br>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">VII. TERAPI YANG DIBERIKAN</div>
+        <div class="field">
+            <div class="field-value">
+                • IVFD NaCl 0.9% 20 tpm<br>
+                • Inj. Ceftriaxone 2x1 gram IV<br>
+                • Inj. Ranitidine 2x50 mg IV<br>
+                • Amlodipine 1x10 mg PO<br>
+                • Paracetamol 3x500 mg PO (prn)<br>
+                • Ambroxol Syr 3x1 cth<br>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">VIII. KONDISI KELUAR & RENCANA TINDAK LANJUT</div>
+        <div class="field">
+            <div class="field-label">Kondisi Keluar:</div>
+            <div class="field-value">Membaik, sesak berkurang, demam turun, saturasi oksigen 96% tanpa O2</div>
+        </div>
+        <div class="field">
+            <div class="field-label">Instruksi Pulang:</div>
+            <div class="field-value">
+                • Kontrol ke poli paru dalam 1 minggu<br>
+                • Lanjutkan obat oral: Amoxicillin 3x500mg selama 5 hari, Amlodipine 1x10mg<br>
+                • Istirahat cukup, hindari paparan asap dan debu<br>
+                • Kembali ke IGD bila sesak memberat
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="signature-box">
+            <div>Jakarta, 5 September 2020</div>
+            <div style="margin-top: 10px;">Dokter Penanggung Jawab</div>
+            <div class="stamp-area">
+                [CAP RUMAH SAKIT]
+            </div>
+            <div class="signature-line">dr. Budi Santoso, Sp.PD, FINASIM</div>
+        </div>
+    </div>
+
+    <div style="margin-top: 50px; font-size: 12px; color: #666; text-align: center;">
+        <hr style="border: 1px solid #ccc; margin: 20px 0;">
+        Dokumen ini adalah resume medis resmi yang ditandatangani secara elektronik.<br>
+        Untuk verifikasi, hubungi Medical Record RSCM: (021) 31900924 ext. 1234
+    </div>
+
+    <script>
+        // Auto print dialog when opened
+        // window.onload = function() {
+        //     window.print();
+        // };
+    </script>
+</body>
+</html>

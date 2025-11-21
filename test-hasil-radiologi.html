@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hasil Radiologi - Test SINAVIKA</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', serif;
+            margin: 40px;
+            line-height: 1.6;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #000;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .hospital-name {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .radiology-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #144782;
+            margin-top: 10px;
+        }
+        .document-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+            text-decoration: underline;
+        }
+        .patient-info {
+            background-color: #f0f0f0;
+            padding: 15px;
+            margin: 20px 0;
+            border-left: 4px solid #144782;
+        }
+        .patient-info table {
+            width: 100%;
+        }
+        .patient-info td {
+            padding: 3px 10px;
+        }
+        .exam-info {
+            background-color: #e3f2fd;
+            padding: 15px;
+            margin: 20px 0;
+            border-left: 4px solid #1976d2;
+        }
+        .section {
+            margin: 30px 0;
+        }
+        .section-title {
+            font-weight: bold;
+            font-size: 16px;
+            background-color: #144782;
+            color: white;
+            padding: 8px 15px;
+            margin-bottom: 15px;
+        }
+        .findings {
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            margin: 10px 0;
+        }
+        .conclusion-box {
+            background-color: #fff9c4;
+            border: 3px solid #fbc02d;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .conclusion-box h3 {
+            margin-top: 0;
+            color: #f57c00;
+        }
+        .image-placeholder {
+            width: 100%;
+            height: 400px;
+            border: 2px dashed #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f5f5f5;
+            color: #999;
+            font-size: 18px;
+            margin: 20px 0;
+        }
+        .footer {
+            margin-top: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+        .signature-box {
+            text-align: center;
+            min-width: 200px;
+        }
+        .signature-line {
+            margin-top: 60px;
+            border-top: 2px solid #000;
+            padding-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="hospital-name">RUMAH SAKIT UMUM CIPTO MANGUNKUSUMO</div>
+        <div>Jl. Diponegoro No. 71, Jakarta Pusat 10430</div>
+        <div>Telp: (021) 31900924 | Email: radiologi@rscm.co.id</div>
+        <div class="radiology-name">INSTALASI RADIOLOGI</div>
+        <div class="document-title">HASIL PEMERIKSAAN RADIOLOGI</div>
+    </div>
+
+    <div style="text-align: right; font-family: monospace; font-size: 12px; color: #666;">
+        No. Radiologi: RAD-2020-09-003421 | Acc No: 2020090400342
+    </div>
+
+    <div class="patient-info">
+        <table>
+            <tr>
+                <td style="width: 20%;"><strong>Nama Pasien</strong></td>
+                <td style="width: 30%;">Ahmad Fauzi</td>
+                <td style="width: 20%;"><strong>No. RM</strong></td>
+                <td style="width: 30%;">00-12-34-56</td>
+            </tr>
+            <tr>
+                <td><strong>Tanggal Lahir</strong></td>
+                <td>15 Januari 1975 (49 tahun) / L</td>
+                <td><strong>No. BPJS</strong></td>
+                <td>0001234567890</td>
+            </tr>
+            <tr>
+                <td><strong>Dokter Pengirim</strong></td>
+                <td>dr. Budi Santoso, Sp.PD</td>
+                <td><strong>Ruang/Poli</strong></td>
+                <td>Melati 3 (Rawat Inap)</td>
+            </tr>
+            <tr>
+                <td><strong>Diagnosis Klinis</strong></td>
+                <td colspan="3">Suspek Pneumonia + Hipertensi</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="exam-info">
+        <table style="width: 100%;">
+            <tr>
+                <td style="width: 25%;"><strong>Jenis Pemeriksaan:</strong></td>
+                <td style="width: 25%;">FOTO THORAX AP</td>
+                <td style="width: 25%;"><strong>Kode ICD-9-CM:</strong></td>
+                <td style="width: 25%;"><strong>87.44</strong></td>
+            </tr>
+            <tr>
+                <td><strong>Tanggal Pemeriksaan:</strong></td>
+                <td>4 September 2020, 16:00 WIB</td>
+                <td><strong>Modalitas:</strong></td>
+                <td>X-Ray Digital (DR)</td>
+            </tr>
+            <tr>
+                <td><strong>Proyeksi:</strong></td>
+                <td>Anteroposterior (AP)</td>
+                <td><strong>Kondisi:</strong></td>
+                <td>Portable (Bedside)</td>
+            </tr>
+            <tr>
+                <td><strong>Teknik:</strong></td>
+                <td colspan="3">70 kVp, 4 mAs, FFD 100 cm</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="image-placeholder">
+        [FOTO THORAX AP - GAMBAR RADIOLOGI]<br>
+        <small style="font-size: 14px; margin-top: 10px;">
+            Pada implementasi sesungguhnya, gambar radiologi akan ditampilkan di sini
+        </small>
+    </div>
+
+    <div class="section">
+        <div class="section-title">TEKNIK PEMERIKSAAN</div>
+        <div class="findings">
+            Telah dilakukan pemeriksaan Foto Thorax proyeksi Anteroposterior (AP) dengan kondisi portable
+            di ruang rawat inap. Pasien dalam posisi semi fowler, inspirasi cukup, penetrasi baik.
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">HASIL BACAAN (FINDINGS)</div>
+        <div class="findings">
+            <strong>COR:</strong><br>
+            • Batas jantung normal<br>
+            • CTR (Cardio-Thoracic Ratio) dalam batas normal (± 0.45)<br>
+            • Aorta tidak melebar<br>
+            • Tidak tampak kardiomegali<br><br>
+
+            <strong>PULMO:</strong><br>
+            • Tampak <strong>infiltrat</strong> berbatas tidak tegas di <strong>lapang paru kanan bawah</strong>
+              (lobus inferior dextra)<br>
+            • Sudut costophrenicus kanan tertutup infiltrat<br>
+            • Sudut costophrenicus kiri tajam<br>
+            • Sinus phrenico-costalis kiri bebas<br>
+            • Tidak tampak efusi pleura<br>
+            • Tidak tampak pneumothorax<br>
+            • Corakan bronkovaskular meningkat di perihiler<br>
+            • Hemidiafragma kanan dan kiri baik<br><br>
+
+            <strong>TULANG & JARINGAN LUNAK:</strong><br>
+            • Tulang-tulang thorax intak, tidak tampak fraktur<br>
+            • Sela iga simetris<br>
+            • Soft tissue dinding thorax normal<br>
+            • Tidak tampak massa atau lesi lain
+        </div>
+    </div>
+
+    <div class="conclusion-box">
+        <h3>KESIMPULAN (IMPRESSION)</h3>
+        <p style="font-size: 16px; line-height: 1.8;">
+            <strong>1. PNEUMONIA LOBUS INFERIOR DEXTRA</strong><br>
+            <span style="margin-left: 20px;">
+                (Infiltrat di paru kanan bawah yang sugestif proses infeksi/inflamasi akut)
+            </span>
+        </p>
+        <p style="font-size: 16px; line-height: 1.8;">
+            <strong>2. COR DALAM BATAS NORMAL</strong><br>
+            <span style="margin-left: 20px;">
+                (Tidak tampak kardiomegali atau kelainan struktural jantung yang jelas)
+            </span>
+        </p>
+    </div>
+
+    <div class="section">
+        <div class="section-title">ANJURAN (RECOMMENDATION)</div>
+        <div class="findings">
+            • Korelasi klinis dan laboratorium<br>
+            • Terapi sesuai indikasi<br>
+            • Follow-up foto thorax 3-5 hari untuk evaluasi perbaikan<br>
+            • CT Scan Thorax bila diperlukan untuk evaluasi lebih lanjut
+        </div>
+    </div>
+
+    <div style="background-color: #ffebee; padding: 15px; margin: 20px 0; border-left: 4px solid #d32f2f;">
+        <strong>DISCLAIMER:</strong><br>
+        Hasil pemeriksaan radiologi ini harus diinterpretasikan dalam konteks klinis pasien.
+        Pemeriksaan imaging merupakan alat bantu diagnostik dan harus dikorelasikan dengan
+        anamnesis, pemeriksaan fisik, dan pemeriksaan penunjang lainnya.
+    </div>
+
+    <div class="footer">
+        <div>
+            <p style="font-size: 12px; color: #666;">
+                <strong>Radiografer:</strong> Andi Wijaya, S.Tr.Rad<br>
+                <strong>QC Image:</strong> Passed ✓<br>
+                <strong>Validasi:</strong> 4 September 2020, 17:30 WIB
+            </p>
+        </div>
+        <div class="signature-box">
+            <div>Jakarta, 4 September 2020</div>
+            <div style="margin-top: 10px; font-weight: bold;">Dokter Spesialis Radiologi</div>
+            <div class="signature-line">dr. Maria Kusuma, Sp.Rad</div>
+            <div style="font-size: 11px; color: #666; margin-top: 5px;">
+                SIP: 604/RAD/2018
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top: 40px; padding-top: 20px; border-top: 2px dashed #ccc; font-size: 11px; color: #666; text-align: center;">
+        Dokumen ini adalah hasil resmi dari Instalasi Radiologi RSCM.<br>
+        Untuk konsultasi atau second opinion, hubungi: (021) 31900924 ext. 3456
+    </div>
+</body>
+</html>

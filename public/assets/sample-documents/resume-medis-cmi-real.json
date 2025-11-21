@@ -1,0 +1,241 @@
+{
+  "documentType": "RESUME_MEDIS",
+  "fileName": "Resume-Medis-CMI-Klinik-Utama.png",
+  "source": "KLINIK UTAMA CMI",
+  "metadata": {
+    "uploadedAt": "2024-11-20T20:30:00Z",
+    "fileSize": "458KB",
+    "fileType": "image/png",
+    "hospital": "Klinik Utama CMI",
+    "address": "Jl. Tubagus Ismail VII Ni 21 Bandung",
+    "phone": "022-2531000",
+    "fax": "022-2516663",
+    "email": "info@cmihospital.com",
+    "website": "www.cmihospital.com"
+  },
+  "extractedData": {
+    "dataPasien": {
+      "nomorRM": "",
+      "namaPasien": "",
+      "umur": "",
+      "jenisKelamin": "",
+      "alamat": "",
+      "dokter": ""
+    },
+    "dataRawat": {
+      "tanggalMasuk": {
+        "tanggal": "",
+        "bagian": "",
+        "kmr": ""
+      },
+      "tanggalKeluar": {
+        "tanggal": "",
+        "bagian": "",
+        "kmr": ""
+      }
+    },
+    "diagnosis": {
+      "alasanMasuk": "",
+      "diagnosaMasuk": "",
+      "diagnosisKeluar": {
+        "utama": {
+          "nama": "",
+          "kode": ""
+        },
+        "tambahan": {
+          "nama": "",
+          "kode": ""
+        },
+        "komplikasi": {
+          "nama": "",
+          "kode": ""
+        }
+      },
+      "penyakitTersebut": {
+        "diakibatkanOleh": "",
+        "kode": ""
+      }
+    },
+    "riwayatPenyakit": "",
+    "pemeriksaanFisik": "",
+    "pemeriksaanPenunjang": "",
+    "konsultasi": {
+      "dikonsulkanKepada": ""
+    },
+    "operasiTindakan": {
+      "jenisOperasiTindakan": "",
+      "kode": ""
+    },
+    "terapiDiberikan": "",
+    "keadaanPasienWaktuKeluar": {
+      "kondisi": "",
+      "kematian": ""
+    },
+    "caraKeluar": {
+      "atasPersetujuan": false,
+      "pulangPaksa": false,
+      "dirujuk": false,
+      "pindahRS": false,
+      "lari": false
+    },
+    "prognosa": {
+      "baik": false,
+      "buruk": false,
+      "raguRaguCondongKearahBaik": false,
+      "raguRaguCondongKearahBuruk": false,
+      "burukTidakMemberiHarapan": false
+    },
+    "catatanWaktuKeluar": "",
+    "lokasi": "Bandung",
+    "tanggalKeluar": ""
+  },
+  "formStructure": {
+    "sections": [
+      {
+        "name": "Header",
+        "fields": ["Nomor RM", "Nama Pasien", "Umur (L/P)", "Alamat", "Dokter"]
+      },
+      {
+        "name": "Data Rawat",
+        "fields": [
+          "Tgl Masuk (Tanggal, Bagian, KMR)",
+          "Tgl Keluar (Tanggal, Bagian, KMR)"
+        ]
+      },
+      {
+        "name": "Diagnosis",
+        "fields": [
+          "Alasan Masuk",
+          "Diagnosa Masuk",
+          "Diagnosa Keluar (Utama + Kode)",
+          "Diagnosa Keluar (Tambahan + Kode)",
+          "Diagnosa Keluar (Komplikasi + Kode)",
+          "Penyakit Tersebut Diakibatkan Oleh + Kode"
+        ]
+      },
+      {
+        "name": "Riwayat & Pemeriksaan",
+        "fields": [
+          "Riwayat Penyakit",
+          "Pemeriksaan Fisik",
+          "Pemeriksaan Penunjang"
+        ]
+      },
+      {
+        "name": "Konsultasi & Operasi",
+        "fields": [
+          "Dikonsulkan Kepada",
+          "Jenis Operasi/Tindakan + Kode"
+        ]
+      },
+      {
+        "name": "Terapi",
+        "fields": ["Terapi yang diberikan"]
+      },
+      {
+        "name": "Kondisi Keluar",
+        "fields": [
+          "Keadaan Pasien Waktu Keluar (Sembuh/Perbaikan/Tidak ada Perbaikan/Meninggal)",
+          "Cara Keluar (Atas Persetujuan/Pulang Paksa/Dirujuk/Pindah RS/Lari)",
+          "Prognosa (Baik/Buruk/Ragu-ragu condong kearah baik/buruk/tidak memberi harapan)"
+        ]
+      },
+      {
+        "name": "Footer",
+        "fields": ["Catatan waktu keluar", "Lokasi & Tanggal"]
+      }
+    ]
+  },
+  "aiAnalysis": {
+    "documentStatus": "BLANK_TEMPLATE",
+    "isFilledOut": false,
+    "readinessScore": 0,
+    "canAutoFill": false,
+    "issues": [
+      {
+        "severity": "critical",
+        "message": "Dokumen ini adalah TEMPLATE KOSONG, bukan resume medis yang sudah diisi",
+        "field": "all"
+      },
+      {
+        "severity": "critical",
+        "message": "Tidak ada data pasien yang bisa diekstrak",
+        "field": "dataPasien"
+      },
+      {
+        "severity": "critical",
+        "message": "Tidak ada diagnosa dan kode ICD-10",
+        "field": "diagnosis"
+      },
+      {
+        "severity": "critical",
+        "message": "Tidak ada kode operasi/tindakan (ICD-9-CM)",
+        "field": "operasiTindakan"
+      }
+    ],
+    "suggestions": [
+      "❌ Dokumen ini TIDAK BISA digunakan untuk auto-fill",
+      "📝 Yang dibutuhkan: Resume Medis yang SUDAH DIISI LENGKAP",
+      "✅ Resume Medis harus berisi:",
+      "   1. Data Pasien lengkap (Nama, No RM, Umur, dll)",
+      "   2. Diagnosa Keluar UTAMA + Kode ICD-10 (contoh: E11.9)",
+      "   3. Diagnosa Tambahan + Kode ICD-10 (contoh: I10)",
+      "   4. Jenis Operasi/Tindakan + Kode ICD-9-CM (contoh: 99.10)",
+      "   5. Tanggal Masuk & Keluar",
+      "   6. Nama Dokter (DPJP)",
+      "",
+      "💡 Contoh Resume Medis yang TERISI:",
+      "   - Nama Pasien: Ahmad Fauzi",
+      "   - Diagnosa Utama: Diabetes Mellitus Tipe 2 (E11.9)",
+      "   - Diagnosa Tambahan: Hipertensi Esensial (I10)",
+      "   - Tindakan: Konsultasi (99.10)",
+      "",
+      "🔍 Cari contoh resume medis yang SUDAH TERISI untuk testing"
+    ],
+    "templateAnalysis": {
+      "isValidTemplate": true,
+      "hasCorrectStructure": true,
+      "hasICD10Fields": true,
+      "hasICD9CMFields": true,
+      "missingData": "ALL_FIELDS_EMPTY",
+      "recommendation": "Use this template as reference for structure, but need FILLED resume medis for auto-fill functionality"
+    }
+  },
+  "comparisonWithMockData": {
+    "mockFile": "resume-medis-sample.json",
+    "differences": [
+      {
+        "field": "Data Pasien",
+        "mockData": "✅ Filled with Ahmad Fauzi data",
+        "realTemplate": "❌ Empty"
+      },
+      {
+        "field": "Diagnosa Utama + ICD-10",
+        "mockData": "✅ Diabetes Mellitus Tipe 2 (E11.9)",
+        "realTemplate": "❌ Empty"
+      },
+      {
+        "field": "Diagnosa Tambahan + ICD-10",
+        "mockData": "✅ Hipertensi Esensial (I10)",
+        "realTemplate": "❌ Empty"
+      },
+      {
+        "field": "Operasi/Tindakan + ICD-9-CM",
+        "mockData": "✅ Konsultasi (99.10)",
+        "realTemplate": "❌ Empty"
+      },
+      {
+        "field": "INA-CBG",
+        "mockData": "✅ Auto-generated: N-4-10-I",
+        "realTemplate": "❌ Cannot generate (no ICD-10)"
+      }
+    ],
+    "conclusion": "Mock data (resume-medis-sample.json) is BETTER for testing because it contains all filled data. This template is only useful as structure reference."
+  },
+  "integrationNotes": {
+    "canBeUsedForAutoFill": false,
+    "reason": "Template is blank/empty",
+    "whatIsNeeded": "Resume Medis yang SUDAH DIISI dengan data pasien real dan kode ICD-10/ICD-9-CM",
+    "alternativeSolution": "Use the mock data (resume-medis-sample.json) that was already created - it has complete filled data and is ready for testing"
+  }
+}
