@@ -27,409 +27,225 @@ export async function POST(request) {
     // Use Gemini 2.0 Flash for multimodal document analysis (supports vision)
     const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
 
-    // Create the appropriate prompt based on document type
-    let prompt = '';
+    // UNIVERSAL PROMPT - Auto-detect document type from visual content
+    // No longer relying on filename - AI detects from document content
+    const prompt = `Anda adalah AI medis expert yang membantu mengidentifikasi dan mengekstrak data dari dokumen medis untuk sistem E-Klaim BPJS Indonesia.
 
-    if (documentType === 'resume_medis' || file.name.toLowerCase().includes('resume') || file.name.toLowerCase().includes('medis')) {
-      prompt = `Anda adalah AI medis expert yang membantu ekstraksi data dari resume medis untuk sistem E-Klaim BPJS Indonesia.
+TUGAS:
+1. IDENTIFIKASI jenis dokumen ini dengan SANGAT TELITI dari konten visual
+2. EKSTRAK semua informasi penting sesuai jenis dokumen yang terdeteksi
 
-TUGAS: Analisis dokumen resume medis ini dengan SANGAT TELITI dan ekstrak SEMUA informasi dalam format JSON yang LENGKAP dan AKURAT.
+JENIS DOKUMEN YANG MUNGKIN:
+1. **Resume Medis / Discharge Summary**
+   - Ciri: Ada diagnosa, kode ICD-10, tindakan/prosedur, tanggal rawat, nama DPJP
+   - Header: "Resume Medis", "Discharge Summary", "Resume Rawat Inap"
 
-STRATEGI EKSTRAKSI:
-1. Dokumen ini bisa berupa HTML atau PDF dari resume medis
-2. Cari di SEMUA bagian dokumen: header, tabel, body text, footer
-3. Perhatikan label seperti "Nama Pasien:", "No. BPJS:", "No. SEP:", "No. Rekam Medis:", "DPJP:", dll
-4. Tabel HTML biasanya memiliki struktur: <strong>Label</strong> di kolom kiri, value di kolom kanan
-5. Tanggal bisa dalam format "4 September 2020" atau "2020-09-04" - konversi ke YYYY-MM-DD
+2. **SEP (Surat Eligibilitas Peserta)**
+   - Ciri: Logo BPJS Kesehatan, Nomor SEP (format: 0301R001...), Data Peserta, PPK
+   - Header: "BPJS Kesehatan", "Surat Eligibilitas Peserta"
 
-CRITICAL FIELDS - WAJIB EKSTRAK:
-1. DATA PASIEN:
-   - Nama Pasien (cari: "Nama Pasien:", "Nama:", di tabel data pasien)
-   - No. BPJS / No. Peserta BPJS (13 digit, cari: "No. BPJS:", "Nomor BPJS:", "No. Peserta:")
-   - No. SEP (format: 0301R001..., cari: "No. SEP:", "Nomor SEP:", "SEP:")
-   - No. Rekam Medis / RM (format: 00-12-34-56, cari: "No. Rekam Medis:", "No. RM:")
+3. **Hasil Laboratorium**
+   - Ciri: Tabel hasil tes darah/urine dengan nilai, satuan (mg/dL, %), rentang normal
+   - Header: "Hasil Laboratorium", "Pemeriksaan Darah"
 
-2. DATA PERAWATAN:
-   - Tanggal Masuk (cari: "Tanggal Masuk:", "Tgl Masuk:", di tabel data perawatan)
-   - Tanggal Keluar (cari: "Tanggal Keluar:", "Tgl Keluar:", "Tanggal Pulang:")
-   - Kelas Rawat (cari: "Kelas 1", "Kelas 2", "Kelas 3", "Ruang Perawatan:")
-   - DPJP (cari: "DPJP:", "Dokter Penanggung Jawab", biasanya format: dr. Nama, Sp.XX)
+4. **Hasil Radiologi**
+   - Ciri: Jenis pemeriksaan (Foto Rontgen, CT Scan, MRI), hasil bacaan, kesan/kesimpulan
+   - Header: "Hasil Radiologi", "Foto Rontgen", "CT Scan"
 
-3. DIAGNOSA (CRITICAL!):
-   - Diagnosis Utama/Primary (cari: "Diagnosis Utama:", "Diagnosa Utama:", dan kode ICD-10 dalam kurung)
-   - Diagnosis Sekunder (cari: "Diagnosis Sekunder:", "Diagnosa Sekunder:")
-   - Diagnosis Penyerta/Tertiary (cari: "Diagnosis Penyerta:", "Diagnosa Lainnya:")
-   - Kode ICD-10 biasanya dalam format: (ICD-10: J18.9) atau <strong>J18.9</strong>
+5. **Surat Rujukan**
+   - Ciri: Nomor rujukan, PPK perujuk, PPK tujuan, diagnosa rujukan, alasan rujuk
+   - Header: "Surat Rujukan", "Rujukan"
 
-4. TINDAKAN:
-   - Cari di section "TINDAKAN", "PROSEDUR", "TINDAKAN & PROSEDUR"
-   - Kode ICD-9-CM biasanya dalam format: (ICD-9-CM: 99.04) atau <strong>99.04</strong>
+6. **Resep Obat**
+   - Ciri: Daftar obat dengan dosis, aturan pakai (3x1, 2x500mg), nama dokter
+   - Header: "Resep", "Resep Obat", atau simbol Rx
 
-FORMAT OUTPUT JSON (HARUS LENGKAP):
+STRATEGI IDENTIFIKASI (CRITICAL):
+✓ Scan SELURUH dokumen dari atas ke bawah
+✓ Cari logo/header/judul dokumen
+✓ Identifikasi struktur (tabel, paragraf, daftar)
+✓ Perhatikan keyword kunci sesuai jenis dokumen
+✓ Jika ada lebih dari 1 kemungkinan, pilih yang PALING SESUAI
 
+---
+
+FORMAT OUTPUT BERDASARKAN JENIS DOKUMEN:
+
+=== JIKA RESUME MEDIS ===
 {
   "documentType": "resume_medis",
   "patient": {
     "name": "nama lengkap pasien (WAJIB)",
-    "age": "umur dalam angka saja",
+    "age": "umur",
     "gender": "L atau P",
-    "medicalRecordNumber": "nomor RM/rekam medis (cari format: 00-12-34-56 atau RM-xxx)",
-    "bpjsNumber": "nomor kartu BPJS Kesehatan 13 digit (cari: No. BPJS, No. Peserta, Kartu BPJS)",
-    "sepNumber": "nomor SEP jika ada (format: 0301R001xxxx atau SEP)"
+    "medicalRecordNumber": "nomor RM (format: 00-12-34-56)",
+    "bpjsNumber": "nomor BPJS 13 digit",
+    "sepNumber": "nomor SEP jika ada"
   },
   "treatment": {
-    "type": "Rawat Jalan atau Rawat Inap (WAJIB - lihat di dokumen)",
-    "admissionDate": "YYYY-MM-DD (tanggal masuk WAJIB)",
-    "dischargeDate": "YYYY-MM-DD (tanggal keluar/pulang WAJIB)",
-    "dpjp": "nama lengkap dokter DPJP dengan gelar (dr. Nama, Sp.XX)",
-    "kelasRawat": "1 atau 2 atau 3 (jika rawat inap)"
+    "type": "Rawat Jalan atau Rawat Inap",
+    "admissionDate": "YYYY-MM-DD (tanggal masuk)",
+    "dischargeDate": "YYYY-MM-DD (tanggal keluar)",
+    "dpjp": "nama dokter DPJP lengkap dengan gelar (dr. Nama, Sp.XX)",
+    "kelasRawat": "1 atau 2 atau 3"
   },
   "diagnosis": {
-    "primary": {
-      "name": "nama diagnosa utama LENGKAP",
-      "icd10": "kode ICD-10 (contoh: J18.9, I10, E11.9)"
-    },
-    "secondary": {
-      "name": "diagnosa sekunder jika ada",
-      "icd10": "kode ICD-10 sekunder"
-    },
-    "tertiary": {
-      "name": "diagnosa penyerta/tertiary jika ada",
-      "icd10": "kode ICD-10 tertiary"
-    }
+    "primary": {"name": "diagnosa utama", "icd10": "kode ICD-10"},
+    "secondary": {"name": "diagnosa sekunder", "icd10": "kode ICD-10"},
+    "tertiary": {"name": "diagnosa penyerta", "icd10": "kode ICD-10"}
   },
   "procedures": [
-    {
-      "name": "nama tindakan lengkap (contoh: Transfusi Darah, Foto Rontgen Thorax)",
-      "icd9cm": "kode ICD-9-CM (contoh: 99.04, 87.44, 39.95)"
-    }
+    {"name": "nama tindakan", "icd9cm": "kode ICD-9-CM"}
   ],
-  "medications": ["daftar obat yang diberikan"],
-  "summary": "ringkasan singkat kondisi medis"
+  "medications": ["daftar obat"],
+  "summary": "ringkasan"
 }
 
-CONTOH EKSTRAKSI DARI HTML/TABEL:
-Jika menemukan:
-  <strong>Nama Pasien</strong> | Ahmad Fauzi
-  → patient.name = "Ahmad Fauzi"
+=== JIKA SEP ===
+{
+  "documentType": "sep",
+  "patient": {
+    "name": "nama peserta",
+    "bpjsNumber": "nomor BPJS 13 digit (WAJIB)",
+    "nik": "NIK 16 digit",
+    "dateOfBirth": "YYYY-MM-DD",
+    "gender": "L atau P",
+    "pesertaType": "jenis peserta",
+    "hakKelas": "hak kelas (1/2/3)"
+  },
+  "sep": {
+    "nomorSEP": "nomor SEP LENGKAP (WAJIB - format: 0301R001...)",
+    "tanggalSEP": "YYYY-MM-DD",
+    "tanggalPelayanan": "YYYY-MM-DD",
+    "tanggalRujukan": "YYYY-MM-DD",
+    "nomorRujukan": "nomor rujukan"
+  },
+  "pelayanan": {
+    "ppkPerujuk": "nama PPK perujuk",
+    "ppkPelayanan": "nama PPK pelayanan (RS)",
+    "jenisPelayanan": "1-Rawat Inap atau 2-Rawat Jalan",
+    "kelasRawat": "kelas rawat (1/2/3)",
+    "caraMasuk": "cara masuk",
+    "poliTujuan": "poli tujuan",
+    "dpjp": "nama DPJP dengan gelar"
+  },
+  "diagnosis": {
+    "diagnosisAwal": "diagnosa awal",
+    "icd10": "kode ICD-10",
+    "catatan": "catatan"
+  }
+}
 
-  <strong>No. BPJS</strong> | 0001234567890
-  → patient.bpjsNumber = "0001234567890"
-
-  <strong>Tanggal Masuk</strong> | 4 September 2020, 14:30 WIB
-  → treatment.admissionDate = "2020-09-04"
-
-  Ruang Perawatan: Melati 3 - Kelas 3
-  → treatment.kelasRawat = "3"
-
-  <strong>DPJP</strong> | dr. Budi Santoso, Sp.PD, FINASIM
-  → treatment.dpjp = "dr. Budi Santoso, Sp.PD, FINASIM"
-
-  Diagnosis Utama: <strong>Pneumonia</strong> (ICD-10: <strong>J18.9</strong>)
-  → diagnosis.primary.name = "Pneumonia"
-  → diagnosis.primary.icd10 = "J18.9"
-
-KONVERSI TANGGAL:
-- "4 September 2020" → "2020-09-04"
-- "5 Sep 2020" → "2020-09-05"
-- "15 Januari 1975" → "1975-01-15"
-- Januari=01, Februari=02, Maret=03, April=04, Mei=05, Juni=06, Juli=07, Agustus=08, September=09, Oktober=10, November=11, Desember=12
-
-ATURAN PENTING:
-✓ Jika field tidak ditemukan di dokumen, isi dengan null (BUKAN string kosong)
-✓ Format tanggal HARUS YYYY-MM-DD (gunakan tabel konversi bulan di atas)
-✓ Kode ICD-10 HARUS huruf kapital (contoh: J18.9, bukan j18.9)
-✓ Kode ICD-9-CM untuk tindakan HARUS ada jika tindakan disebutkan
-✓ DPJP harus format: dr. Nama Lengkap, Gelar (ekstrak lengkap dengan gelar Sp.XX)
-✓ Array procedures HARUS diisi jika ada tindakan yang disebutkan
-✓ Pastikan JSON 100% valid (bisa di-parse tanpa error)
-✓ JANGAN tambahkan komentar, markdown, atau teks lain
-✓ CRITICAL: Ekstrak No. BPJS/Peserta (13 digit), No. RM, dan No. SEP jika ada di dokumen
-✓ Cek SEMUA bagian dokumen untuk mencari nomor identitas pasien (header, tabel, footer)
-✓ SCAN DOKUMEN DARI ATAS KE BAWAH - jangan lewatkan section/tabel apapun
-
-CONTOH TINDAKAN UMUM & KODE ICD-9-CM:
-- Transfusi Darah/PRC → 99.04
-- Foto Rontgen Thorax → 87.44
-- Cuci Darah/Hemodialisis → 39.95
-- CT Scan → 88.38
-
-LANGKAH VERIFIKASI SEBELUM OUTPUT:
-1. Apakah saya sudah mengekstrak patient.name? (WAJIB)
-2. Apakah saya sudah mengekstrak patient.bpjsNumber? (WAJIB - 13 digit)
-3. Apakah saya sudah mengekstrak patient.sepNumber? (WAJIB)
-4. Apakah saya sudah mengekstrak patient.medicalRecordNumber? (WAJIB)
-5. Apakah saya sudah mengekstrak treatment.admissionDate dan dischargeDate? (WAJIB - format YYYY-MM-DD)
-6. Apakah saya sudah mengekstrak treatment.dpjp dengan gelar lengkap? (WAJIB)
-7. Apakah saya sudah mengekstrak semua diagnosis dengan kode ICD-10? (WAJIB)
-8. Apakah saya sudah mengekstrak semua procedures dengan kode ICD-9-CM? (WAJIB)
-
-Jika ada yang belum, SCAN ULANG dokumen dan ekstrak!
-
-Ekstrak dengan TELITI, LENGKAP, dan AKURAT!`;
-
-    } else if (documentType === 'lab' || file.name.toLowerCase().includes('lab') || file.name.toLowerCase().includes('darah') || file.name.toLowerCase().includes('laboratorium')) {
-      prompt = `Anda adalah AI medis expert yang membantu ekstraksi data dari hasil laboratorium untuk sistem E-Klaim BPJS Indonesia.
-
-TUGAS: Analisis hasil laboratorium ini dan ekstrak SEMUA informasi dalam format JSON yang LENGKAP dan AKURAT.
-
-STRATEGI EKSTRAKSI:
-1. Cari data pasien di header dokumen (Nama, No. RM, No. BPJS)
-2. Cari tanggal pemeriksaan
-3. Ekstrak SEMUA hasil tes dari tabel (nama tes, nilai, satuan, rentang normal, status)
-4. Identifikasi hasil yang abnormal (Tinggi/Rendah)
-
-FORMAT OUTPUT JSON:
-
+=== JIKA HASIL LABORATORIUM ===
 {
   "documentType": "lab_result",
   "patient": {
-    "name": "nama lengkap pasien",
-    "medicalRecordNumber": "nomor RM (format: 00-12-34-56)",
-    "bpjsNumber": "nomor BPJS 13 digit jika ada",
+    "name": "nama pasien",
+    "medicalRecordNumber": "nomor RM",
+    "bpjsNumber": "nomor BPJS",
     "sepNumber": "nomor SEP jika ada"
   },
-  "testDate": "YYYY-MM-DD (tanggal pemeriksaan)",
+  "testDate": "YYYY-MM-DD",
   "tests": [
     {
-      "name": "nama pemeriksaan lengkap",
+      "name": "nama pemeriksaan",
       "value": "nilai hasil",
       "unit": "satuan (mg/dL, %, dll)",
       "normalRange": "rentang normal",
       "status": "Normal/Tinggi/Rendah"
     }
   ],
-  "summary": "ringkasan hasil lab dan interpretasi",
-  "relevantFindings": ["temuan penting yang mendukung diagnosa"]
+  "summary": "ringkasan hasil",
+  "relevantFindings": ["temuan penting"]
 }
 
-ATURAN PENTING:
-✓ Ekstrak SEMUA data pasien (nama, No. RM, No. BPJS)
-✓ Format tanggal HARUS YYYY-MM-DD
-✓ Status: "Normal" jika dalam rentang, "Tinggi" jika di atas, "Rendah" jika di bawah
-✓ Jika field tidak ada, isi dengan null
-✓ JANGAN tambahkan komentar atau teks lain
-✓ Pastikan JSON 100% valid
-
-Berikan JSON yang valid tanpa tambahan teks.`;
-
-    } else if (file.name.toLowerCase().includes('foto') || file.name.toLowerCase().includes('radiologi') || file.name.toLowerCase().includes('rontgen') || file.name.toLowerCase().includes('xray')) {
-      prompt = `Anda adalah AI medis expert yang membantu ekstraksi data dari hasil radiologi untuk sistem E-Klaim BPJS Indonesia.
-
-TUGAS: Analisis hasil radiologi ini dan ekstrak SEMUA informasi dalam format JSON yang LENGKAP dan AKURAT.
-
-STRATEGI EKSTRAKSI:
-1. Cari data pasien di header (Nama, No. RM, No. BPJS)
-2. Identifikasi jenis pemeriksaan yang SPESIFIK (Foto Thorax AP, CT Scan Kepala, dsb)
-3. Cari tanggal pemeriksaan
-4. Ekstrak temuan radiologi dan kesimpulan
-5. WAJIB tentukan kode ICD-9-CM sesuai jenis pemeriksaan
-
-FORMAT OUTPUT JSON:
-
+=== JIKA HASIL RADIOLOGI ===
 {
   "documentType": "radiology",
   "patient": {
-    "name": "nama lengkap pasien",
-    "medicalRecordNumber": "nomor RM jika ada",
-    "bpjsNumber": "nomor BPJS jika ada"
+    "name": "nama pasien",
+    "medicalRecordNumber": "nomor RM",
+    "bpjsNumber": "nomor BPJS"
   },
-  "examType": "jenis pemeriksaan LENGKAP (contoh: Foto Rontgen Thorax AP, CT Scan Kepala, dll)",
+  "examType": "jenis pemeriksaan SPESIFIK (Foto Rontgen Thorax AP, CT Scan Kepala, dll)",
   "examDate": "YYYY-MM-DD",
-  "icd9cm": "kode ICD-9-CM untuk tindakan radiologi (contoh: 87.44 untuk Foto Thorax, 88.38 untuk CT Scan)",
-  "findings": ["temuan radiologi dari hasil bacaan"],
-  "conclusion": "kesimpulan radiologi",
-  "summary": "ringkasan singkat"
+  "icd9cm": "kode ICD-9-CM (87.44 untuk Foto Thorax, 88.38 untuk CT Scan, dll)",
+  "findings": ["temuan radiologi"],
+  "conclusion": "kesimpulan",
+  "summary": "ringkasan"
 }
 
-KODE ICD-9-CM RADIOLOGI UMUM:
-- Foto Rontgen Thorax → 87.44
-- CT Scan → 88.38
-- MRI → 88.91
-- USG → 88.76
-
-ATURAN PENTING:
-✓ Ekstrak SEMUA data pasien (nama, No. RM, No. BPJS)
-✓ Format tanggal HARUS YYYY-MM-DD
-✓ examType harus jelas dan spesifik
-✓ WAJIB isi kode ICD-9-CM sesuai jenis pemeriksaan
-✓ Jika field tidak ada, isi dengan null
-✓ JANGAN tambahkan komentar atau teks lain
-✓ Pastikan JSON 100% valid
-
-Berikan JSON yang valid tanpa tambahan teks.`;
-
-    } else if (file.name.toLowerCase().includes('resep') || file.name.toLowerCase().includes('obat') || file.name.toLowerCase().includes('prescription')) {
-      prompt = `Anda adalah AI medis expert yang membantu ekstraksi data dari resep obat untuk sistem E-Klaim BPJS Indonesia.
-
-TUGAS: Analisis resep obat ini dan ekstrak SEMUA informasi dalam format JSON yang LENGKAP dan AKURAT.
-
-STRATEGI EKSTRAKSI:
-1. Cari data pasien di header (Nama, No. RM, No. BPJS)
-2. Cari tanggal resep dan nomor resep
-3. Cari nama dokter yang meresepkan (LENGKAP dengan gelar)
-4. Ekstrak SEMUA obat dengan dosis, jumlah, bentuk, dan aturan pakai
-5. Cari ruang rawat dan kelas rawat jika ada
-
-FORMAT OUTPUT JSON:
-
-{
-  "documentType": "resep_obat",
-  "patient": {
-    "name": "nama lengkap pasien",
-    "medicalRecordNumber": "nomor RM jika ada",
-    "bpjsNumber": "nomor BPJS jika ada"
-  },
-  "tanggalResep": "YYYY-MM-DD",
-  "nomorResep": "nomor resep jika ada",
-  "dokter": "nama lengkap dokter dengan gelar (dr. Nama, Sp.XX)",
-  "ruangRawat": "ruang rawat jika rawat inap",
-  "kelasRawat": "kelas rawat (1/2/3) jika ada",
-  "medications": [
-    {
-      "name": "nama obat lengkap",
-      "dosage": "dosis (contoh: 2x1 gram IV, 3x500 mg PO)",
-      "quantity": "jumlah (contoh: 10 vial, 15 tablet)",
-      "form": "bentuk sediaan (Tablet, Injeksi, Sirup, dll)",
-      "instruction": "signa/aturan pakai"
-    }
-  ],
-  "diagnosis": "diagnosa jika tercantum di resep"
-}
-
-ATURAN PENTING:
-✓ Ekstrak SEMUA data pasien (nama, No. RM, No. BPJS)
-✓ Ekstrak SEMUA obat yang diresepkan (nama, dosis, jumlah, aturan pakai)
-✓ Nama dokter HARUS dengan gelar lengkap
-✓ Format tanggal HARUS YYYY-MM-DD
-✓ Jika field tidak ada, isi dengan null
-✓ JANGAN tambahkan komentar atau teks lain
-✓ Pastikan JSON 100% valid
-
-Berikan JSON yang valid tanpa tambahan teks.`;
-
-    } else if (file.name.toLowerCase().includes('rujuk') || file.name.toLowerCase().includes('referral')) {
-      prompt = `Anda adalah AI medis expert yang membantu ekstraksi data dari surat rujukan untuk sistem E-Klaim BPJS Indonesia.
-
-TUGAS: Analisis surat rujukan ini dan ekstrak SEMUA informasi dalam format JSON yang LENGKAP dan AKURAT.
-
-STRATEGI EKSTRAKSI:
-1. Cari data pasien (Nama, No. BPJS 13 digit, NIK, No. RM)
-2. Cari nomor rujukan (format: 0103R001...)
-3. Cari tanggal rujukan dan masa berlaku
-4. Identifikasi faskes perujuk dan tujuan
-5. Ekstrak diagnosa rujukan dengan kode ICD-10
-6. Cari alasan rujukan
-
-FORMAT OUTPUT JSON:
-
+=== JIKA SURAT RUJUKAN ===
 {
   "documentType": "surat_rujukan",
   "patient": {
-    "name": "nama lengkap pasien",
-    "medicalRecordNumber": "nomor RM jika ada",
-    "bpjsNumber": "nomor BPJS/Peserta 13 digit",
-    "nik": "NIK jika ada"
+    "name": "nama pasien",
+    "medicalRecordNumber": "nomor RM",
+    "bpjsNumber": "nomor BPJS 13 digit",
+    "nik": "NIK"
   },
   "rujukan": {
-    "nomorRujukan": "nomor rujukan (format: 0103R0011024Y000345)",
+    "nomorRujukan": "nomor rujukan (format: 0103R001...)",
     "tanggalRujukan": "YYYY-MM-DD",
-    "masaBerlaku": "masa berlaku rujukan",
-    "asalFaskes": "nama faskes perujuk (Puskesmas/RS)",
+    "masaBerlaku": "masa berlaku",
+    "asalFaskes": "nama faskes perujuk",
     "tujuanFaskes": "nama faskes tujuan",
-    "poliklinikTujuan": "poli tujuan (Poli Penyakit Dalam, dll)",
-    "jenisRujukan": "Rujukan Partial/Rujukan Vertikal"
+    "poliklinikTujuan": "poli tujuan",
+    "jenisRujukan": "jenis rujukan"
   },
   "diagnosis": {
-    "name": "diagnosa kerja/rujukan",
-    "icd10": "kode ICD-10 jika ada"
+    "name": "diagnosa rujukan",
+    "icd10": "kode ICD-10"
   },
-  "keluhanUtama": "keluhan utama pasien",
-  "anamnesis": "anamnesis tambahan",
-  "pemeriksaanFisik": "hasil pemeriksaan fisik",
-  "alasanRujukan": "alasan merujuk"
+  "keluhanUtama": "keluhan utama",
+  "alasanRujukan": "alasan rujuk"
 }
 
-ATURAN PENTING:
-✓ Ekstrak SEMUA data pasien (nama, No. BPJS/Peserta, NIK)
-✓ No. Rujukan sangat penting untuk klaim BPJS
-✓ Format tanggal HARUS YYYY-MM-DD
-✓ Diagnosa rujukan dan kode ICD-10 nya
-✓ Jika field tidak ada, isi dengan null
-✓ JANGAN tambahkan komentar atau teks lain
-✓ Pastikan JSON 100% valid
-
-Berikan JSON yang valid tanpa tambahan teks.`;
-
-    } else if (file.name.toLowerCase().includes('sep') || file.name.toLowerCase().includes('eligibilitas') || file.name.toLowerCase().includes('surat eligibilitas')) {
-      prompt = `Anda adalah AI medis expert yang membantu ekstraksi data dari Surat Eligibilitas Peserta (SEP) BPJS Kesehatan untuk sistem E-Klaim.
-
-TUGAS: Analisis dokumen SEP ini dan ekstrak SEMUA informasi dalam format JSON yang LENGKAP dan AKURAT.
-
-STRATEGI EKSTRAKSI:
-1. SEP adalah dokumen resmi BPJS yang berisi data peserta dan pelayanan
-2. Cari nomor SEP (format: 0301R001...) - INI SANGAT PENTING
-3. Ekstrak data peserta lengkap (Nama, No. BPJS, NIK, Tanggal Lahir)
-4. Ekstrak data pelayanan (PPK, Jenis Pelayanan, Kelas Rawat, DPJP)
-5. Ekstrak diagnosa awal dan kode ICD-10
-
-FORMAT OUTPUT JSON:
-
+=== JIKA RESEP OBAT ===
 {
-  "documentType": "sep",
+  "documentType": "resep_obat",
   "patient": {
-    "name": "nama lengkap peserta",
-    "bpjsNumber": "nomor kartu BPJS 13 digit",
-    "nik": "NIK 16 digit",
-    "dateOfBirth": "YYYY-MM-DD",
-    "gender": "L atau P",
-    "pesertaType": "jenis peserta (PBI, PBPU, PPU)",
-    "hakKelas": "hak kelas rawat (1/2/3)"
+    "name": "nama pasien",
+    "medicalRecordNumber": "nomor RM",
+    "bpjsNumber": "nomor BPJS"
   },
-  "sep": {
-    "nomorSEP": "nomor SEP lengkap (format: 0301R001...)",
-    "tanggalSEP": "YYYY-MM-DD",
-    "tanggalPelayanan": "YYYY-MM-DD",
-    "tanggalRujukan": "YYYY-MM-DD",
-    "nomorRujukan": "nomor rujukan jika ada"
-  },
-  "pelayanan": {
-    "ppkPerujuk": "nama PPK perujuk (Puskesmas/RS)",
-    "ppkPelayanan": "nama PPK pelayanan (RS tujuan)",
-    "jenisPelayanan": "1-Rawat Inap atau 2-Rawat Jalan",
-    "kelasRawat": "kelas rawat (1/2/3)",
-    "caraMasuk": "cara masuk (IGD, Rujukan, dll)",
-    "poliTujuan": "poli tujuan",
-    "dpjp": "nama DPJP dengan gelar lengkap"
-  },
-  "diagnosis": {
-    "diagnosisAwal": "nama diagnosa awal",
-    "icd10": "kode ICD-10",
-    "catatan": "catatan diagnosa jika ada"
-  }
+  "tanggalResep": "YYYY-MM-DD",
+  "nomorResep": "nomor resep",
+  "dokter": "nama dokter LENGKAP dengan gelar (dr. Nama, Sp.XX)",
+  "ruangRawat": "ruang rawat",
+  "kelasRawat": "kelas rawat (1/2/3)",
+  "medications": [
+    {
+      "name": "nama obat",
+      "dosage": "dosis (2x1 gram IV, 3x500 mg PO)",
+      "quantity": "jumlah (10 vial, 15 tablet)",
+      "form": "bentuk sediaan",
+      "instruction": "aturan pakai"
+    }
+  ],
+  "diagnosis": "diagnosa"
 }
 
-ATURAN PENTING:
-✓ Nomor SEP adalah FIELD PALING PENTING - WAJIB ekstrak
+---
+
+ATURAN EKSTRAKSI (CRITICAL):
+✓ WAJIB tentukan documentType dengan TEPAT
+✓ Ekstrak SEMUA data yang terlihat di dokumen
 ✓ Format tanggal HARUS YYYY-MM-DD
-✓ No. BPJS harus 13 digit
-✓ Jika field tidak ada, isi dengan null
-✓ JANGAN tambahkan komentar atau teks lain
-✓ Pastikan JSON 100% valid
-✓ Ekstrak DPJP dengan gelar lengkap (dr. Nama, Sp.XX)
+✓ Konversi bulan Indonesia ke angka (Januari=01, September=09, dll)
+✓ Kode ICD-10 HARUS huruf kapital (J18.9, bukan j18.9)
+✓ DPJP/Dokter HARUS dengan gelar lengkap (dr. Nama, Sp.XX)
+✓ Jika field tidak ditemukan, isi dengan null (BUKAN string kosong)
+✓ JANGAN tambahkan komentar, markdown, atau teks lain
+✓ Output HARUS JSON valid 100% yang bisa di-parse
 
-Berikan JSON yang valid tanpa tambahan teks.`;
+LANGKAH VERIFIKASI SEBELUM OUTPUT:
+1. Apakah documentType sudah benar?
+2. Apakah semua field WAJIB sudah terisi?
+3. Apakah format tanggal sudah YYYY-MM-DD?
+4. Apakah JSON valid (bisa di-parse)?
 
-    } else {
-      // Generic document analysis
-      prompt = `Analisis dokumen medis ini dan identifikasi:
-1. Jenis dokumen (resume medis, hasil lab, surat rujukan, resep, dll)
-2. Data pasien yang tersedia
-3. Informasi medis penting
-4. Data yang relevan untuk klaim BPJS
-
-Berikan dalam format JSON yang sesuai dengan jenis dokumen yang terdeteksi.`;
-    }
+Berikan JSON yang valid tanpa tambahan teks apapun.`;
 
     // Generate content with image
     const result = await model.generateContent([

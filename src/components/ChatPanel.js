@@ -6,7 +6,7 @@ export default function ChatPanel({ claimData, onSuggestionApply, onDocumentUplo
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: '👋 Halo! Saya AI Copilot SINAVIKA untuk Rumah Sakit. Saya siap membantu Anda melengkapi dokumen klaim sebelum dikirim ke BPJS.\n\n**Saya bisa:**\n• 📤 Menganalisis resume medis & dokumen lainnya\n• 🔍 Auto-fill form dengan data yang terekstrak\n• 💡 Menyarankan kode ICD-10 dan INA-CBG\n• ⚠️ Mendeteksi masalah kelengkapan dokumen\n\nUpload dokumen atau tanya saya apa saja!',
+      content: '👋 Halo! Saya AI Copilot SINAVIKA untuk Rumah Sakit. Saya siap membantu Anda melengkapi dokumen klaim sebelum dikirim ke BPJS.\n\n**Saya bisa:**\n• 📤 Menganalisis resume medis & dokumen lainnya\n• 📸 Scan dokumen langsung dengan kamera (mobile)\n• 🔍 Auto-fill form dengan data yang terekstrak\n• 💡 Menyarankan kode ICD-10 dan INA-CBG\n• ⚠️ Mendeteksi masalah kelengkapan dokumen\n\nUpload dokumen, foto dengan kamera, atau tanya saya apa saja!',
       timestamp: new Date()
     }
   ]);
@@ -20,14 +20,15 @@ export default function ChatPanel({ claimData, onSuggestionApply, onDocumentUplo
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
   const fileInputRef = useRef(null);
+  const cameraInputRef = useRef(null);
   const dropZoneRef = useRef(null);
 
   // Quick suggestions
   const quickSuggestions = [
     "📤 Upload resume medis",
+    "📸 Foto dokumen dengan kamera",
     "📤 Upload hasil lab/penunjang",
-    "🔍 Cek kode ICD & INA-CBG",
-    "📋 Auto-fill form dari dokumen"
+    "🔍 Cek kode ICD & INA-CBG"
   ];
 
   const scrollToBottom = () => {
@@ -166,6 +167,17 @@ export default function ChatPanel({ claimData, onSuggestionApply, onDocumentUplo
     await processFile(file);
 
     // Reset file input
+    event.target.value = '';
+  };
+
+  const handleCameraCapture = async (event) => {
+    const files = Array.from(event.target.files);
+    if (files.length === 0) return;
+
+    const file = files[0];
+    await processFile(file);
+
+    // Reset camera input
     event.target.value = '';
   };
 
@@ -768,6 +780,19 @@ export default function ChatPanel({ claimData, onSuggestionApply, onDocumentUplo
         };
 
   const handleQuickSuggestion = (suggestion) => {
+    // Handle camera quick action
+    if (suggestion.includes('📸 Foto dokumen')) {
+      cameraInputRef.current?.click();
+      return;
+    }
+
+    // Handle upload quick action
+    if (suggestion.includes('📤 Upload')) {
+      fileInputRef.current?.click();
+      return;
+    }
+
+    // Default: set as chat input
     setInput(suggestion);
     inputRef.current?.focus();
   };
@@ -814,7 +839,7 @@ export default function ChatPanel({ claimData, onSuggestionApply, onDocumentUplo
           </div>
           <div>
             <h3 className="text-lg font-bold text-white">AI Copilot</h3>
-            <p className="text-sm text-white/90">Upload / Drag & Drop dokumen untuk auto-fill</p>
+            <p className="text-sm text-white/90">📸 Foto/Upload dokumen untuk auto-fill</p>
           </div>
         </div>
         <button
@@ -940,10 +965,11 @@ export default function ChatPanel({ claimData, onSuggestionApply, onDocumentUplo
               <div className="text-center text-sm text-gray-600">
                 <Upload className="w-5 h-5 mx-auto mb-1 text-gray-400" />
                 <span className="font-medium">Drag & drop file di sini</span>
-                <span className="text-gray-400"> atau klik tombol Upload</span>
+                <span className="text-gray-400"> atau klik tombol Upload/Kamera</span>
               </div>
             </div>
             <div className="flex gap-3">
+              {/* Hidden file input for regular upload */}
               <input
                 ref={fileInputRef}
                 type="file"
@@ -951,13 +977,32 @@ export default function ChatPanel({ claimData, onSuggestionApply, onDocumentUplo
                 onChange={handleFileUpload}
                 className="hidden"
               />
+              {/* Hidden file input for camera capture */}
+              <input
+                ref={cameraInputRef}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                onChange={handleCameraCapture}
+                className="hidden"
+              />
+              {/* Upload button */}
               <button
                 onClick={() => fileInputRef.current?.click()}
                 className="px-4 py-3 border-2 border-dashed border-[#03974a] rounded-xl hover:bg-green-50 transition-all group flex items-center gap-2"
-                title="Upload dokumen"
+                title="Upload dokumen dari galeri"
               >
                 <Upload className="w-5 h-5 text-[#03974a]" />
                 <span className="text-sm font-medium text-[#03974a] hidden sm:block">Upload</span>
+              </button>
+              {/* Camera button (mobile-friendly) */}
+              <button
+                onClick={() => cameraInputRef.current?.click()}
+                className="px-4 py-3 border-2 border-dashed border-[#144782] rounded-xl hover:bg-blue-50 transition-all group flex items-center gap-2"
+                title="Foto dokumen dengan kamera"
+              >
+                <ImageIcon className="w-5 h-5 text-[#144782]" />
+                <span className="text-sm font-medium text-[#144782] hidden sm:block">Kamera</span>
               </button>
               <input
                 ref={inputRef}

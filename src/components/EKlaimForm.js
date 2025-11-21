@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { FileText, AlertCircle, Check, Sparkles, Info, Plus, X, Calculator, Zap, TrendingUp } from 'lucide-react';
+import { FileText, AlertCircle, Check, Sparkles, Info, Plus, X, Calculator, Zap, TrendingUp, ChevronDown, ChevronUp } from 'lucide-react';
 
 export default function EKlaimForm({ claimData, onFormChange, aiFilledData }) {
   const [formData, setFormData] = useState({
@@ -64,6 +64,23 @@ export default function EKlaimForm({ claimData, onFormChange, aiFilledData }) {
   const [highlightedFields, setHighlightedFields] = useState([]);
   const [grouperResult, setGrouperResult] = useState(null);
   const [isGrouping, setIsGrouping] = useState(false);
+
+  // Collapsible sections state - default all open
+  const [expandedSections, setExpandedSections] = useState({
+    dataPasien: true,
+    dataRawat: true,
+    diagnosa: true,
+    prosedur: true,
+    tarifRS: true,
+    grouper: true
+  });
+
+  const toggleSection = (sectionKey) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [sectionKey]: !prev[sectionKey]
+    }));
+  };
 
   // Update form when AI fills data
   useEffect(() => {
@@ -393,15 +410,24 @@ export default function EKlaimForm({ claimData, onFormChange, aiFilledData }) {
     <div className="space-y-8">
       {/* Section 1: Data Pasien */}
       <div className="bg-white rounded-2xl border border-gray-200 shadow-sm">
-        <div className="px-8 py-6 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-transparent">
+        <button
+          onClick={() => toggleSection('dataPasien')}
+          className="w-full px-8 py-6 border-b border-gray-100 bg-gray-50 hover:bg-gray-100 transition-colors flex items-center justify-between"
+        >
           <h2 className="text-xl font-bold text-gray-900 flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-[#144782] to-[#03974a] rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-[#144782] rounded-xl flex items-center justify-center">
               <FileText className="w-5 h-5 text-white" />
             </div>
             Data Pasien
           </h2>
-        </div>
-        <div className="p-8">
+          {expandedSections.dataPasien ? (
+            <ChevronUp className="w-6 h-6 text-gray-600" />
+          ) : (
+            <ChevronDown className="w-6 h-6 text-gray-600" />
+          )}
+        </button>
+        {expandedSections.dataPasien && (
+          <div className="p-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -471,20 +497,30 @@ export default function EKlaimForm({ claimData, onFormChange, aiFilledData }) {
               />
             </div>
           </div>
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Section 2: Data Rawat & Administrasi */}
       <div className="bg-white rounded-2xl border border-gray-200 shadow-sm">
-        <div className="px-8 py-6 border-b border-gray-100 bg-gradient-to-r from-purple-50 to-transparent">
+        <button
+          onClick={() => toggleSection('dataRawat')}
+          className="w-full px-8 py-6 border-b border-gray-100 bg-gray-50 hover:bg-gray-100 transition-colors flex items-center justify-between"
+        >
           <h2 className="text-xl font-bold text-gray-900 flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-[#144782] rounded-xl flex items-center justify-center">
               <FileText className="w-5 h-5 text-white" />
             </div>
             Data Rawat & Administrasi
           </h2>
-        </div>
-        <div className="p-8">
+          {expandedSections.dataRawat ? (
+            <ChevronUp className="w-6 h-6 text-gray-600" />
+          ) : (
+            <ChevronDown className="w-6 h-6 text-gray-600" />
+          )}
+        </button>
+        {expandedSections.dataRawat && (
+          <div className="p-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -608,23 +644,35 @@ export default function EKlaimForm({ claimData, onFormChange, aiFilledData }) {
               />
             </div>
           </div>
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Section 3: Diagnosa */}
       <div className="bg-white rounded-2xl border border-gray-200 shadow-sm">
-        <div className="px-8 py-6 border-b border-gray-100 bg-gradient-to-r from-orange-50 to-transparent">
-          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center">
-              <FileText className="w-5 h-5 text-white" />
-            </div>
-            Diagnosa & Kode ICD-10
-          </h2>
-          <p className="text-sm text-gray-600 mt-2">
-            ⚠️ Bagian KRUSIAL! Kode yang menentukan INA-CBG dan tarif
-          </p>
-        </div>
-        <div className="p-8 space-y-6">
+        <button
+          onClick={() => toggleSection('diagnosa')}
+          className="w-full px-8 py-6 border-b border-gray-100 bg-orange-50 hover:bg-orange-100 transition-colors flex items-center justify-between"
+        >
+          <div>
+            <h2 className="text-xl font-bold text-gray-900 flex items-center gap-3">
+              <div className="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center">
+                <AlertCircle className="w-5 h-5 text-white" />
+              </div>
+              Diagnosa & Kode ICD-10
+            </h2>
+            <p className="text-sm text-orange-800 mt-2 ml-14 font-medium">
+              ⚠️ Bagian KRUSIAL! Kode yang menentukan INA-CBG dan tarif
+            </p>
+          </div>
+          {expandedSections.diagnosa ? (
+            <ChevronUp className="w-6 h-6 text-gray-600 flex-shrink-0" />
+          ) : (
+            <ChevronDown className="w-6 h-6 text-gray-600 flex-shrink-0" />
+          )}
+        </button>
+        {expandedSections.diagnosa && (
+          <div className="p-8 space-y-6">
           {/* Diagnosa Utama */}
           <div className="p-6 bg-orange-50 rounded-xl border-2 border-orange-200">
             <h3 className="font-bold text-orange-900 mb-4 flex items-center gap-2">
@@ -739,22 +787,34 @@ export default function EKlaimForm({ claimData, onFormChange, aiFilledData }) {
             </div>
           </div>
         </div>
+        )}
       </div>
 
       {/* Section 4: Prosedur/Tindakan (ICD-9-CM) */}
       <div className="bg-white rounded-2xl border border-gray-200 shadow-sm">
-        <div className="px-8 py-6 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-transparent">
-          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
-              <FileText className="w-5 h-5 text-white" />
-            </div>
-            Prosedur / Tindakan (ICD-9-CM)
-          </h2>
-          <p className="text-sm text-gray-600 mt-2">
-            Contoh: Transfusi (99.04), Rontgen (87.44), Cuci Darah (39.95)
-          </p>
-        </div>
-        <div className="p-8">
+        <button
+          onClick={() => toggleSection('prosedur')}
+          className="w-full px-8 py-6 border-b border-gray-100 bg-gray-50 hover:bg-gray-100 transition-colors flex items-center justify-between"
+        >
+          <div>
+            <h2 className="text-xl font-bold text-gray-900 flex items-center gap-3">
+              <div className="w-10 h-10 bg-[#144782] rounded-xl flex items-center justify-center">
+                <FileText className="w-5 h-5 text-white" />
+              </div>
+              Prosedur / Tindakan (ICD-9-CM)
+            </h2>
+            <p className="text-sm text-gray-600 mt-2 ml-14">
+              Contoh: Transfusi (99.04), Rontgen (87.44), Cuci Darah (39.95)
+            </p>
+          </div>
+          {expandedSections.prosedur ? (
+            <ChevronUp className="w-6 h-6 text-gray-600 flex-shrink-0" />
+          ) : (
+            <ChevronDown className="w-6 h-6 text-gray-600 flex-shrink-0" />
+          )}
+        </button>
+        {expandedSections.prosedur && (
+          <div className="p-8">
           {formData.procedures.map((procedure, index) => (
             <div key={index} className={`flex gap-4 mb-4 p-4 rounded-xl ${
               isFieldHighlighted('procedures') ? 'bg-green-50 border-2 border-green-400' : 'bg-gray-50'
@@ -789,22 +849,34 @@ export default function EKlaimForm({ claimData, onFormChange, aiFilledData }) {
             Tambah Tindakan
           </button>
         </div>
+        )}
       </div>
 
       {/* Section 5: Tarif Rinci Rumah Sakit */}
       <div className="bg-white rounded-2xl border border-gray-200 shadow-sm">
-        <div className="px-8 py-6 border-b border-gray-100 bg-gradient-to-r from-green-50 to-transparent">
-          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-white" />
-            </div>
-            Tarif Rinci Rumah Sakit
-          </h2>
-          <p className="text-sm text-gray-600 mt-2">
-            Seperti di video E-Klaim: Prosedur Bedah, Tenaga Ahli, Keperawatan, dll
-          </p>
-        </div>
-        <div className="p-8">
+        <button
+          onClick={() => toggleSection('tarifRS')}
+          className="w-full px-8 py-6 border-b border-gray-100 bg-gray-50 hover:bg-gray-100 transition-colors flex items-center justify-between"
+        >
+          <div>
+            <h2 className="text-xl font-bold text-gray-900 flex items-center gap-3">
+              <div className="w-10 h-10 bg-[#144782] rounded-xl flex items-center justify-center">
+                <TrendingUp className="w-5 h-5 text-white" />
+              </div>
+              Tarif Rinci Rumah Sakit
+            </h2>
+            <p className="text-sm text-gray-600 mt-2 ml-14">
+              Seperti di video E-Klaim: Prosedur Bedah, Tenaga Ahli, Keperawatan, dll
+            </p>
+          </div>
+          {expandedSections.tarifRS ? (
+            <ChevronUp className="w-6 h-6 text-gray-600 flex-shrink-0" />
+          ) : (
+            <ChevronDown className="w-6 h-6 text-gray-600 flex-shrink-0" />
+          )}
+        </button>
+        {expandedSections.tarifRS && (
+          <div className="p-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
               { key: 'prosedurBedah', label: 'Prosedur Bedah' },
@@ -848,22 +920,34 @@ export default function EKlaimForm({ claimData, onFormChange, aiFilledData }) {
             </div>
           </div>
         </div>
+        )}
       </div>
 
       {/* Section 6: GROUPER - INA-CBG */}
-      <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border-4 border-purple-300 shadow-xl">
-        <div className="px-8 py-6 border-b-4 border-purple-300 bg-gradient-to-r from-purple-100 to-pink-100">
-          <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
-              <Calculator className="w-6 h-6 text-white" />
-            </div>
-            GROUPER - Hitung INA-CBG
-          </h2>
-          <p className="text-sm text-purple-800 mt-2 font-medium">
-            ⚡ Klik tombol GROUPER untuk menghitung tarif INA-CBG berdasarkan diagnosa & tindakan
-          </p>
-        </div>
-        <div className="p-8">
+      <div className="bg-gradient-to-br from-blue-50 to-green-50 rounded-2xl border-2 border-[#03974a] shadow-lg">
+        <button
+          onClick={() => toggleSection('grouper')}
+          className="w-full px-8 py-6 border-b-2 border-[#03974a] bg-gradient-to-r from-[#144782]/5 to-[#03974a]/5 hover:from-[#144782]/10 hover:to-[#03974a]/10 transition-colors flex items-center justify-between"
+        >
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+              <div className="w-12 h-12 bg-gradient-to-br from-[#144782] to-[#03974a] rounded-xl flex items-center justify-center shadow-lg">
+                <Calculator className="w-6 h-6 text-white" />
+              </div>
+              GROUPER - Hitung INA-CBG
+            </h2>
+            <p className="text-sm text-[#03974a] mt-2 font-semibold ml-16">
+              ⚡ Klik tombol GROUPER untuk menghitung tarif INA-CBG berdasarkan diagnosa & tindakan
+            </p>
+          </div>
+          {expandedSections.grouper ? (
+            <ChevronUp className="w-7 h-7 text-gray-700 flex-shrink-0" />
+          ) : (
+            <ChevronDown className="w-7 h-7 text-gray-700 flex-shrink-0" />
+          )}
+        </button>
+        {expandedSections.grouper && (
+          <div className="p-8">
           {!grouperResult ? (
             <div className="text-center py-12">
               <Zap className="w-16 h-16 text-purple-500 mx-auto mb-4" />
@@ -948,6 +1032,7 @@ export default function EKlaimForm({ claimData, onFormChange, aiFilledData }) {
             </div>
           )}
         </div>
+        )}
       </div>
     </div>
   );
