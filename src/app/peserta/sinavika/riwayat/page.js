@@ -271,7 +271,7 @@ function RiwayatPageContent() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         {/* Filters */}
-        <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="mb-6 space-y-4">
           {/* Search */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -286,11 +286,11 @@ function RiwayatPageContent() {
 
           {/* Filter */}
           <div className="relative">
-            <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white z-10" />
             <select
               value={filterSeverity}
               onChange={(e) => setFilterSeverity(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#03974a] focus:border-transparent outline-none appearance-none"
+              className="w-full pl-10 pr-4 py-3 rounded-lg bg-gradient-to-r from-[#03974a] to-[#144782] text-white font-semibold border-0 focus:ring-2 focus:ring-[#03974a] focus:ring-offset-2 outline-none appearance-none shadow-md hover:shadow-lg transition-shadow cursor-pointer [&>option]:text-gray-900 [&>option]:bg-white"
             >
               <option value="all">Semua Tingkat Keparahan</option>
               <option value="emergency">Gawat Darurat</option>
