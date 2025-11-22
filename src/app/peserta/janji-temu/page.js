@@ -178,7 +178,7 @@ function JanjiTemuContent() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Janji Temu Saya</h1>
           <p className="text-gray-600">
-            Daftar janji temu Anda dengan rumah sakit beserta ringkasan triase
+            Daftar janji temu Anda dengan rumah sakit beserta ringkasan keluhan
           </p>
         </div>
 
@@ -336,7 +336,7 @@ function JanjiTemuContent() {
                           className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-[#144782] to-[#0d3461] text-white rounded-xl hover:shadow-md transition-all font-semibold"
                         >
                           <FileText className="w-4 h-4" />
-                          <span>Lihat Detail Triage</span>
+                          <span>Lihat Detail Keluhan</span>
                         </Link>
                       )}
                     </div>

@@ -118,7 +118,7 @@ function RiwayatPageContent() {
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
           <div className="text-center py-12">
             <Loader2 className="w-12 h-12 animate-spin text-[#03974a] mx-auto mb-4" />
-            <p className="text-gray-600">Memuat riwayat triase...</p>
+            <p className="text-gray-600">Memuat riwayat keluhan...</p>
           </div>
         </main>
       </div>
@@ -142,7 +142,7 @@ function RiwayatPageContent() {
             <div className="mb-6">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Detail Hasil Triase</h2>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Detail Hasil Keluhan</h2>
                   <p className="text-sm text-gray-500">ID: {selectedTriage.triage_id}</p>
                   <p className="text-sm text-gray-500">
                     {formatDate(selectedTriage.created_at)} • {formatTime(selectedTriage.created_at)} WIB
@@ -253,7 +253,7 @@ function RiwayatPageContent() {
                     className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#03974a] to-[#144782] text-white rounded-lg font-semibold hover:shadow-lg transition-all"
                   >
                     <MapPin className="w-5 h-5" />
-                    Cari Rumah Sakit Terdekat
+                    Cari Fasilitas Kesehatan Terdekat
                   </Link>
                 )}
               </div>
@@ -272,10 +272,10 @@ function RiwayatPageContent() {
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-            Riwayat Triase
+            Riwayat Keluhan
           </h1>
           <p className="text-gray-600">
-            Lihat semua hasil triase kesehatan Anda sebelumnya
+            Lihat semua hasil keluhan kesehatan Anda sebelumnya
           </p>
         </div>
 
@@ -333,12 +333,12 @@ function RiwayatPageContent() {
           <div className="text-center py-12 bg-white rounded-2xl border border-gray-200">
             <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              {searchTerm || filterSeverity !== 'all' ? 'Tidak ada hasil' : 'Belum ada riwayat triase'}
+              {searchTerm || filterSeverity !== 'all' ? 'Tidak ada hasil' : 'Belum ada riwayat keluhan'}
             </h3>
             <p className="text-gray-600 mb-4">
               {searchTerm || filterSeverity !== 'all'
                 ? 'Coba ubah filter atau kata kunci pencarian'
-                : 'Mulai cek keluhan Anda untuk membuat riwayat triase pertama'}
+                : 'Mulai cek keluhan Anda untuk membuat riwayat keluhan pertama'}
             </p>
             {!searchTerm && filterSeverity === 'all' && (
               <Link
@@ -405,7 +405,7 @@ function RiwayatPageContent() {
           <div className="mt-6 bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-4 border border-green-200">
             <p className="text-sm text-gray-700">
               Menampilkan <span className="font-semibold">{filteredHistory.length}</span> dari{' '}
-              <span className="font-semibold">{history.length}</span> triase
+              <span className="font-semibold">{history.length}</span> keluhan
             </p>
           </div>
         )}
@@ -422,7 +422,7 @@ export default function RiwayatPage() {
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
           <div className="text-center py-12">
             <Loader2 className="w-12 h-12 animate-spin text-[#03974a] mx-auto mb-4" />
-            <p className="text-gray-600">Memuat riwayat triase...</p>
+            <p className="text-gray-600">Memuat riwayat keluhan...</p>
           </div>
         </main>
       </div>
