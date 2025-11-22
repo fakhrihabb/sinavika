@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   ArrowLeft,
   ArrowRight,
@@ -14,10 +14,16 @@ import {
   Info,
   Check,
   Square,
-  Clock
+  Clock,
+  Volume2,
+  VolumeX,
+  Mic,
+  MicOff
 } from 'lucide-react';
 import Link from 'next/link';
 import MobileHeader from '@/components/MobileHeader';
+import { useVoiceInteraction } from '@/lib/useVoiceInteraction';
+import AudioWaveVisualizer from '@/components/AudioWaveVisualizer';
 
 export default function TriagePage() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -30,12 +36,47 @@ export default function TriagePage() {
   const [currentAnswer, setCurrentAnswer] = useState('');
   const [selectedChoices, setSelectedChoices] = useState([]); // For multi-choice questions
   const [showExitModal, setShowExitModal] = useState(false);
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
+
+  // Voice interaction hook
+  const {
+    isPlaying,
+    isRecording,
+    isTranscribing,
+    audioError,
+    audioStream,
+    speak,
+    pauseAudio,
+    resumeAudio,
+    stopAudio,
+    startRecording,
+    stopRecording,
+  } = useVoiceInteraction();
+
+  // Track the last spoken question to prevent double-speaking
+  const lastSpokenQuestionRef = useRef('');
 
   // Initialize first question
   useEffect(() => {
     loadNextQuestion();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Auto-play TTS when a new question arrives (but only once per question)
+  useEffect(() => {
+    if (currentQuestion && currentQuestion.nextQuestion && hasUserInteracted) {
+      // Only speak if this is a new question
+      if (lastSpokenQuestionRef.current !== currentQuestion.nextQuestion) {
+        // Stop any previous audio
+        stopAudio();
+        // Speak immediately - no delay needed
+        speak(currentQuestion.nextQuestion);
+        // Remember this question
+        lastSpokenQuestionRef.current = currentQuestion.nextQuestion;
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentQuestion, hasUserInteracted]);
 
   const loadNextQuestion = async (previousAnswer = null) => {
     setLoading(true);
@@ -358,6 +399,7 @@ export default function TriagePage() {
   };
 
   const resetTriage = () => {
+    stopAudio();
     setCurrentStep(0);
     setConversationHistory([]);
     setQuestionHistory([]);
@@ -367,6 +409,33 @@ export default function TriagePage() {
     setTriageResult(null);
     setError(null);
     loadNextQuestion();
+  };
+
+  // Handle voice recording
+  const handleMicClick = async () => {
+    if (isRecording) {
+      // Stop recording and get transcript
+      try {
+        const transcript = await stopRecording();
+        if (transcript) {
+          setCurrentAnswer(transcript);
+        }
+      } catch (err) {
+        console.error('Recording error:', err);
+      }
+    } else {
+      // Start recording
+      await startRecording();
+    }
+  };
+
+  // Toggle audio playback
+  const handleAudioToggle = () => {
+    if (isPlaying) {
+      pauseAudio();
+    } else {
+      resumeAudio();
+    }
   };
 
   // Render results page
@@ -597,6 +666,29 @@ export default function TriagePage() {
       )}
 
       <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Audio Enable Notice */}
+        {!hasUserInteracted && (
+          <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
+            <div className="flex items-start gap-3">
+              <Volume2 className="w-5 h-5 text-green-600 mt-0.5 shrink-0" />
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-green-900 mb-1">
+                  Aktifkan Audio Otomatis
+                </h3>
+                <p className="text-sm text-green-700 mb-3">
+                  Untuk pengalaman terbaik, aktifkan audio agar pertanyaan dibacakan secara otomatis.
+                </p>
+                <button
+                  onClick={() => setHasUserInteracted(true)}
+                  className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors"
+                >
+                  Aktifkan Audio
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Progress Bar */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
@@ -635,9 +727,23 @@ export default function TriagePage() {
               )}
 
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                  {currentQuestion.nextQuestion}
-                </h2>
+                <div className="flex items-start justify-between gap-3 mb-2">
+                  <h2 className="text-2xl font-bold text-gray-900 flex-1">
+                    {currentQuestion.nextQuestion}
+                  </h2>
+                  {/* Audio Control Button */}
+                  <button
+                    onClick={handleAudioToggle}
+                    className="flex-shrink-0 p-2 rounded-full bg-green-100 hover:bg-green-200 transition-colors"
+                    title={isPlaying ? "Jeda audio" : "Putar audio"}
+                  >
+                    {isPlaying ? (
+                      <Volume2 className="w-5 h-5 text-green-700 animate-pulse" />
+                    ) : (
+                      <VolumeX className="w-5 h-5 text-green-700" />
+                    )}
+                  </button>
+                </div>
                 {currentQuestion.reasoning && (
                   <p className="text-sm text-gray-500 italic">
                     {currentQuestion.reasoning}
@@ -651,7 +757,7 @@ export default function TriagePage() {
                   <div>
                     <div className="space-y-2 mb-4">
                       <p className="text-sm text-gray-600 flex items-center gap-2">
-                        <Info className="w-4 h-4 text-blue-500" />
+                        <Info className="w-4 h-4 text-[#03974a]" />
                         Anda bisa memilih lebih dari satu pilihan
                       </p>
                       {currentQuestion.choices.map((choice, index) => (
@@ -715,20 +821,67 @@ export default function TriagePage() {
                     ))}
                   </div>
                 ) : (
-                  // Text input
+                  // Text input with voice recording
                   <div>
-                    <textarea
-                      value={currentAnswer}
-                      onChange={(e) => setCurrentAnswer(e.target.value)}
-                      placeholder={currentQuestion.placeholderText || "Ketik jawaban Anda di sini..."}
-                      rows="4"
-                      disabled={loading}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#03974a] focus:border-transparent outline-none transition-all resize-none disabled:opacity-50 disabled:bg-gray-100"
-                    />
+                    <div className="relative">
+                      <textarea
+                        value={currentAnswer}
+                        onChange={(e) => setCurrentAnswer(e.target.value)}
+                        placeholder={currentQuestion.placeholderText || "Ketik jawaban Anda di sini..."}
+                        rows="4"
+                        disabled={loading || isTranscribing}
+                        className="w-full px-4 py-3 pr-14 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#03974a] focus:border-transparent outline-none transition-all resize-none disabled:opacity-50 disabled:bg-gray-100"
+                      />
+                      {/* Microphone Button */}
+                      <button
+                        onClick={handleMicClick}
+                        disabled={loading || isTranscribing}
+                        className={`absolute right-3 bottom-3 p-2 rounded-full transition-all ${
+                          isRecording
+                            ? 'bg-red-500 hover:bg-red-600 animate-pulse'
+                            : 'bg-[#03974a] hover:bg-[#027d3e]'
+                        } disabled:opacity-50 disabled:cursor-not-allowed`}
+                        title={isRecording ? "Berhenti merekam" : "Rekam suara"}
+                      >
+                        {isRecording ? (
+                          <MicOff className="w-5 h-5 text-white" />
+                        ) : (
+                          <Mic className="w-5 h-5 text-white" />
+                        )}
+                      </button>
+                    </div>
+
+                    {/* Audio Wave Visualizer */}
+                    {isRecording && audioStream && (
+                      <div className="mt-4">
+                        <AudioWaveVisualizer
+                          isRecording={isRecording}
+                          onStop={handleMicClick}
+                          stream={audioStream}
+                        />
+                      </div>
+                    )}
+
+                    {/* Transcribing State */}
+                    {isTranscribing && (
+                      <div className="mt-2 flex items-center gap-2 text-sm text-[#03974a]">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Membuat transkrip...</span>
+                      </div>
+                    )}
+
+                    {/* Audio Error */}
+                    {audioError && (
+                      <div className="mt-2 flex items-start gap-2 text-sm text-red-600">
+                        <AlertCircle className="w-4 h-4 mt-0.5" />
+                        <span>{audioError}</span>
+                      </div>
+                    )}
+
                     <div className="flex items-start gap-2 mt-2">
-                      <Info className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                      <Info className="w-4 h-4 text-[#03974a] mt-0.5 flex-shrink-0" />
                       <p className="text-xs text-gray-600">
-                        Jawab dengan sejelas dan sedetail mungkin untuk mendapatkan rekomendasi yang lebih akurat
+                        Jawab dengan sejelas dan sedetail mungkin untuk mendapatkan rekomendasi yang lebih akurat. Anda bisa mengetik atau menggunakan tombol mikrofon untuk menjawab dengan suara.
                       </p>
                     </div>
                   </div>
