@@ -3,9 +3,12 @@ import { Home, CreditCard, MessageCircle, User } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { useState } from 'react';
+import RoleModal from './RoleModal';
 
 export default function BottomNavbar() {
   const pathname = usePathname();
+  const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
 
   // Only show bottom navbar on /peserta routes
   if (!pathname?.startsWith('/peserta')) {
@@ -62,16 +65,25 @@ export default function BottomNavbar() {
           <span className="text-xs font-medium">FAQ</span>
         </div>
 
-        <div className="flex flex-col items-center gap-1 px-4 py-2 text-gray-400 cursor-not-allowed">
+        <button
+          onClick={() => setIsRoleModalOpen(true)}
+          className="flex flex-col items-center gap-1 px-4 py-2 text-gray-600 hover:text-blue-600 transition-colors"
+        >
           <User className="w-6 h-6" />
-          <span className="text-xs font-medium">Profil</span>
-        </div>
+          <span className="text-xs font-medium">Ganti Role</span>
+        </button>
       </div>
 
       {/* iOS-style home indicator */}
       <div className="flex justify-center pb-2 pointer-events-none">
         <div className="w-32 h-1 bg-gray-900 rounded-full opacity-60"></div>
       </div>
+
+      {/* Role Modal */}
+      <RoleModal
+        isOpen={isRoleModalOpen}
+        onClose={() => setIsRoleModalOpen(false)}
+      />
     </div>
   );
 }
