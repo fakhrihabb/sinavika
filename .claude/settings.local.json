@@ -10,7 +10,9 @@
       "Bash(findstr:*)",
       "Bash(npx supabase status:*)",
       "Bash(npx supabase:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(timeout:*)",
+      "Bash(exit 0)"
     ],
     "deny": [],
     "ask": []
