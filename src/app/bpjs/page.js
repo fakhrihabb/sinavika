@@ -1,4 +1,4 @@
-import BPJSNavbar from '@/components/BPJSNavbar';
+import BpjsNavbar from '@/components/BpjsNavbar';
 import { FileText, TrendingUp, AlertTriangle, CheckCircle, XCircle, Clock, Building2, ArrowUpRight, ArrowDownRight, ChevronRight, Calendar, Shield, Filter } from 'lucide-react';
 import Link from 'next/link';
 
@@ -98,7 +98,7 @@ export default function BPJSPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <BPJSNavbar />
+      <BpjsNavbar />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
         {/* Header */}

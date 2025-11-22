@@ -40,6 +40,8 @@ export default function PreCheckKlaimPage({ params }) {
   const [claimData, setClaimData] = useState(null);
   const [documentChecklist, setDocumentChecklist] = useState({});
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
 
   useEffect(() => {
     // Simulate fetching data
@@ -291,6 +293,133 @@ export default function PreCheckKlaimPage({ params }) {
     setFormData(newFormData);
   };
 
+  // Handle submit to BPJS
+  const handleSubmitToBPJS = async () => {
+    if (!formData || !claimData) {
+      alert('Data form belum lengkap');
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      setSubmitError(null);
+
+      // Transform formData to API format
+      const submitData = {
+        // Basic info
+        claimId: claimData.id,
+        hospitalName: claimData.hospital || 'RS Cipto Mangunkusumo',
+        hospitalCode: 'RS003',
+
+        // Patient data
+        patientName: formData.patientName,
+        patientBpjsNumber: formData.patientId,
+        sepNumber: formData.sepNumber,
+        rmNumber: formData.nomorRM,
+        patientDob: null, // TODO: Add to form if needed
+        patientGender: null, // TODO: Add to form if needed
+
+        // Treatment data
+        treatmentType: formData.treatmentType,
+        admissionDate: formData.admissionDate,
+        dischargeDate: formData.dischargeDate,
+        careClass: formData.kelasRawat,
+        dpjp: formData.dpjp,
+
+        // Diagnoses
+        diagnoses: [],
+
+        // Procedures
+        procedures: formData.procedures || [],
+
+        // GROUPER result
+        inaCbgCode: formData.inaCbgCode,
+        inaCbgDescription: formData.inaCbgDescription,
+        tarifInaCbg: formData.tarifInaCbg,
+
+        // Calculate total RS tariff
+        tarifRS: Object.values(formData.tarifRS || {}).reduce((sum, val) => {
+          const num = parseFloat(val) || 0;
+          return sum + num;
+        }, 0),
+
+        // Documents from checklist
+        documents: [],
+
+        // AI flags - check if there are any warnings
+        aiRiskScore: 0,
+        aiFlags: []
+      };
+
+      // Add diagnoses
+      if (formData.diagnosisPrimary && formData.icd10Primary) {
+        submitData.diagnoses.push({
+          type: 'primary',
+          name: formData.diagnosisPrimary,
+          icd10: formData.icd10Primary
+        });
+      }
+      if (formData.diagnosisSecondary && formData.icd10Secondary) {
+        submitData.diagnoses.push({
+          type: 'secondary',
+          name: formData.diagnosisSecondary,
+          icd10: formData.icd10Secondary
+        });
+      }
+      if (formData.diagnosisTertiary && formData.icd10Tertiary) {
+        submitData.diagnoses.push({
+          type: 'tertiary',
+          name: formData.diagnosisTertiary,
+          icd10: formData.icd10Tertiary
+        });
+      }
+
+      // Collect documents from checklist
+      Object.entries(documentChecklist).forEach(([category, section]) => {
+        section.items.forEach(item => {
+          if (item.status === 'complete' && item.file) {
+            submitData.documents.push({
+              type: item.name,
+              fileName: item.file.name || item.name,
+              fileSize: item.file.size || null,
+              verified: true
+            });
+          }
+        });
+      });
+
+      // Submit to API
+      const response = await fetch('/api/bpjs/claims/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(submitData),
+      });
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || 'Gagal mengirim klaim');
+      }
+
+      // Success!
+      alert('✓ Klaim berhasil dikirim ke BPJS!\n\nKlaim ID: ' + result.data.claimId);
+
+      // Redirect to dashboard after 1.5 seconds
+      setTimeout(() => {
+        window.location.href = '/rumah-sakit';
+      }, 1500);
+
+    } catch (error) {
+      console.error('Submit error:', error);
+      setSubmitError(error.message);
+      alert('✗ Gagal mengirim klaim:\n' + error.message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -502,16 +631,26 @@ export default function PreCheckKlaimPage({ params }) {
                   </p>
                 </div>
                 <button
-                  disabled={!readiness.readyToSubmit}
+                  onClick={handleSubmitToBPJS}
+                  disabled={!readiness.readyToSubmit || submitting}
                   className={`px-8 py-4 rounded-xl font-bold text-lg transition-all ${
-                    readiness.readyToSubmit
+                    readiness.readyToSubmit && !submitting
                       ? 'bg-gradient-to-r from-[#03974a] to-[#144782] text-white hover:shadow-xl hover:scale-105'
                       : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                   }`}
                 >
                   <div className="flex items-center gap-2">
-                    <Send className="w-6 h-6" />
-                    Kirim ke BPJS
+                    {submitting ? (
+                      <>
+                        <Clock className="w-6 h-6 animate-spin" />
+                        Mengirim...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-6 h-6" />
+                        Kirim ke BPJS
+                      </>
+                    )}
                   </div>
                 </button>
               </div>
