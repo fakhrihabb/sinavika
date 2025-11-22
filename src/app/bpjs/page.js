@@ -1,100 +1,129 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import BpjsNavbar from '@/components/BPJSNavbar';
-import { FileText, TrendingUp, AlertTriangle, CheckCircle, XCircle, Clock, Building2, ArrowUpRight, ArrowDownRight, ChevronRight, Calendar, Shield, Filter } from 'lucide-react';
+import { FileText, TrendingUp, AlertTriangle, CheckCircle, XCircle, Clock, Building2, ArrowUpRight, ArrowDownRight, ChevronRight, Calendar, Shield, Filter, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
 export default function BPJSPage() {
-  // National KPIs
-  const kpis = [
-    {
-      title: "Klaim Masuk",
-      subtitle: "Hari Ini",
-      value: "1,247",
-      change: "+12%",
-      changeType: "increase",
-      icon: FileText,
-      color: "bg-blue-500"
-    },
-    {
-      title: "Pending Verifikasi",
-      subtitle: "Perlu ditangani",
-      value: "328",
-      change: "+5%",
-      changeType: "increase",
-      icon: Clock,
-      color: "bg-orange-500"
-    },
-    {
-      title: "AI Fraud Alert",
-      subtitle: "Terdeteksi hari ini",
-      value: "42",
-      change: "-8%",
-      changeType: "decrease",
-      icon: AlertTriangle,
-      color: "bg-red-500"
-    },
-    {
-      title: "Approval Rate",
-      subtitle: "30 hari terakhir",
-      value: "92%",
-      change: "+3%",
-      changeType: "increase",
-      icon: TrendingUp,
-      color: "bg-emerald-500"
-    }
-  ];
+  const [dashboardData, setDashboardData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Priority verification queue
-  const highPriorityClaims = [
-    {
-      id: "CLM-2025-1847",
-      hospital: "RS Cipto Mangunkusumo",
-      patientName: "Ahmad Fauzi",
-      diagnosis: "Diabetes Type 2 + Komplikasi",
-      amount: "Rp 12.500.000",
-      submittedDate: "18 Nov 2025",
-      aiRiskScore: 87,
-      aiFlags: ["Dokumen tidak konsisten", "Pola klaim tidak biasa"],
-      estimatedTime: "2 jam"
-    },
-    {
-      id: "CLM-2025-1845",
-      hospital: "RS Dr. Sardjito",
-      patientName: "Siti Aminah",
-      diagnosis: "Operasi Jantung Koroner",
-      amount: "Rp 15.700.000",
-      submittedDate: "19 Nov 2025",
-      aiRiskScore: 72,
-      aiFlags: ["Kode ICD perlu review"],
-      estimatedTime: "1 jam"
-    },
-    {
-      id: "CLM-2025-1844",
-      hospital: "RS Hasan Sadikin",
-      patientName: "Budi Santoso",
-      diagnosis: "Pneumonia Berat",
-      amount: "Rp 9.200.000",
-      submittedDate: "18 Nov 2025",
-      aiRiskScore: 45,
-      aiFlags: [],
-      estimatedTime: "30 menit"
-    }
-  ];
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
 
-  // Hospital performance summary
-  const topIssueHospitals = [
-    {
-      name: "RSUD Dr. Soetomo",
-      claimsTotal: 124,
-      issueRate: 18,
-      commonIssues: "Dokumen tidak lengkap"
-    },
-    {
-      name: "RS Hasan Sadikin",
-      claimsTotal: 142,
-      issueRate: 12,
-      commonIssues: "Kode ICD tidak sesuai"
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/bpjs/dashboard');
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || 'Gagal mengambil data dashboard');
+      }
+
+      setDashboardData(result.data);
+    } catch (err) {
+      console.error('Error fetching dashboard data:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  // Calculate KPIs from real data
+  const getKPIs = () => {
+    if (!dashboardData) return [];
+
+    const { stats } = dashboardData;
+
+    // Calculate approval rate (approved / (approved + rejected) * 100)
+    const totalProcessed = (stats.approved || 0) + (stats.rejected || 0);
+    const approvalRate = totalProcessed > 0
+      ? Math.round((stats.approved / totalProcessed) * 100)
+      : 0;
+
+    return [
+      {
+        title: "Klaim Masuk",
+        subtitle: "Hari Ini",
+        value: stats.today?.toString() || "0",
+        change: "+12%",
+        changeType: "increase",
+        icon: FileText,
+        color: "bg-blue-500"
+      },
+      {
+        title: "Pending Verifikasi",
+        subtitle: "Perlu ditangani",
+        value: stats.pending?.toString() || "0",
+        change: stats.pending > stats.total * 0.5 ? "+5%" : "-3%",
+        changeType: stats.pending > stats.total * 0.5 ? "increase" : "decrease",
+        icon: Clock,
+        color: "bg-orange-500"
+      },
+      {
+        title: "AI Fraud Alert",
+        subtitle: "Terdeteksi hari ini",
+        value: stats.highRisk?.toString() || "0",
+        change: "-8%",
+        changeType: "decrease",
+        icon: AlertTriangle,
+        color: "bg-red-500"
+      },
+      {
+        title: "Approval Rate",
+        subtitle: "Total yang diproses",
+        value: `${approvalRate}%`,
+        change: approvalRate >= 90 ? "+3%" : "-2%",
+        changeType: approvalRate >= 90 ? "increase" : "decrease",
+        icon: TrendingUp,
+        color: "bg-emerald-500"
+      }
+    ];
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <BpjsNavbar />
+        <div className="flex items-center justify-center h-[calc(100vh-80px)]">
+          <div className="text-center">
+            <Loader2 className="w-12 h-12 text-[#03974a] animate-spin mx-auto mb-4" />
+            <p className="text-gray-600">Memuat data dashboard...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <BpjsNavbar />
+        <div className="flex items-center justify-center h-[calc(100vh-80px)]">
+          <div className="text-center max-w-md">
+            <AlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+            <h2 className="text-xl font-bold text-gray-900 mb-2">Error Memuat Data</h2>
+            <p className="text-gray-600 mb-4">{error}</p>
+            <button
+              onClick={fetchDashboardData}
+              className="px-4 py-2 bg-[#03974a] text-white rounded-lg hover:bg-[#144782] transition-colors"
+            >
+              Coba Lagi
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const kpis = getKPIs();
+  const highPriorityClaims = dashboardData?.priorityClaims || [];
+  const topIssueHospitals = dashboardData?.topIssueHospitals || [];
+  const stats = dashboardData?.stats || {};
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -108,7 +137,7 @@ export default function BPJSPage() {
           </h1>
           <p className="text-gray-600 flex items-center gap-2">
             <Calendar className="w-4 h-4" />
-            Selasa, 19 November 2025 • Region: DKI Jakarta
+            {new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
           </p>
         </div>
 
@@ -125,7 +154,7 @@ export default function BPJSPage() {
               </div>
               <h3 className="text-xl font-bold text-white mb-2">Verifikasi Klaim</h3>
               <p className="text-white/90 text-sm leading-relaxed">
-                328 klaim menunggu verifikasi dan proses Anda
+                {stats.pending || 0} klaim menunggu verifikasi dan proses Anda
               </p>
             </Link>
 
@@ -139,7 +168,7 @@ export default function BPJSPage() {
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-2">Fraud Analytics</h3>
               <p className="text-gray-600 text-sm leading-relaxed">
-                42 AI fraud alert baru terdeteksi hari ini
+                {stats.highRisk || 0} AI fraud alert baru terdeteksi hari ini
               </p>
             </Link>
           </div>
@@ -194,7 +223,7 @@ export default function BPJSPage() {
                   <h2 className="text-lg font-semibold text-gray-900">Antrian Prioritas Tinggi</h2>
                   <p className="text-sm text-gray-500 mt-0.5">Klaim dengan AI fraud alert dan risiko tinggi</p>
                 </div>
-                <Link 
+                <Link
                   href="/bpjs/verifikasi"
                   className="text-sm font-semibold text-[#03974a] hover:text-[#144782] flex items-center gap-1"
                 >
@@ -203,95 +232,106 @@ export default function BPJSPage() {
                 </Link>
               </div>
               <div className="divide-y divide-gray-100">
-                {highPriorityClaims.map((claim) => (
-                  <div key={claim.id} className="p-5 hover:bg-gray-50 transition-colors">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <h3 className="font-semibold text-gray-900">{claim.id}</h3>
-                          {claim.aiRiskScore >= 70 && (
-                            <span className="flex items-center gap-1 px-2 py-0.5 bg-red-100 text-red-700 text-xs font-semibold rounded-full">
-                              <Shield className="w-3 h-3" />
-                              Risk: {claim.aiRiskScore}
-                            </span>
+                {highPriorityClaims.length === 0 ? (
+                  <div className="p-8 text-center text-gray-500">
+                    <Clock className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                    <p className="text-sm">Tidak ada klaim dalam antrian prioritas saat ini</p>
+                  </div>
+                ) : (
+                  highPriorityClaims.slice(0, 5).map((claim) => (
+                    <div key={claim.id} className="p-5 hover:bg-gray-50 transition-colors">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <h3 className="font-semibold text-gray-900">{claim.id}</h3>
+                            {claim.aiRiskScore >= 70 && (
+                              <span className="flex items-center gap-1 px-2 py-0.5 bg-red-100 text-red-700 text-xs font-semibold rounded-full">
+                                <Shield className="w-3 h-3" />
+                                Risk: {claim.aiRiskScore}
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-gray-600 mb-1">
+                            <Building2 className="w-4 h-4" />
+                            <span>{claim.hospital}</span>
+                          </div>
+                          <p className="text-sm text-gray-600">{claim.patientName} • {claim.diagnosis}</p>
+                          {claim.aiFlags && claim.aiFlags.length > 0 && (
+                            <div className="mt-2 flex flex-wrap gap-1">
+                              {claim.aiFlags.map((flag, idx) => (
+                                <span key={idx} className="text-xs px-2 py-1 bg-orange-50 text-orange-700 rounded-full">
+                                  {flag}
+                                </span>
+                              ))}
+                            </div>
                           )}
                         </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-600 mb-1">
-                          <Building2 className="w-4 h-4" />
-                          <span>{claim.hospital}</span>
+                        <div className="text-right ml-4">
+                          <p className="font-bold text-gray-900 whitespace-nowrap">{claim.amount}</p>
+                          <p className="text-xs text-gray-500 mt-1">{claim.submittedDate}</p>
+                          <p className="text-xs text-blue-600 mt-1">~{claim.estimatedTime}</p>
                         </div>
-                        <p className="text-sm text-gray-600">{claim.patientName} • {claim.diagnosis}</p>
-                        {claim.aiFlags.length > 0 && (
-                          <div className="mt-2 flex flex-wrap gap-1">
-                            {claim.aiFlags.map((flag, idx) => (
-                              <span key={idx} className="text-xs px-2 py-1 bg-orange-50 text-orange-700 rounded-full">
-                                {flag}
-                              </span>
-                            ))}
-                          </div>
-                        )}
                       </div>
-                      <div className="text-right ml-4">
-                        <p className="font-bold text-gray-900 whitespace-nowrap">{claim.amount}</p>
-                        <p className="text-xs text-gray-500 mt-1">{claim.submittedDate}</p>
-                        <p className="text-xs text-blue-600 mt-1">~{claim.estimatedTime}</p>
-                      </div>
+                      <Link
+                        href={`/bpjs/verifikasi/${claim.id}`}
+                        className="inline-flex items-center gap-1 text-sm font-medium text-[#144782] hover:text-[#03974a]"
+                      >
+                        Mulai Verifikasi
+                        <ChevronRight className="w-4 h-4" />
+                      </Link>
                     </div>
-                    <Link
-                      href={`/bpjs/verifikasi/${claim.id}`}
-                      className="inline-flex items-center gap-1 text-sm font-medium text-[#144782] hover:text-[#03974a]"
-                    >
-                      Mulai Verifikasi
-                      <ChevronRight className="w-4 h-4" />
-                    </Link>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
-              <div className="p-4 bg-gray-50 border-t border-gray-100">
-                <Link
-                  href="/bpjs/verifikasi"
-                  className="block w-full py-2.5 text-center bg-white border border-gray-200 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
-                >
-                  Lihat Semua Antrian ({highPriorityClaims.length + 325} klaim)
-                </Link>
-              </div>
+              {highPriorityClaims.length > 0 && (
+                <div className="p-4 bg-gray-50 border-t border-gray-100">
+                  <Link
+                    href="/bpjs/verifikasi"
+                    className="block w-full py-2.5 text-center bg-white border border-gray-200 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+                  >
+                    Lihat Semua Antrian ({stats.pending || 0} klaim)
+                  </Link>
+                </div>
+              )}
             </div>
 
             {/* Hospitals Needing Attention */}
-            <div className="bg-white rounded-xl border border-orange-200">
-              <div className="p-5 border-b border-orange-100 bg-orange-50">
-                <div className="flex items-start gap-3">
-                  <AlertTriangle className="w-5 h-5 text-orange-600 mt-0.5" />
-                  <div>
-                    <h2 className="text-lg font-semibold text-gray-900 mb-0.5">Rumah Sakit Perlu Perhatian</h2>
-                    <p className="text-sm text-gray-600">RS dengan tingkat klaim bermasalah tinggi</p>
+            {topIssueHospitals.length > 0 && (
+              <div className="bg-white rounded-xl border border-orange-200">
+                <div className="p-5 border-b border-orange-100 bg-orange-50">
+                  <div className="flex items-start gap-3">
+                    <AlertTriangle className="w-5 h-5 text-orange-600 mt-0.5" />
+                    <div>
+                      <h2 className="text-lg font-semibold text-gray-900 mb-0.5">Rumah Sakit Perlu Perhatian</h2>
+                      <p className="text-sm text-gray-600">RS dengan tingkat klaim bermasalah tinggi</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="divide-y divide-gray-100">
-                {topIssueHospitals.map((hospital, index) => (
-                  <div key={index} className="p-5 hover:bg-gray-50 transition-colors">
-                    <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <h3 className="font-semibold text-gray-900 mb-1">{hospital.name}</h3>
-                        <p className="text-sm text-gray-600">{hospital.claimsTotal} klaim bulan ini</p>
-                        <p className="text-sm text-orange-700 font-medium mt-1">Issue umum: {hospital.commonIssues}</p>
+                <div className="divide-y divide-gray-100">
+                  {topIssueHospitals.map((hospital, index) => (
+                    <div key={index} className="p-5 hover:bg-gray-50 transition-colors">
+                      <div className="flex items-start justify-between mb-2">
+                        <div>
+                          <h3 className="font-semibold text-gray-900 mb-1">{hospital.name}</h3>
+                          <p className="text-sm text-gray-600">{hospital.claimsTotal} klaim bulan ini</p>
+                          <p className="text-sm text-orange-700 font-medium mt-1">Issue umum: {hospital.commonIssues}</p>
+                        </div>
+                        <span className="px-3 py-1 bg-red-100 text-red-700 text-sm font-semibold rounded-full whitespace-nowrap">
+                          {hospital.issueRate}% bermasalah
+                        </span>
                       </div>
-                      <span className="px-3 py-1 bg-red-100 text-red-700 text-sm font-semibold rounded-full whitespace-nowrap">
-                        {hospital.issueRate}% bermasalah
-                      </span>
+                      <Link
+                        href={`/bpjs/insight?hospital=${encodeURIComponent(hospital.name)}`}
+                        className="inline-flex items-center gap-1 text-sm font-medium text-[#144782] hover:text-[#03974a]"
+                      >
+                        Lihat Detail & Feedback
+                        <ChevronRight className="w-4 h-4" />
+                      </Link>
                     </div>
-                    <Link
-                      href={`/bpjs/insight?hospital=${hospital.name}`}
-                      className="inline-flex items-center gap-1 text-sm font-medium text-[#144782] hover:text-[#03974a]"
-                    >
-                      Lihat Detail & Feedback
-                      <ChevronRight className="w-4 h-4" />
-                    </Link>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Sidebar */}
@@ -305,21 +345,21 @@ export default function BPJSPage() {
                     <CheckCircle className="w-4 h-4 text-green-600" />
                     <span className="text-sm font-medium text-gray-900">Disetujui</span>
                   </div>
-                  <span className="text-xl font-bold text-green-600">847</span>
+                  <span className="text-xl font-bold text-green-600">{stats.approved || 0}</span>
                 </div>
                 <div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-orange-600" />
                     <span className="text-sm font-medium text-gray-900">Pending</span>
                   </div>
-                  <span className="text-xl font-bold text-orange-600">72</span>
+                  <span className="text-xl font-bold text-orange-600">{stats.pending || 0}</span>
                 </div>
                 <div className="flex items-center justify-between p-3 bg-red-50 rounded-lg">
                   <div className="flex items-center gap-2">
                     <XCircle className="w-4 h-4 text-red-600" />
                     <span className="text-sm font-medium text-gray-900">Ditolak</span>
                   </div>
-                  <span className="text-xl font-bold text-red-600">28</span>
+                  <span className="text-xl font-bold text-red-600">{stats.rejected || 0}</span>
                 </div>
               </div>
             </div>
