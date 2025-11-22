@@ -169,11 +169,14 @@ function HospitalSelectionContent() {
     return (
       <div className="min-h-screen bg-gray-50">
         <MobileHeader title="Pilih Faskes" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-center justify-center min-h-[400px]">
-            <div className="text-center">
-              <Loader2 className="w-8 h-8 text-[#03974a] animate-spin mx-auto mb-4" />
-              <p className="text-gray-600">Mencari {serviceType === 'Faskes Tingkat Pertama' ? 'faskes' : 'rumah sakit'} terdekat...</p>
+        <div className="px-4 py-8">
+          <div className="flex flex-col items-center justify-center min-h-[60vh]">
+            <div className="bg-white rounded-3xl p-8 shadow-lg text-center">
+              <div className="bg-green-50 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                <Loader2 className="w-10 h-10 text-[#03974a] animate-spin" />
+              </div>
+              <p className="text-gray-900 font-semibold mb-2">Mencari faskes terdekat...</p>
+              <p className="text-gray-500 text-sm">Mohon tunggu sebentar</p>
             </div>
           </div>
         </div>
@@ -185,20 +188,20 @@ function HospitalSelectionContent() {
     return (
       <div className="min-h-screen bg-gray-50">
         <MobileHeader title="Pilih Faskes" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-2xl mx-auto">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="w-6 h-6 text-red-500 flex-shrink-0 mt-0.5" />
-              <div>
-                <h3 className="font-semibold text-red-800 mb-1">Terjadi Kesalahan</h3>
-                <p className="text-red-700">{error}</p>
-                <button
-                  onClick={() => router.push('/peserta')}
-                  className="mt-4 text-red-700 underline hover:text-red-800"
-                >
-                  Kembali ke Beranda
-                </button>
+        <div className="px-4 py-8">
+          <div className="bg-red-50 border-2 border-red-200 rounded-2xl p-5 mx-auto">
+            <div className="flex flex-col items-center text-center">
+              <div className="bg-red-100 rounded-full p-3 mb-4">
+                <AlertCircle className="w-8 h-8 text-red-500" />
               </div>
+              <h3 className="font-bold text-red-800 mb-2 text-lg">Terjadi Kesalahan</h3>
+              <p className="text-red-700 text-sm mb-6">{error}</p>
+              <button
+                onClick={() => router.push('/peserta')}
+                className="w-full px-6 py-3 bg-red-600 text-white rounded-xl font-semibold active:scale-[0.98] transition-all"
+              >
+                Kembali ke Beranda
+              </button>
             </div>
           </div>
         </div>
@@ -209,175 +212,193 @@ function HospitalSelectionContent() {
   return (
     <div className="min-h-screen bg-gray-50">
       <MobileHeader title={serviceType === 'Faskes Tingkat Pertama' ? 'Pilih Faskes' : 'Pilih Rumah Sakit'} />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Mobile Summary */}
-        <div className="mb-6 bg-white rounded-lg p-4 border border-gray-200">
-          <p className="text-sm text-gray-600 mb-1">Rekomendasi untuk Anda:</p>
-          <p className="font-semibold text-[#03974a] mb-2">
-            {getServiceTypeLabel(serviceType)}
-          </p>
-          <p className="text-xs text-gray-500">
-            {hospitals.length} {serviceType === 'Faskes Tingkat Pertama' ? 'faskes' : 'rumah sakit'} terdekat
-          </p>
+      
+      {/* Mobile-Centric Container */}
+      <div className="px-4 py-4">
+        {/* Summary Card */}
+        <div className="mb-4 bg-gradient-to-br from-[#03974a] to-[#027a3d] rounded-2xl p-4 text-white shadow-lg">
+          <div className="flex items-start gap-3">
+            <div className="bg-white/20 rounded-xl p-2.5">
+              <Stethoscope className="w-5 h-5 text-white" />
+            </div>
+            <div className="flex-1">
+              <p className="text-xs text-white/80 mb-1">Rekomendasi untuk Anda</p>
+              <p className="font-bold text-base mb-2">
+                {getServiceTypeLabel(serviceType)}
+              </p>
+              <div className="flex items-center gap-2 text-xs text-white/90">
+                <MapPin className="w-3.5 h-3.5" />
+                <span>{hospitals.length} {serviceType === 'Faskes Tingkat Pertama' ? 'faskes' : 'rumah sakit'} terdekat</span>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Hospital List */}
-        <div className="space-y-6">
+        {/* Hospital Cards */}
+        <div className="space-y-3">
           {hospitals.map((hospital) => (
             <div
               key={hospital.placeId}
-              className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md hover:border-gray-300 transition-all"
+              className="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100"
             >
-              <div className="md:flex">
-                {/* Hospital Image */}
-                <div className="md:w-64 h-56 bg-gradient-to-br from-gray-100 to-gray-200 flex-shrink-0">
-                  {hospital.photoReference ? (
-                    <img
-                      src={getPhotoUrl(hospital.photoReference)}
-                      alt={hospital.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <Building2 className="w-20 h-20 text-gray-400" />
+              {/* Hospital Image - Mobile First */}
+              <div className="relative h-40 bg-gradient-to-br from-gray-100 to-gray-200">
+                {hospital.photoReference ? (
+                  <img
+                    src={getPhotoUrl(hospital.photoReference)}
+                    alt={hospital.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <Building2 className="w-16 h-16 text-gray-400" />
+                  </div>
+                )}
+                {/* Distance Badge */}
+                <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-lg">
+                  <div className="flex items-center gap-1.5">
+                    <Navigation className="w-3.5 h-3.5 text-[#03974a]" />
+                    <span className="text-sm font-bold text-[#03974a]">{hospital.distance.km} km</span>
+                  </div>
+                </div>
+                {/* Rating Badge */}
+                {hospital.rating && (
+                  <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-sm rounded-full px-2.5 py-1 shadow-lg">
+                    <div className="flex items-center gap-1">
+                      <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
+                      <span className="text-sm font-bold text-gray-900">{hospital.rating.toFixed(1)}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Hospital Info */}
+              <div className="p-4">
+                {/* Header */}
+                <div className="mb-3">
+                  <h3 className="text-base font-bold text-gray-900 mb-1.5 leading-tight">
+                    {hospital.name}
+                  </h3>
+                  <div className="flex items-center justify-between text-xs text-gray-500">
+                    {hospital.rating && (
+                      <span className="flex items-center gap-1">
+                        {hospital.userRatingsTotal} ulasan
+                      </span>
+                    )}
+                    <div className="flex items-center gap-1 text-gray-600">
+                      <Clock className="w-3 h-3" />
+                      <span>{hospital.duration.text}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Address */}
+                <div className="mb-3 pb-3 border-b border-gray-100">
+                  <div className="flex items-start gap-2 text-xs text-gray-600">
+                    <MapPin className="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-gray-400" />
+                    <span className="line-clamp-2">{hospital.address}</span>
+                  </div>
+                </div>
+
+                {/* Quick Info Grid */}
+                <div className="grid grid-cols-2 gap-2 mb-3">
+                  {hospital.phone && (
+                    <div className="flex items-center gap-1.5 text-xs text-gray-600 bg-gray-50 rounded-lg px-2.5 py-2">
+                      <Phone className="w-3.5 h-3.5 shrink-0 text-gray-400" />
+                      <span className="truncate">{hospital.phone}</span>
+                    </div>
+                  )}
+                  {hospital.availability?.estimatedWaitTime && (
+                    <div className="flex items-center gap-1.5 text-xs text-gray-600 bg-gray-50 rounded-lg px-2.5 py-2">
+                      <Clock className="w-3.5 h-3.5 shrink-0 text-gray-400" />
+                      <span className="truncate">{hospital.availability.estimatedWaitTime}</span>
                     </div>
                   )}
                 </div>
 
-                {/* Hospital Details */}
-                <div className="flex-1 p-6">
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-1">
-                        {hospital.name}
-                      </h3>
-                      {hospital.rating && (
-                        <div className="flex items-center gap-1 text-sm text-gray-600">
-                          <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                          <span className="font-semibold">{hospital.rating.toFixed(1)}</span>
-                          <span>({hospital.userRatingsTotal} ulasan)</span>
-                        </div>
-                      )}
-                    </div>
-                    <div className="text-right">
-                      <div className="flex items-center gap-1 text-[#03974a] font-semibold">
-                        <Navigation className="w-4 h-4" />
-                        <span>{hospital.distance.km} km</span>
-                      </div>
-                      <div className="flex items-center gap-1 text-sm text-gray-500 mt-1">
-                        <Clock className="w-3 h-3" />
-                        <span>{hospital.duration.text}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2 mb-4">
-                    <div className="flex items-start gap-2 text-sm text-gray-600">
-                      <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                      <span>{hospital.address}</span>
-                    </div>
-                    {hospital.phone && (
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <Phone className="w-4 h-4 flex-shrink-0" />
-                        <span>{hospital.phone}</span>
-                      </div>
-                    )}
-                    {hospital.availability?.estimatedWaitTime && (
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <Clock className="w-4 h-4 flex-shrink-0" />
-                        <span>Estimasi tunggu: <span className="font-semibold">{hospital.availability.estimatedWaitTime}</span></span>
-                      </div>
-                    )}
-                    {hospital.availability?.operationalHours && (
-                      <div className="flex items-start gap-2 text-sm text-gray-600">
-                        <Clock className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                        <span>Jam operasional: {hospital.availability.operationalHours}</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Why This Hospital is Recommended */}
-                  <div className="mb-4 p-5 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 border-2 border-green-300 rounded-xl">
-                    <h4 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                      <CheckCircle className="w-5 h-5 text-[#03974a]" />
-                      Mengapa {serviceType === 'Faskes Tingkat Pertama' ? 'faskes' : 'rumah sakit'} ini direkomendasikan
-                    </h4>
-                    <ul className="space-y-2.5 text-sm">
-                      {/* Service availability */}
-                      {serviceType === 'IGD' && hospital.availability.hasER && (
-                        <li className="flex items-start gap-2 text-gray-800">
-                          <Check className="w-4 h-4 text-[#03974a] flex-shrink-0 mt-0.5" />
-                          <span><span className="font-semibold">Layanan IGD tersedia</span> untuk penanganan darurat Anda</span>
-                        </li>
-                      )}
-                      {serviceType === 'Poli Spesialis' && hospital.availability.availableSpecialties.length > 0 && (
-                        <li className="flex items-start gap-2 text-gray-800">
-                          <Check className="w-4 h-4 text-[#03974a] flex-shrink-0 mt-0.5" />
-                          <span><span className="font-semibold">Dokter spesialis tersedia</span> ({hospital.availability.availableSpecialties.slice(0, 3).join(', ')})</span>
-                        </li>
-                      )}
-
-                      {/* Distance */}
-                      <li className="flex items-start gap-2 text-gray-800">
-                        <Check className="w-4 h-4 text-[#03974a] flex-shrink-0 mt-0.5" />
-                        <span><span className="font-semibold">Lokasi terdekat</span> dari Anda ({hospital.distance.km} km, sekitar {hospital.duration.text})</span>
+                {/* Why Recommended - Compact */}
+                <div className="mb-4 p-3 bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-xl">
+                  <h4 className="text-xs font-bold text-gray-900 mb-2 flex items-center gap-1.5">
+                    <CheckCircle className="w-3.5 h-3.5 text-[#03974a]" />
+                    Direkomendasikan karena
+                  </h4>
+                  <ul className="space-y-1.5">
+                    {/* Service availability */}
+                    {serviceType === 'IGD' && hospital.availability.hasER && (
+                      <li className="flex items-start gap-1.5 text-xs text-gray-700">
+                        <Check className="w-3 h-3 text-[#03974a] flex-shrink-0 mt-0.5" />
+                        <span>Layanan IGD tersedia</span>
                       </li>
+                    )}
+                    {serviceType === 'Poli Spesialis' && hospital.availability.availableSpecialties.length > 0 && (
+                      <li className="flex items-start gap-1.5 text-xs text-gray-700">
+                        <Check className="w-3 h-3 text-[#03974a] flex-shrink-0 mt-0.5" />
+                        <span>Dokter spesialis tersedia</span>
+                      </li>
+                    )}
 
-                      {/* Rating */}
-                      {hospital.rating && hospital.rating >= 4.0 && (
-                        <li className="flex items-start gap-2 text-gray-800">
-                          <Check className="w-4 h-4 text-[#03974a] flex-shrink-0 mt-0.5" />
-                          <span><span className="font-semibold">Rating tinggi</span> dari pasien ({hospital.rating.toFixed(1)}/5.0 dari {hospital.userRatingsTotal} ulasan)</span>
-                        </li>
-                      )}
+                    {/* Distance */}
+                    <li className="flex items-start gap-1.5 text-xs text-gray-700">
+                      <Check className="w-3 h-3 text-[#03974a] flex-shrink-0 mt-0.5" />
+                      <span>Lokasi terdekat ({hospital.distance.km} km)</span>
+                    </li>
 
-                      {/* Quick access */}
-                      {parseFloat(hospital.distance.km) < 5 && (
-                        <li className="flex items-start gap-2 text-gray-800">
-                          <Check className="w-4 h-4 text-[#03974a] flex-shrink-0 mt-0.5" />
-                          <span><span className="font-semibold">Akses cepat</span> dalam radius 5 km untuk penanganan segera</span>
-                        </li>
-                      )}
-                    </ul>
-                  </div>
+                    {/* Rating */}
+                    {hospital.rating && hospital.rating >= 4.0 && (
+                      <li className="flex items-start gap-1.5 text-xs text-gray-700">
+                        <Check className="w-3 h-3 text-[#03974a] flex-shrink-0 mt-0.5" />
+                        <span>Rating {hospital.rating.toFixed(1)}/5.0 dari pasien</span>
+                      </li>
+                    )}
 
-                  {/* Action Buttons */}
-                  <div className="flex gap-3 pt-2">
-                    <button
-                      onClick={() => handleOpenInMaps(hospital)}
-                      className="flex-1 flex items-center justify-center gap-2 px-5 py-3 border-2 border-[#03974a] text-[#03974a] rounded-xl hover:bg-green-50 transition-all font-semibold"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                      <span>Buka di Maps</span>
-                    </button>
-                    <button
-                      onClick={() => handleBookAppointment(hospital)}
-                      disabled={bookingInProgress === hospital.placeId}
-                      className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-[#03974a] to-[#027a3d] text-white rounded-xl hover:shadow-md transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {bookingInProgress === hospital.placeId ? (
-                        <>
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                          <span>Memproses...</span>
-                        </>
-                      ) : (
-                        <>
-                          <Check className="w-4 h-4" />
-                          <span>Buat Janji</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
+                    {/* Quick access */}
+                    {parseFloat(hospital.distance.km) < 5 && (
+                      <li className="flex items-start gap-1.5 text-xs text-gray-700">
+                        <Check className="w-3 h-3 text-[#03974a] flex-shrink-0 mt-0.5" />
+                        <span>Akses cepat dalam radius 5 km</span>
+                      </li>
+                    )}
+                  </ul>
+                </div>
+
+                {/* Action Buttons - Mobile Touch Friendly */}
+                <div className="flex flex-col gap-2">
+                  <button
+                    onClick={() => handleBookAppointment(hospital)}
+                    disabled={bookingInProgress === hospital.placeId}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-gradient-to-r from-[#03974a] to-[#027a3d] text-white rounded-xl font-bold text-sm shadow-lg active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {bookingInProgress === hospital.placeId ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Memproses...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Check className="w-4 h-4" />
+                        <span>Buat Janji Temu</span>
+                      </>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => handleOpenInMaps(hospital)}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border-2 border-[#03974a] text-[#03974a] rounded-xl font-semibold text-sm active:scale-[0.98] transition-all"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>Lihat di Google Maps</span>
+                  </button>
                 </div>
               </div>
             </div>
           ))}
         </div>
 
+        {/* Empty State */}
         {hospitals.length === 0 && !error && (
-          <div className="text-center py-12">
-            <Building2 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-600">Tidak ada rumah sakit ditemukan di sekitar Anda</p>
+          <div className="text-center py-16">
+            <Building2 className="w-20 h-20 text-gray-300 mx-auto mb-4" />
+            <p className="text-gray-600 text-sm">Tidak ada {serviceType === 'Faskes Tingkat Pertama' ? 'faskes' : 'rumah sakit'} ditemukan</p>
+            <p className="text-gray-400 text-xs mt-1">Coba perluas radius pencarian</p>
           </div>
         )}
       </div>
