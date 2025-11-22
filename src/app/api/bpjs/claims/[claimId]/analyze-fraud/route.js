@@ -142,25 +142,40 @@ export async function GET(request, { params }) {
     }
 
     console.log('✅ Claim found:', claim.id);
-    
+
+    // Fetch diagnoses from database
+    const { data: diagnoses } = await supabase
+      .from('claim_diagnoses')
+      .select('*')
+      .eq('claim_id', claimId);
+
+    // Fetch procedures from database
+    const { data: procedures } = await supabase
+      .from('claim_procedures')
+      .select('*')
+      .eq('claim_id', claimId);
+
+    console.log(`📊 Found ${diagnoses?.length || 0} diagnoses and ${procedures?.length || 0} procedures`);
+
     const mockData = await getMockFraudulentData(claimId);
-    
+
     const richClaimObject = {
         ...claim,
         patient_name: mockData?.resumeData?.nama || claim.patient_name,
         dataRawat: {
-            tanggalMasuk: mockData?.resumeData?.tanggalMasuk,
-            tanggalKeluar: mockData?.resumeData?.tanggalKeluar,
+            tanggalMasuk: mockData?.resumeData?.tanggalMasuk || claim.admission_date,
+            tanggalKeluar: mockData?.resumeData?.tanggalKeluar || claim.discharge_date,
         },
-        diagnoses: mockData?.resumeData?.diagnosisUtama ? [{
+        diagnoses: diagnoses && diagnoses.length > 0 ? diagnoses : (mockData?.resumeData?.diagnosisUtama ? [{
             diagnosis_type: 'primary',
             diagnosis_name: mockData.resumeData.diagnosisUtama,
             icd10_code: mockData.resumeData.icd10Utama,
-        }] : [],
-        procedures: mockData?.resumeData?.tindakan ? [{
+        }] : []),
+        procedures: procedures && procedures.length > 0 ? procedures : (mockData?.resumeData?.tindakan ? [{
             procedure_name: mockData.resumeData.tindakan,
             icd9cm_code: mockData.resumeData.icd9cm,
-        }] : [],
+        }] : []),
+        los_days: claim.los_days,
         pemeriksaanPenunjang: {
             laboratorium: {
                 tanggal: mockData?.resumeData?.labTanggal,

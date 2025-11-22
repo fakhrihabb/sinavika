@@ -12,49 +12,43 @@ export default function FraudDashboardPage() {
 
   const analyzeClaimForFraud = async (claim) => {
     try {
-      // Skip if required fields are missing
-      if (!claim.tarif_rs || !claim.tarif_ina_cbg) {
-        console.warn(`Claim ${claim.id} missing required tariff fields, skipping fraud analysis`);
-        return {
-          risk_score: 0,
-          risk_level: 'low',
-          risk_factors: [{
-            factor: 'Data tidak lengkap',
-            detail: 'Tarif RS atau tarif INA-CBG tidak tersedia'
-          }]
-        };
-      }
-
-      // For num_procedures, we'd ideally get this from a relation, but we'll use a placeholder
-      const body = {
-        tarif_rs: parseFloat(claim.tarif_rs) || 0,
-        tarif_inacbg: parseFloat(claim.tarif_ina_cbg) || 0,
-        los_days: claim.los_days || 1,
-        num_procedures: claim.procedures?.length || 2, // Placeholder
-        care_class: claim.care_class || '3',
-        diagnosis_severity: 'normal', // Placeholder
-        provider_claims_count: 50, // Placeholder
-        provider_fraud_history_rate: 0.1, // Placeholder
-        hospital_fraud_history_rate: 0.05, // Placeholder
-      };
-
-      const response = await fetch('/api/ml/fraud-detection', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
-      });
-
+      // Call the combined fraud analysis API (document + ML)
+      const response = await fetch(`/api/bpjs/claims/${claim.id}/analyze-fraud`);
       const result = await response.json();
 
       if (result.success) {
-        return result.fraud_detection;
+        // Convert combined analysis to display format
+        return {
+          risk_score: result.data.confidenceScore || 0,
+          risk_level: result.data.confidenceScore >= 70 ? 'high' :
+                      result.data.confidenceScore >= 40 ? 'medium' : 'low',
+          risk_factors: [
+            // Document issues
+            ...(result.data.documentIssues || []).map(issue => ({
+              factor: issue.code,
+              detail: issue.description
+            })),
+            // ML issues
+            ...(result.data.mlRiskFactors || [])
+          ]
+        };
       }
-      return null;
+
+      return {
+        risk_score: 0,
+        risk_level: 'low',
+        risk_factors: []
+      };
     } catch (err) {
       console.error(`Error analyzing claim ${claim.id}:`, err);
-      return null;
+      return {
+        risk_score: 0,
+        risk_level: 'low',
+        risk_factors: [{
+          factor: 'Error',
+          detail: 'Gagal menganalisis klaim'
+        }]
+      };
     }
   };
 
