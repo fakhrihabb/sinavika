@@ -3,8 +3,11 @@ import { useState, useEffect } from 'react';
 import { Stethoscope, FileText, Clock, Activity, Calendar, CalendarCheck, Loader2, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRoleModal } from '@/contexts/RoleModalContext';
 
 export default function PesertaPage() {
+  const { openModal } = useRoleModal();
+  
   const [stats, setStats] = useState([
     { label: "Total Keluhan", value: "0", icon: Activity, color: "text-blue-600" },
     { label: "Bulan Ini", value: "0", icon: Calendar, color: "text-green-600" },
@@ -159,6 +162,16 @@ export default function PesertaPage() {
             className="mb-3"
           />
           <h1 className="text-2xl font-bold text-gray-900">SINAVIKA</h1>
+        </div>
+
+        {/* Ganti Role Button */}
+        <div className="absolute top-4 right-4">
+          <button
+            onClick={openModal}
+            className="px-4 py-2 bg-white/90 backdrop-blur-sm text-gray-800 rounded-full hover:bg-white transition-all text-sm font-medium shadow-md border border-gray-200"
+          >
+            Ganti Role
+          </button>
         </div>
 
         {/* Wave decoration */}
