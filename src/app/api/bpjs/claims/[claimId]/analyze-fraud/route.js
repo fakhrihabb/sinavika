@@ -105,20 +105,43 @@ async function getMockFraudulentData(claimId) {
 
 export async function GET(request, { params }) {
   try {
-    const claimId = params.claimId;
+    // Next.js 15+ requires awaiting the entire params object
+    const resolvedParams = await params;
+    const claimId = resolvedParams.claimId;
 
+    console.log('🔍 Analyze-fraud: Looking for claim ID:', claimId);
+
+    if (!claimId) {
+      return NextResponse.json(
+        { success: false, error: 'Claim ID missing' },
+        { status: 400 }
+      );
+    }
+
+    // Use maybeSingle() instead of single() for better error handling
     const { data: claim, error: claimError } = await supabase
       .from('claims')
       .select('*')
       .eq('id', claimId)
-      .single();
+      .maybeSingle();
 
-    if (claimError || !claim) {
+    if (claimError) {
+      console.error('❌ Database error:', claimError);
       return NextResponse.json(
-        { success: false, error: 'Klaim tidak ditemukan' },
+        { success: false, error: 'Database error', details: claimError.message },
+        { status: 500 }
+      );
+    }
+
+    if (!claim) {
+      console.error('❌ Claim not found:', claimId);
+      return NextResponse.json(
+        { success: false, error: 'Klaim tidak ditemukan', claimId },
         { status: 404 }
       );
     }
+
+    console.log('✅ Claim found:', claim.id);
     
     const mockData = await getMockFraudulentData(claimId);
     

@@ -12,13 +12,26 @@ export default function FraudDashboardPage() {
 
   const analyzeClaimForFraud = async (claim) => {
     try {
+      // Skip if required fields are missing
+      if (!claim.tarif_rs || !claim.tarif_ina_cbg) {
+        console.warn(`Claim ${claim.id} missing required tariff fields, skipping fraud analysis`);
+        return {
+          risk_score: 0,
+          risk_level: 'low',
+          risk_factors: [{
+            factor: 'Data tidak lengkap',
+            detail: 'Tarif RS atau tarif INA-CBG tidak tersedia'
+          }]
+        };
+      }
+
       // For num_procedures, we'd ideally get this from a relation, but we'll use a placeholder
       const body = {
-        tarif_rs: claim.tarif_rs,
-        tarif_inacbg: claim.tarif_ina_cbg,
-        los_days: claim.los_days,
+        tarif_rs: parseFloat(claim.tarif_rs) || 0,
+        tarif_inacbg: parseFloat(claim.tarif_ina_cbg) || 0,
+        los_days: claim.los_days || 1,
         num_procedures: claim.procedures?.length || 2, // Placeholder
-        care_class: claim.care_class,
+        care_class: claim.care_class || '3',
         diagnosis_severity: 'normal', // Placeholder
         provider_claims_count: 50, // Placeholder
         provider_fraud_history_rate: 0.1, // Placeholder
