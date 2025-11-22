@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useRoleModal } from '@/contexts/RoleModalContext';
 import { LayoutDashboard, FileSearch, TrendingUp, AlertTriangle, Menu, X } from 'lucide-react';
 
-export default function BPJSNavbar() {
+export default function BpjsNavbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { openModal } = useRoleModal();
 

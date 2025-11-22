@@ -128,7 +128,7 @@ export default function RumahSakitPage() {
             </Link>
 
             <Link
-              href="/rumah-sakit/klaim"
+              href="/rumah-sakit/pre-check"
               className="group block bg-white rounded-xl p-6 border-2 border-[#03974a] shadow-md hover:shadow-lg transition-all transform hover:scale-105"
             >
               <div className="flex items-start justify-between mb-3">

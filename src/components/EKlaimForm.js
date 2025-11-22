@@ -315,6 +315,13 @@ export default function EKlaimForm({ claimData, onFormChange, aiFilledData }) {
     handleChange('procedures', newProcedures);
   };
 
+  useEffect(() => {
+    // Auto-run grouper when critical data changes
+    if(formData.icd10Primary && formData.kelasRawat) {
+        runGrouper();
+    }
+  }, [formData.icd10Primary, formData.kelasRawat, formData.procedures]);
+
   // Simulate INA-CBG Grouper (simplified version based on video)
   const runGrouper = () => {
     setIsGrouping(true);
@@ -327,18 +334,11 @@ export default function EKlaimForm({ claimData, onFormChange, aiFilledData }) {
 
       if (formData.treatmentType === 'Rawat Inap') {
         baseRate = 1165600; // Base for rawat inap
-
-        // Adjust based on class
-        if (formData.kelasRawat === '1') {
-          baseRate = baseRate * 2.3;
-        } else if (formData.kelasRawat === '2') {
-          baseRate = baseRate * 1.5;
-        }
+        if (formData.kelasRawat === '1') baseRate *= 2.3;
+        else if (formData.kelasRawat === '2') baseRate *= 1.5;
       }
 
-      // Adjust based on diagnosis (simplified)
       if (formData.icd10Primary) {
-        // Example adjustments
         if (formData.icd10Primary.startsWith('I10')) {
           inaCbgCode = 'K-3-10-I';
           description = 'Hipertensi Esensial';
@@ -354,41 +354,42 @@ export default function EKlaimForm({ claimData, onFormChange, aiFilledData }) {
         }
       }
 
-      // Add secondary diagnosis bonus
-      if (formData.icd10Secondary) {
-        baseRate += 800000;
-      }
+      if (formData.icd10Secondary) baseRate += 800000;
+      if (formData.icd10Tertiary) baseRate += 1500000;
 
-      // Add tertiary diagnosis bonus
-      if (formData.icd10Tertiary) {
-        baseRate += 1500000;
-      }
-
-      // Add procedures
       formData.procedures.forEach(proc => {
-        if (proc.icd9cm.includes('99.04')) { // Transfusi
-          baseRate += 500000;
-        } else if (proc.icd9cm.includes('87.44')) { // Rontgen
-          baseRate += 150000;
-        } else if (proc.icd9cm.includes('39.95')) { // Cuci Darah
-          baseRate += 1800000;
-        }
+        if (proc.icd9cm?.includes('99.04')) baseRate += 500000; // Transfusi
+        else if (proc.icd9cm?.includes('87.44')) baseRate += 150000; // Rontgen
+        else if (proc.icd9cm?.includes('39.95')) baseRate += 1800000; // Cuci Darah
       });
+
+      const finalTarifInaCbg = Math.round(baseRate);
+      // Mock Tarif RS to be 115% of INA-CBG to have a value for fraud detection
+      const mockTotalTarifRS = Math.round(finalTarifInaCbg * 1.15);
 
       setGrouperResult({
         code: inaCbgCode,
         description: description,
-        tarif: baseRate
+        tarif: finalTarifInaCbg
       });
 
-      const newFormData = { ...formData };
-      newFormData.inaCbgCode = inaCbgCode;
-      newFormData.inaCbgDescription = description;
-      newFormData.tarifInaCbg = baseRate.toString();
+      const newFormData = { 
+          ...formData,
+          inaCbgCode: inaCbgCode,
+          inaCbgDescription: description,
+          tarifInaCbg: finalTarifInaCbg.toString(),
+          totalTarifRS: mockTotalTarifRS.toString(), // Set the total RS tariff
+      };
+      
+      // To make it look more realistic, put the mock total into one of the sub-fields
+      newFormData.tarifRS.obat = mockTotalTarifRS.toString();
+
       setFormData(newFormData);
+       if (onFormChange) onFormChange(newFormData);
+
 
       setIsGrouping(false);
-    }, 1500);
+    }, 1000);
   };
 
   const isFieldHighlighted = (field) => highlightedFields.includes(field);

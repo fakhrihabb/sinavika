@@ -24,10 +24,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
-export default function PreCheckKlaimPage({ params }) {
-  // Unwrap params Promise for Next.js 16
-  const unwrappedParams = use(params);
-  const claimId = unwrappedParams.claimId;
+export default function PreCheckKlaimPage() {
   const [expandedSections, setExpandedSections] = useState({
     rujukan: true,
     resume: true,
@@ -40,69 +37,66 @@ export default function PreCheckKlaimPage({ params }) {
   const [claimData, setClaimData] = useState(null);
   const [documentChecklist, setDocumentChecklist] = useState({});
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
 
   useEffect(() => {
-    // Simulate fetching data
-    const fetchClaimData = async () => {
-      setLoading(true);
-      // In a real app, you would fetch this from an API
-      // const response = await fetch(`/api/claims/${params.claimId}`);
-      // const data = await response.json();
-      const mockData = {
-        id: "CLM-2025-1847",
-        patientName: "Ahmad Fauzi",
-        patientId: "0001234567890",
-        sepNumber: "0301R0011024Y000001",
-        hospital: "RS Cipto Mangunkusumo",
-        admissionDate: "2020-09-05",
-        dischargeDate: "2020-09-05",
-        los: "0 hari",
-        diagnosis: "Diabetes Type 2 + Komplikasi",
-        treatmentType: "Rawat Jalan",
-        doctor: "dr. Budi",
-        amount: "Rp 300,000"
-      };
-      const mockChecklist = {
-        rujukan: {
-          title: "Surat Rujukan",
-          items: [
-            { id: 'rujukan_valid', name: 'Surat rujukan tersedia dan masih berlaku', status: 'incomplete', file: null },
-            { id: 'rujukan_sesuai', name: 'Diagnosa rujukan sesuai dengan klaim', status: 'incomplete', file: null },
-            { id: 'rujukan_tanggal', name: 'Tanggal rujukan valid (tidak kadaluarsa)', status: 'incomplete', file: null }
-          ]
-        },
-        resume: {
-          title: "Resume Medis",
-          items: [
-            { id: 'resume_lengkap', name: 'Resume medis lengkap dan terbaca', status: 'incomplete', file: null },
-            { id: 'resume_ttd', name: 'Tanda tangan dokter dan stempel RS', status: 'incomplete', file: null },
-            { id: 'resume_icd', name: 'Kode ICD-10 tercantum dan sesuai', status: 'incomplete', file: null }
-          ]
-        },
-        penunjang: {
-          title: "Hasil Penunjang",
-          items: [
-            { id: 'lab_required', name: 'Hasil laboratorium (wajib untuk diagnosis ini)', status: 'incomplete', file: null },
-            { id: 'radiologi', name: 'Hasil radiologi (jika diperlukan)', status: 'na', file: null },
-            { id: 'penunjang_tanggal', name: 'Tanggal hasil penunjang sesuai masa rawat', status: 'incomplete', file: null }
-          ]
-        },
-        formulir: {
-          title: "Formulir Lain",
-          items: [
-            { id: 'sep', name: 'SEP (Surat Elegibilitas Peserta)', status: 'incomplete', file: null },
-            { id: 'informed_consent', name: 'Informed consent (jika ada tindakan)', status: 'na', file: null },
-            { id: 'resep', name: 'Resep obat', status: 'incomplete', file: null }
-          ]
-        }
-      };
-      setClaimData(mockData);
-      setDocumentChecklist(mockChecklist);
-      setLoading(false);
+    // This page is for creating a new claim, so we start with a blank slate.
+    setLoading(true);
+
+    const initialClaimData = {
+      id: "(akan dibuat saat submit)",
+      patientName: "",
+      patientId: "",
+      sepNumber: "",
+      hospital: "RS Mitra Keluarga", // Example default, can be fetched from user session
+      admissionDate: "",
+      dischargeDate: "",
+      los: "0 hari",
+      diagnosis: "",
+      treatmentType: "Rawat Jalan",
+      doctor: "",
+      amount: "Rp 0"
     };
 
-    fetchClaimData();
-  }, [claimId]);
+    const initialChecklist = {
+      rujukan: {
+        title: "Surat Rujukan",
+        items: [
+          { id: 'rujukan_valid', name: 'Surat rujukan tersedia dan masih berlaku', status: 'incomplete', file: null },
+          { id: 'rujukan_sesuai', name: 'Diagnosa rujukan sesuai dengan klaim', status: 'incomplete', file: null },
+          { id: 'rujukan_tanggal', name: 'Tanggal rujukan valid (tidak kadaluarsa)', status: 'incomplete', file: null }
+        ]
+      },
+      resume: {
+        title: "Resume Medis",
+        items: [
+          { id: 'resume_lengkap', name: 'Resume medis lengkap dan terbaca', status: 'incomplete', file: null },
+          { id: 'resume_ttd', name: 'Tanda tangan dokter dan stempel RS', status: 'incomplete', file: null },
+          { id: 'resume_icd', name: 'Kode ICD-10 tercantum dan sesuai', status: 'incomplete', file: null }
+        ]
+      },
+      penunjang: {
+        title: "Hasil Penunjang",
+        items: [
+          { id: 'lab_required', name: 'Hasil laboratorium (wajib untuk diagnosis ini)', status: 'incomplete', file: null },
+          { id: 'radiologi', name: 'Hasil radiologi (jika diperlukan)', status: 'na', file: null },
+          { id: 'penunjang_tanggal', name: 'Tanggal hasil penunjang sesuai masa rawat', status: 'incomplete', file: null }
+        ]
+      },
+      formulir: {
+        title: "Formulir Lain",
+        items: [
+          { id: 'sep', name: 'SEP (Surat Elegibilitas Peserta)', status: 'incomplete', file: null },
+          { id: 'informed_consent', name: 'Informed consent (jika ada tindakan)', status: 'na', file: null },
+          { id: 'resep', name: 'Resep obat', status: 'incomplete', file: null }
+        ]
+      }
+    };
+    setClaimData(initialClaimData);
+    setDocumentChecklist(initialChecklist);
+    setLoading(false);
+  }, []);
 
   // Calculate readiness score
   const calculateReadinessScore = () => {
@@ -222,55 +216,37 @@ export default function PreCheckKlaimPage({ params }) {
     setDocumentChecklist(prev => {
       const updated = { ...prev };
 
+      // Helper to mark all non-'na' items in a section as complete
+      const markSectionComplete = (sectionKey, specificFileItemIds = []) => {
+        if (updated[sectionKey]) {
+          updated[sectionKey].items = updated[sectionKey].items.map(item => {
+            let newStatus = item.status;
+            let newFile = item.file;
+
+            if (item.status !== 'na') {
+              newStatus = 'complete';
+            }
+            if (specificFileItemIds.includes(item.id)) {
+                newFile = fileName;
+            }
+            return { ...item, status: newStatus, file: newFile };
+          });
+        }
+      };
+
       // Update checklist based on document type
       if (documentType === 'resume_medis') {
-        if (updated.resume) {
-          updated.resume.items = updated.resume.items.map(item => ({
-            ...item,
-            status: item.id === 'resume_lengkap' || item.id === 'resume_icd' ? 'complete' : item.status,
-            file: item.id === 'resume_lengkap' ? fileName : item.file
-          }));
-        }
+        markSectionComplete('resume', ['resume_lengkap']);
       } else if (documentType === 'lab_result') {
-        if (updated.penunjang) {
-          updated.penunjang.items = updated.penunjang.items.map(item => ({
-            ...item,
-            status: item.id === 'lab_required' || item.id === 'penunjang_tanggal' ? 'complete' : item.status,
-            file: item.id === 'lab_required' ? fileName : item.file
-          }));
-        }
+        markSectionComplete('penunjang', ['lab_required']);
       } else if (documentType === 'radiology') {
-        if (updated.penunjang) {
-          updated.penunjang.items = updated.penunjang.items.map(item => ({
-            ...item,
-            status: item.id === 'radiologi' || item.id === 'penunjang_tanggal' ? 'complete' : item.status,
-            file: item.id === 'radiologi' ? fileName : item.file
-          }));
-        }
+        markSectionComplete('penunjang', ['radiologi']);
       } else if (documentType === 'sep' || documentType === 'surat_eligibilitas_peserta') {
-        if (updated.formulir) {
-          updated.formulir.items = updated.formulir.items.map(item => ({
-            ...item,
-            status: item.id === 'sep' ? 'complete' : item.status,
-            file: item.id === 'sep' ? fileName : item.file
-          }));
-        }
+        markSectionComplete('formulir', ['sep']);
       } else if (documentType === 'surat_rujukan') {
-        if (updated.rujukan) {
-          updated.rujukan.items = updated.rujukan.items.map(item => ({
-            ...item,
-            status: 'complete',
-            file: fileName
-          }));
-        }
+        markSectionComplete('rujukan', ['rujukan_valid']); // Assuming rujukan_valid is the main item to attach the file
       } else if (documentType === 'resep_obat') {
-        if (updated.formulir) {
-          updated.formulir.items = updated.formulir.items.map(item => ({
-            ...item,
-            status: item.id === 'resep' ? 'complete' : item.status,
-            file: item.id === 'resep' ? fileName : item.file
-          }));
-        }
+        markSectionComplete('formulir', ['resep']);
       }
 
       return updated;
@@ -289,6 +265,132 @@ export default function PreCheckKlaimPage({ params }) {
   // Handle form data change
   const handleFormChange = (newFormData) => {
     setFormData(newFormData);
+  };
+
+  // Handle submit to BPJS
+  const handleSubmitToBPJS = async () => {
+    if (!formData || !claimData) {
+      alert('Data form belum lengkap');
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      setSubmitError(null);
+
+      // Transform formData to API format
+      const submitData = {
+        // Basic info
+        hospitalName: claimData.hospital || 'RS Cipto Mangunkusumo',
+        hospitalCode: 'RS003',
+
+        // Patient data
+        patientName: formData.patientName,
+        patientBpjsNumber: formData.patientId,
+        sepNumber: formData.sepNumber,
+        rmNumber: formData.nomorRM,
+        patientDob: null, // TODO: Add to form if needed
+        patientGender: null, // TODO: Add to form if needed
+
+        // Treatment data
+        treatmentType: formData.treatmentType,
+        admissionDate: formData.admissionDate,
+        dischargeDate: formData.dischargeDate,
+        careClass: formData.kelasRawat,
+        dpjp: formData.dpjp,
+
+        // Diagnoses
+        diagnoses: [],
+
+        // Procedures
+        procedures: formData.procedures || [],
+
+        // GROUPER result
+        inaCbgCode: formData.inaCbgCode,
+        inaCbgDescription: formData.inaCbgDescription,
+        tarifInaCbg: formData.tarifInaCbg,
+
+        // Calculate total RS tariff
+        tarifRS: Object.values(formData.tarifRS || {}).reduce((sum, val) => {
+          const num = parseFloat(val) || 0;
+          return sum + num;
+        }, 0),
+
+        // Documents from checklist
+        documents: [],
+
+        // AI flags - check if there are any warnings
+        aiRiskScore: 0,
+        aiFlags: []
+      };
+
+      // Add diagnoses
+      if (formData.diagnosisPrimary && formData.icd10Primary) {
+        submitData.diagnoses.push({
+          type: 'primary',
+          name: formData.diagnosisPrimary,
+          icd10: formData.icd10Primary
+        });
+      }
+      if (formData.diagnosisSecondary && formData.icd10Secondary) {
+        submitData.diagnoses.push({
+          type: 'secondary',
+          name: formData.diagnosisSecondary,
+          icd10: formData.icd10Secondary
+        });
+      }
+      if (formData.diagnosisTertiary && formData.icd10Tertiary) {
+        submitData.diagnoses.push({
+          type: 'tertiary',
+          name: formData.diagnosisTertiary,
+          icd10: formData.icd10Tertiary
+        });
+      }
+
+      // Collect documents from checklist
+      Object.entries(documentChecklist).forEach(([category, section]) => {
+        section.items.forEach(item => {
+          if (item.status === 'complete' && item.file) {
+            submitData.documents.push({
+              type: item.name,
+              fileName: item.file.name || item.name,
+              fileSize: item.file.size || null,
+              verified: true
+            });
+          }
+        });
+      });
+
+      // Submit to API
+      const response = await fetch('/api/bpjs/claims/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(submitData),
+      });
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || 'Gagal mengirim klaim');
+      }
+
+      // Success!
+      alert('✓ Klaim berhasil dikirim ke BPJS!\n\nKlaim ID: ' + result.data.claimId);
+
+      // Redirect to dashboard after 1.5 seconds
+      setTimeout(() => {
+        window.location.href = '/rumah-sakit';
+      }, 1500);
+
+    } catch (error) {
+      console.error('Submit error:', error);
+      setSubmitError(error.message);
+      alert('✗ Gagal mengirim klaim:\n' + error.message);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (loading) {
@@ -358,7 +460,7 @@ export default function PreCheckKlaimPage({ params }) {
                     <FileText className="w-5 h-5 text-[#144782]" />
                     <div>
                       <p className="text-xs text-gray-500">ID Klaim</p>
-                      <p className="font-semibold text-gray-900 font-mono">{claimData.id}</p>
+                      <p className="font-semibold text-gray-900 font-mono">(akan dibuat saat submit)</p>
                     </div>
                   </div>
                 </div>
@@ -502,16 +604,26 @@ export default function PreCheckKlaimPage({ params }) {
                   </p>
                 </div>
                 <button
-                  disabled={!readiness.readyToSubmit}
+                  onClick={handleSubmitToBPJS}
+                  disabled={!readiness.readyToSubmit || submitting}
                   className={`px-8 py-4 rounded-xl font-bold text-lg transition-all ${
-                    readiness.readyToSubmit
+                    readiness.readyToSubmit && !submitting
                       ? 'bg-gradient-to-r from-[#03974a] to-[#144782] text-white hover:shadow-xl hover:scale-105'
                       : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                   }`}
                 >
                   <div className="flex items-center gap-2">
-                    <Send className="w-6 h-6" />
-                    Kirim ke BPJS
+                    {submitting ? (
+                      <>
+                        <Clock className="w-6 h-6 animate-spin" />
+                        Mengirim...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-6 h-6" />
+                        Kirim ke BPJS
+                      </>
+                    )}
                   </div>
                 </button>
               </div>
