@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import BPJSNavbar from '@/components/BPJSNavbar';
+import BpjsNavbar from '@/components/BPJSNavbar';
 import { AlertCircle, ShieldCheck, ShieldAlert, Search, Activity, FileText, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -122,7 +122,7 @@ export default function FraudDashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <BPJSNavbar />
+      <BpjsNavbar />
       <main className="max-w-[1920px] mx-auto px-8 py-8">
         <div className="flex justify-between items-center mb-8">
             <div className="flex items-center gap-4">
