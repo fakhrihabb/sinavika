@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect, use } from 'react';
-import BpjsNavbar from '@/components/BpjsNavbar';
+import BPJSNavbar from '@/components/BPJSNavbar';
 import {
   ArrowLeft,
   FileText,
@@ -268,7 +268,7 @@ export default function DetailVerifikasiKlaimPage({ params }) {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <BpjsNavbar />
+        <BPJSNavbar />
         <div className="flex items-center justify-center h-[calc(100vh-80px)]">
           <div className="text-center">
             <Loader2 className="w-12 h-12 text-[#144782] animate-spin mx-auto mb-4" />
@@ -283,7 +283,7 @@ export default function DetailVerifikasiKlaimPage({ params }) {
   if (error || !claimData) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <BpjsNavbar />
+        <BPJSNavbar />
         <div className="flex items-center justify-center h-[calc(100vh-80px)]">
           <div className="text-center max-w-md">
             <XCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
@@ -330,7 +330,7 @@ export default function DetailVerifikasiKlaimPage({ params }) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <BpjsNavbar />
+      <BPJSNavbar />
 
       <div className="max-w-[1920px] mx-auto px-8 py-8">
         {/* Header */}
