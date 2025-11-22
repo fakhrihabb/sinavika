@@ -155,9 +155,7 @@ function JanjiTemuContent() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="md:hidden">
-        <MobileHeader title="Janji Temu Saya" />
-      </div>
+      <MobileHeader title="Janji Temu Saya" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Success Message */}
@@ -174,14 +172,6 @@ function JanjiTemuContent() {
             </div>
           </div>
         )}
-
-        {/* Header - Hidden on mobile, shown on desktop */}
-        <div className="mb-8 hidden md:block">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Janji Temu Saya</h1>
-          <p className="text-gray-600">
-            Daftar janji temu Anda dengan rumah sakit beserta ringkasan keluhan
-          </p>
-        </div>
 
         {/* Appointments List */}
         {appointments.length > 0 ? (

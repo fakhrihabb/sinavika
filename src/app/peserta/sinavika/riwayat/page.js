@@ -127,9 +127,7 @@ function RiwayatPageContent() {
   if (selectedTriage) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <div className="md:hidden">
-          <MobileHeader title="Detail Keluhan" />
-        </div>
+        <MobileHeader title="Detail Keluhan" />
 
         <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <button
@@ -268,20 +266,9 @@ function RiwayatPageContent() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="md:hidden">
-        <MobileHeader title="Riwayat Keluhan" />
-      </div>
+      <MobileHeader title="Riwayat Keluhan" />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header - Hidden on mobile, shown on desktop */}
-        <div className="mb-6 hidden md:block">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-            Riwayat Keluhan
-          </h1>
-          <p className="text-gray-600">
-            Lihat semua hasil keluhan kesehatan Anda sebelumnya
-          </p>
-        </div>
 
         {/* Filters */}
         <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
