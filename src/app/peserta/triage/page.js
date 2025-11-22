@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import PesertaNavbar from '@/components/PesertaNavbar';
 import {
   ArrowLeft,
   ArrowRight,
@@ -17,7 +18,6 @@ import {
   Clock
 } from 'lucide-react';
 import Link from 'next/link';
-import MobileHeader from '@/components/MobileHeader';
 
 export default function TriagePage() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -29,7 +29,6 @@ export default function TriagePage() {
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [currentAnswer, setCurrentAnswer] = useState('');
   const [selectedChoices, setSelectedChoices] = useState([]); // For multi-choice questions
-  const [showExitModal, setShowExitModal] = useState(false);
 
   // Initialize first question
   useEffect(() => {
@@ -373,9 +372,9 @@ export default function TriagePage() {
   if (triageResult) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <MobileHeader title="Hasil Triase" />
+        <PesertaNavbar />
 
-        <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sm:p-8">
             <div className="text-center mb-6">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
@@ -548,55 +547,12 @@ export default function TriagePage() {
     );
   }
 
-  // Custom back handler for triage form
-  const handleBackClick = (e) => {
-    e.preventDefault();
-    if (conversationHistory.length > 0) {
-      setShowExitModal(true);
-    } else {
-      window.location.href = '/peserta/sinavika';
-    }
-  };
-
   // Render form interface
   return (
     <div className="min-h-screen bg-gray-50">
-      <MobileHeader title="Cek Keluhan" onBackClick={handleBackClick} />
+      <PesertaNavbar />
 
-      {/* Exit Confirmation Modal */}
-      {showExitModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
-            <div className="flex items-start gap-3 mb-4">
-              <AlertCircle className="w-6 h-6 text-orange-500 flex-shrink-0 mt-0.5" />
-              <div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">
-                  Keluar dari Cek Keluhan?
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Anda sudah menjawab {conversationHistory.length} pertanyaan. Jika keluar sekarang, semua progres akan hilang dan Anda harus mengulang dari awal.
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-3 mt-6">
-              <button
-                onClick={() => setShowExitModal(false)}
-                className="flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
-              >
-                Lanjut Cek Keluhan
-              </button>
-              <Link
-                href="/peserta/sinavika"
-                className="flex-1 px-4 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-colors text-center"
-              >
-                Ya, Keluar
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
         {/* Progress Bar */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
@@ -623,17 +579,7 @@ export default function TriagePage() {
               <p className="text-gray-600">Memuat pertanyaan...</p>
             </div>
           ) : currentQuestion ? (
-            <div className="space-y-6 relative">
-              {/* Loading Overlay */}
-              {loading && (
-                <div className="absolute inset-0 bg-white/80 backdrop-blur-sm rounded-2xl flex items-center justify-center z-10">
-                  <div className="text-center">
-                    <Loader2 className="w-12 h-12 animate-spin text-[#03974a] mx-auto mb-3" />
-                    <p className="text-gray-700 font-medium">Memuat</p>
-                  </div>
-                </div>
-              )}
-
+            <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">
                   {currentQuestion.nextQuestion}

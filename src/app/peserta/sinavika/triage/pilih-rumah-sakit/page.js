@@ -134,7 +134,7 @@ function HospitalSelectionContent() {
       }
 
       // Redirect to Janji Temu list page
-      router.push('/peserta/janji-temu?success=true');
+      router.push('/peserta/sinavika/janji-temu?success=true');
     } catch (err) {
       alert(`Gagal membuat janji temu: ${err.message}`);
       setBookingInProgress(null);

@@ -249,7 +249,7 @@ function RiwayatPageContent() {
                   </Link>
                 ) : (
                   <Link
-                    href={`/peserta/triage/pilih-rumah-sakit?triageId=${selectedTriage.triage_id}&serviceType=${encodeURIComponent(selectedTriage.rekomendasi_layanan)}`}
+                    href={`/peserta/sinavika/triage/pilih-rumah-sakit?triageId=${selectedTriage.triage_id}&serviceType=${encodeURIComponent(selectedTriage.rekomendasi_layanan)}`}
                     className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#03974a] to-[#144782] text-white rounded-lg font-semibold hover:shadow-lg transition-all"
                   >
                     <MapPin className="w-5 h-5" />

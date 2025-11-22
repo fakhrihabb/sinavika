@@ -323,7 +323,7 @@ function JanjiTemuContent() {
                       </button>
                       {triage && (
                         <Link
-                          href={`/peserta/riwayat?triageId=${appointment.triage_id}`}
+                          href={`/peserta/sinavika/riwayat?triageId=${appointment.triage_id}`}
                           className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-[#144782] to-[#0d3461] text-white rounded-xl hover:shadow-md transition-all font-semibold"
                         >
                           <FileText className="w-4 h-4" />
