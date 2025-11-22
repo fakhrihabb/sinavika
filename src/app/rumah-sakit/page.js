@@ -251,7 +251,7 @@ export default function RumahSakitPage() {
                   <h2 className="text-lg font-semibold text-gray-900">Antrian Pasien SINAVIKA</h2>
                   <p className="text-sm text-gray-500 mt-0.5">Pasien dengan hasil triage siap ditangani</p>
                 </div>
-                <Link 
+                <Link
                   href="/rumah-sakit/antrian"
                   className="text-sm font-semibold text-[#03974a] hover:text-[#144782] flex items-center gap-1"
                 >
@@ -325,70 +325,6 @@ export default function RumahSakitPage() {
                 >
                   Lihat Semua Pasien ({totalAppointments} total)
                 </Link>
-              </div>
-            </div>
-
-            {/* Pending Claims Alert */}
-            <div className="bg-white rounded-xl border border-orange-200">
-              <div className="p-5 border-b border-orange-100 bg-orange-50">
-                <div className="flex items-start gap-3">
-                  <AlertCircle className="w-5 h-5 text-orange-600 mt-0.5" />
-                  <div>
-                    <h2 className="text-lg font-semibold text-gray-900 mb-0.5">Klaim Perlu Perhatian</h2>
-                    <p className="text-sm text-gray-600">Klaim yang memerlukan perbaikan sebelum dikirim ke BPJS</p>
-                  </div>
-                </div>
-              </div>
-              <div className="divide-y divide-gray-100">
-                {pendingClaims.length > 0 ? (
-                  pendingClaims.map((claim) => {
-                    const issueText = claim.ai_flags && claim.ai_flags.length > 0
-                      ? claim.ai_flags.join(', ')
-                      : 'Perlu review';
-
-                    return (
-                      <div key={claim.id} className="p-5 hover:bg-gray-50 transition-colors">
-                        <div className="flex items-start justify-between mb-3">
-                          <div>
-                            <div className="flex items-center gap-2 mb-1">
-                              <h3 className="font-semibold text-gray-900">{claim.id}</h3>
-                              {claim.priority === 'high' && (
-                                <span className="px-2 py-0.5 bg-red-100 text-red-700 text-xs font-semibold rounded-full">
-                                  Urgent
-                                </span>
-                              )}
-                              {claim.ai_risk_score && claim.ai_risk_score > 50 && (
-                                <span className="px-2 py-0.5 bg-orange-100 text-orange-700 text-xs font-semibold rounded-full">
-                                  Risk: {claim.ai_risk_score}
-                                </span>
-                              )}
-                            </div>
-                            <p className="text-sm text-gray-600 mb-1">{claim.patient_name}</p>
-                            <p className="text-sm text-orange-700 font-medium">{issueText}</p>
-                          </div>
-                          <div className="text-right">
-                            <p className="font-bold text-gray-900">
-                              {formatCurrency(claim.tarif_rs || 0)}
-                            </p>
-                            <p className="text-xs text-gray-500 mt-1">{claim.daysOld} hari pending</p>
-                          </div>
-                        </div>
-                        <Link
-                          href={`/bpjs/verifikasi/${claim.id}`}
-                          className="inline-flex items-center gap-1 text-sm font-medium text-[#144782] hover:text-[#03974a]"
-                        >
-                          Review Klaim
-                          <ChevronRight className="w-4 h-4" />
-                        </Link>
-                      </div>
-                    );
-                  })
-                ) : (
-                  <div className="p-8 text-center text-gray-500">
-                    <CheckCircle className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                    <p>Tidak ada klaim yang memerlukan perhatian</p>
-                  </div>
-                )}
               </div>
             </div>
           </div>

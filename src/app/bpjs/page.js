@@ -122,7 +122,6 @@ export default function BPJSPage() {
 
   const kpis = getKPIs();
   const highPriorityClaims = dashboardData?.priorityClaims || [];
-  const topIssueHospitals = dashboardData?.topIssueHospitals || [];
   const stats = dashboardData?.stats || {};
 
   return (
@@ -170,21 +169,6 @@ export default function BPJSPage() {
               <p className="text-gray-600 text-sm leading-relaxed">
                 {stats.highRisk || 0} AI fraud alert baru terdeteksi hari ini
               </p>
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 gap-4 mt-4">
-            <Link
-              href="/bpjs/insight"
-              className="group flex items-center gap-4 bg-white rounded-xl p-6 border border-gray-200 shadow-md hover:shadow-lg transition-all"
-            >
-              <div className="p-3 bg-[#03974a] rounded-lg group-hover:scale-110 transition-transform">
-                <TrendingUp className="w-6 h-6 text-white" strokeWidth={2} />
-              </div>
-              <div className="flex-1">
-                <h3 className="text-lg font-bold text-gray-900 mb-1">Insight & Feedback</h3>
-                <p className="text-gray-600 text-sm">Analisis pola klaim dan feedback dari rumah sakit</p>
-              </div>
-              <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-[#03974a] transition-colors" />
             </Link>
           </div>
         </div>
@@ -294,44 +278,6 @@ export default function BPJSPage() {
                 </div>
               )}
             </div>
-
-            {/* Hospitals Needing Attention */}
-            {topIssueHospitals.length > 0 && (
-              <div className="bg-white rounded-xl border border-orange-200">
-                <div className="p-5 border-b border-orange-100 bg-orange-50">
-                  <div className="flex items-start gap-3">
-                    <AlertTriangle className="w-5 h-5 text-orange-600 mt-0.5" />
-                    <div>
-                      <h2 className="text-lg font-semibold text-gray-900 mb-0.5">Rumah Sakit Perlu Perhatian</h2>
-                      <p className="text-sm text-gray-600">RS dengan tingkat klaim bermasalah tinggi</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="divide-y divide-gray-100">
-                  {topIssueHospitals.map((hospital, index) => (
-                    <div key={index} className="p-5 hover:bg-gray-50 transition-colors">
-                      <div className="flex items-start justify-between mb-2">
-                        <div>
-                          <h3 className="font-semibold text-gray-900 mb-1">{hospital.name}</h3>
-                          <p className="text-sm text-gray-600">{hospital.claimsTotal} klaim bulan ini</p>
-                          <p className="text-sm text-orange-700 font-medium mt-1">Issue umum: {hospital.commonIssues}</p>
-                        </div>
-                        <span className="px-3 py-1 bg-red-100 text-red-700 text-sm font-semibold rounded-full whitespace-nowrap">
-                          {hospital.issueRate}% bermasalah
-                        </span>
-                      </div>
-                      <Link
-                        href={`/bpjs/insight?hospital=${encodeURIComponent(hospital.name)}`}
-                        className="inline-flex items-center gap-1 text-sm font-medium text-[#144782] hover:text-[#03974a]"
-                      >
-                        Lihat Detail & Feedback
-                        <ChevronRight className="w-4 h-4" />
-                      </Link>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Sidebar */}

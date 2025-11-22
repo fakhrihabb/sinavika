@@ -3,7 +3,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRoleModal } from '@/contexts/RoleModalContext';
-import { LayoutDashboard, FileSearch, TrendingUp, AlertTriangle, Menu, X } from 'lucide-react';
+import { LayoutDashboard, FileSearch, AlertTriangle, Menu, X } from 'lucide-react';
 
 export default function BpjsNavbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -46,11 +46,7 @@ export default function BpjsNavbar() {
               <AlertTriangle className="w-4 h-4" />
               <span>Fraud Analytics</span>
             </Link>
-            <Link href="/bpjs/insight" className="flex items-center gap-2 text-gray-700 hover:text-[#03974a] transition-colors">
-              <TrendingUp className="w-4 h-4" />
-              <span>Insight & Feedback</span>
-            </Link>
-            <button 
+            <button
               onClick={openModal}
               className="px-4 py-2 bg-gradient-to-r from-[#03974a] to-[#144782] text-white rounded-full hover:shadow-lg transition-all duration-300 text-sm"
             >
@@ -86,11 +82,7 @@ export default function BpjsNavbar() {
               <AlertTriangle className="w-4 h-4" />
               <span>Fraud Analytics</span>
             </Link>
-            <Link href="/bpjs/insight" className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:text-[#03974a] hover:bg-gray-50 rounded-md">
-              <TrendingUp className="w-4 h-4" />
-              <span>Insight & Feedback</span>
-            </Link>
-            <button 
+            <button
               onClick={openModal}
               className="w-full mt-2 px-4 py-2 bg-gradient-to-r from-[#03974a] to-[#144782] text-white rounded-full text-sm"
             >
