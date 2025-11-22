@@ -4,12 +4,25 @@
       "Bash(npm install:*)",
       "Bash(npm run build:*)",
       "Bash(npm run dev:*)",
+<<<<<<< HEAD
       "Bash(node:*)",
       "Bash(curl -s -X GET \"https://xiqcpytcvubmypevflme.supabase.co/rest/v1/claim_procedures?claim_id=eq.CLM-2025-1847&select=*\" -H \"apikey: sb_publishable_SWDLX4xJagjBCYmxJdvZGQ_Us3shB7J\" -H \"Authorization: Bearer sb_publishable_SWDLX4xJagjBCYmxJdvZGQ_Us3shB7J\")",
       "Bash(curl:*)",
       "Bash(pip3 install:*)",
       "Bash(python3:*)",
       "Bash(lsof:*)"
+=======
+      "Bash(nul)",
+      "Bash(find:*)",
+      "Bash(dir:*)",
+      "Bash(findstr:*)",
+      "Bash(npx supabase status:*)",
+      "Bash(npx supabase:*)",
+      "Bash(node:*)",
+      "Bash(timeout:*)",
+      "Bash(exit 0)",
+      "Bash(curl:*)"
+>>>>>>> ebeaabeff33c2165ff2dcfb241f3b9d5d8eb11f9
     ],
     "deny": [],
     "ask": []

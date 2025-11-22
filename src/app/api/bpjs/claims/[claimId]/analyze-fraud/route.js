@@ -105,7 +105,7 @@ async function getMockFraudulentData(claimId) {
 
 export async function GET(request, { params }) {
   try {
-    const { claimId } = params;
+    const claimId = params.claimId;
 
     const { data: claim, error: claimError } = await supabase
       .from('claims')

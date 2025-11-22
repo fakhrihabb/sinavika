@@ -210,53 +210,43 @@ export default function PreCheckKlaimPage() {
   };
 
   // Handle document uploaded notification
-  const handleDocumentUploaded = (documentType, file) => {
-    console.log('📄 [DEBUG] Document uploaded:', { documentType, fileName: file.name });
+  const handleDocumentUploaded = (documentType, fileName) => {
+    console.log('📄 [DEBUG] Document uploaded:', { documentType, fileName });
 
     setDocumentChecklist(prev => {
       const updated = { ...prev };
 
-      const updateItem = (sectionKey, itemId, status, issue = null) => {
-        const section = updated[sectionKey];
-        if (section) {
-          const itemIndex = section.items.findIndex(i => i.id === itemId);
-          if (itemIndex > -1) {
-            section.items[itemIndex].status = status;
-            section.items[itemIndex].file = file;
-            section.items[itemIndex].issue = issue;
-          }
+      // Helper to mark all non-'na' items in a section as complete
+      const markSectionComplete = (sectionKey, specificFileItemIds = []) => {
+        if (updated[sectionKey]) {
+          updated[sectionKey].items = updated[sectionKey].items.map(item => {
+            let newStatus = item.status;
+            let newFile = item.file;
+
+            if (item.status !== 'na') {
+              newStatus = 'complete';
+            }
+            if (specificFileItemIds.includes(item.id)) {
+                newFile = fileName;
+            }
+            return { ...item, status: newStatus, file: newFile };
+          });
         }
       };
 
+      // Update checklist based on document type
       if (documentType === 'resume_medis') {
-        updateItem('resume', 'resume_lengkap', 'complete');
-        updateItem('resume', 'resume_icd', 'complete');
-        updateItem('resume', 'resume_ttd', 'warning', 'Perlu verifikasi manual tanda tangan & stempel');
-      }
-      else if (documentType === 'lab_result') {
-        updateItem('penunjang', 'lab_required', 'complete');
-        updateItem('penunjang', 'penunjang_tanggal', 'complete');
-      }
-      else if (documentType === 'radiology') {
-        updateItem('penunjang', 'radiologi', 'complete');
-        // Also mark date as complete if a radiology report is uploaded
-        updateItem('penunjang', 'penunjang_tanggal', 'complete');
-      }
-      else if (documentType === 'sep' || documentType === 'surat_eligibilitas_peserta') {
-        updateItem('formulir', 'sep', 'complete');
-      }
-      else if (documentType === 'surat_rujukan') {
-        // A single referral letter completes the entire section
-        if (updated.rujukan) {
-            updated.rujukan.items = updated.rujukan.items.map(item => ({
-                ...item,
-                status: 'complete',
-                file: file,
-            }));
-        }
-      }
-      else if (documentType === 'resep_obat') {
-        updateItem('formulir', 'resep', 'complete');
+        markSectionComplete('resume', ['resume_lengkap']);
+      } else if (documentType === 'lab_result') {
+        markSectionComplete('penunjang', ['lab_required']);
+      } else if (documentType === 'radiology') {
+        markSectionComplete('penunjang', ['radiologi']);
+      } else if (documentType === 'sep' || documentType === 'surat_eligibilitas_peserta') {
+        markSectionComplete('formulir', ['sep']);
+      } else if (documentType === 'surat_rujukan') {
+        markSectionComplete('rujukan', ['rujukan_valid']); // Assuming rujukan_valid is the main item to attach the file
+      } else if (documentType === 'resep_obat') {
+        markSectionComplete('formulir', ['resep']);
       }
 
       return updated;
@@ -288,9 +278,6 @@ export default function PreCheckKlaimPage() {
       setSubmitting(true);
       setSubmitError(null);
 
-      const tarifRSNumber = parseFloat(String(formData.totalTarifRS).replace(/[^0-9]/g, '')) || 0;
-      const tarifInaCbgNumber = parseFloat(String(formData.tarifInaCbg).replace(/[^0-9]/g, '')) || 0;
-
       // Transform formData to API format
       const submitData = {
         // Basic info
@@ -311,7 +298,6 @@ export default function PreCheckKlaimPage() {
         dischargeDate: formData.dischargeDate,
         careClass: formData.kelasRawat,
         dpjp: formData.dpjp,
-        los_days: formData.los,
 
         // Diagnoses
         diagnoses: [],
@@ -319,14 +305,16 @@ export default function PreCheckKlaimPage() {
         // Procedures
         procedures: formData.procedures || [],
 
-        // GROUPER result & Tariffs
+        // GROUPER result
         inaCbgCode: formData.inaCbgCode,
         inaCbgDescription: formData.inaCbgDescription,
-        tarif_inacbg: tarifInaCbgNumber,
-        tarif_rs: tarifRSNumber,
-        tarif_difference: tarifRSNumber - tarifInaCbgNumber,
-        tarif_difference_percentage: ((tarifRSNumber - tarifInaCbgNumber) / tarifInaCbgNumber) * 100,
+        tarifInaCbg: formData.tarifInaCbg,
 
+        // Calculate total RS tariff
+        tarifRS: Object.values(formData.tarifRS || {}).reduce((sum, val) => {
+          const num = parseFloat(val) || 0;
+          return sum + num;
+        }, 0),
 
         // Documents from checklist
         documents: [],
@@ -618,7 +606,7 @@ export default function PreCheckKlaimPage() {
                 <button
                   onClick={handleSubmitToBPJS}
                   disabled={!readiness.readyToSubmit || submitting}
-                  className={`px-8 py-4 rounded-xl font-bold text-lg transition-all ${ 
+                  className={`px-8 py-4 rounded-xl font-bold text-lg transition-all ${
                     readiness.readyToSubmit && !submitting
                       ? 'bg-gradient-to-r from-[#03974a] to-[#144782] text-white hover:shadow-xl hover:scale-105'
                       : 'bg-gray-200 text-gray-400 cursor-not-allowed'

@@ -1,14 +1,16 @@
 'use client';
 import {
+  Home, CreditCard, MessageCircle, User,
   Smartphone, MapPin, Building2, UserPlus,
   UserCircle, Settings, Stethoscope,
   Navigation, Wifi, Battery
 } from 'lucide-react';
+import { useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRoleModal } from '@/contexts/RoleModalContext';
 
 export default function MobileJKNPage() {
+  const [activeTab, setActiveTab] = useState('home');
   const { openModal } = useRoleModal();
 
   // Menu items data
@@ -128,41 +130,29 @@ export default function MobileJKNPage() {
             // Only show content for SINAVIKA (id 8)
             const isSinavika = item.id === 8;
 
-            if (isSinavika) {
-              return (
-                <Link
-                  key={item.id}
-                  href="/peserta/sinavika"
-                  className="flex flex-col items-center gap-2 group relative"
-                >
-                  <div className="relative">
-                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-md p-2 border-2 border-[#03974a]">
-                      <Image
-                        src="/branding/sinavika-logo.png"
-                        alt="SINAVIKA"
-                        width={56}
-                        height={56}
-                        className="object-contain"
-                      />
-                    </div>
-                    {/* NEW Badge */}
-                    <div className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow-sm">
-                      NEW
-                    </div>
-                  </div>
-                  <span className="text-xs text-center text-gray-900 leading-tight px-1 font-semibold">
-                    {item.title}
-                  </span>
-                </Link>
-              );
-            }
-
             return (
               <button
                 key={item.id}
-                className="flex flex-col items-center gap-2 group cursor-default"
+                className="flex flex-col items-center gap-2 group"
               >
-                <div className="w-16 h-16 bg-white border-2 border-[#03974a] rounded-full group-hover:scale-110 transition-transform" />
+                {isSinavika ? (
+                  <>
+                    <div className={`w-16 h-16 ${item.bgColor} rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm p-2`}>
+                      <Image
+                        src="/branding/sinavika-logo.png"
+                        alt="SINAVIKA"
+                        width={48}
+                        height={48}
+                        className="object-contain"
+                      />
+                    </div>
+                    <span className="text-xs text-center text-gray-900 leading-tight px-1 font-semibold">
+                      {item.title}
+                    </span>
+                  </>
+                ) : (
+                  <div className="w-16 h-16 border-2 border-gray-300 rounded-full group-hover:scale-110 transition-transform" />
+                )}
               </button>
             );
           })}
@@ -190,6 +180,56 @@ export default function MobileJKNPage() {
               ></div>
             ))}
           </div>
+        </div>
+      </div>
+
+      {/* Bottom Navigation - sticky to bottom */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 max-w-[428px] mx-auto">
+        <div className="flex items-center justify-around py-2">
+          <button
+            onClick={() => setActiveTab('home')}
+            className={`flex flex-col items-center gap-1 px-4 py-2 ${
+              activeTab === 'home' ? 'text-blue-600' : 'text-gray-400'
+            }`}
+          >
+            <Home className="w-6 h-6" />
+            <span className="text-xs font-medium">Home</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('kartu')}
+            className={`flex flex-col items-center gap-1 px-4 py-2 ${
+              activeTab === 'kartu' ? 'text-blue-600' : 'text-gray-400'
+            }`}
+          >
+            <CreditCard className="w-6 h-6" />
+            <span className="text-xs font-medium">Kartu Peserta</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('faq')}
+            className={`flex flex-col items-center gap-1 px-4 py-2 ${
+              activeTab === 'faq' ? 'text-blue-600' : 'text-gray-400'
+            }`}
+          >
+            <MessageCircle className="w-6 h-6" />
+            <span className="text-xs font-medium">FAQ</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('profil')}
+            className={`flex flex-col items-center gap-1 px-4 py-2 ${
+              activeTab === 'profil' ? 'text-blue-600' : 'text-gray-400'
+            }`}
+          >
+            <User className="w-6 h-6" />
+            <span className="text-xs font-medium">Profil</span>
+          </button>
+        </div>
+
+        {/* iOS-style home indicator */}
+        <div className="flex justify-center pb-2 pointer-events-none">
+          <div className="w-32 h-1 bg-gray-900 rounded-full opacity-60"></div>
         </div>
       </div>
     </div>

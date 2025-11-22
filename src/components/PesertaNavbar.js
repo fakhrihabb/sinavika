@@ -38,15 +38,15 @@ export default function PesertaNavbar() {
               <User className="w-4 h-4" />
               <span>Beranda</span>
             </Link>
-            <Link href="/peserta/triage" className="flex items-center gap-2 text-gray-700 hover:text-[#03974a] transition-colors">
+            <Link href="/peserta/sinavika/triage" className="flex items-center gap-2 text-gray-700 hover:text-[#03974a] transition-colors">
               <FileText className="w-4 h-4" />
               <span>Cek Keluhan</span>
             </Link>
-            <Link href="/peserta/riwayat" className="flex items-center gap-2 text-gray-700 hover:text-[#03974a] transition-colors">
+            <Link href="/peserta/sinavika/riwayat" className="flex items-center gap-2 text-gray-700 hover:text-[#03974a] transition-colors">
               <BookOpen className="w-4 h-4" />
               <span>Riwayat Keluhan</span>
             </Link>
-            <Link href="/peserta/janji-temu" className="flex items-center gap-2 text-gray-700 hover:text-[#03974a] transition-colors">
+            <Link href="/peserta/sinavika/janji-temu" className="flex items-center gap-2 text-gray-700 hover:text-[#03974a] transition-colors">
               <CalendarCheck className="w-4 h-4" />
               <span>Janji Temu</span>
             </Link>
@@ -78,15 +78,15 @@ export default function PesertaNavbar() {
               <User className="w-4 h-4" />
               <span>Beranda</span>
             </Link>
-            <Link href="/peserta/triage" className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:text-[#03974a] hover:bg-gray-50 rounded-md">
+            <Link href="/peserta/sinavika/triage" className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:text-[#03974a] hover:bg-gray-50 rounded-md">
               <FileText className="w-4 h-4" />
               <span>Cek Keluhan</span>
             </Link>
-            <Link href="/peserta/riwayat" className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:text-[#03974a] hover:bg-gray-50 rounded-md">
+            <Link href="/peserta/sinavika/riwayat" className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:text-[#03974a] hover:bg-gray-50 rounded-md">
               <BookOpen className="w-4 h-4" />
               <span>Riwayat Keluhan</span>
             </Link>
-            <Link href="/peserta/janji-temu" className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:text-[#03974a] hover:bg-gray-50 rounded-md">
+            <Link href="/peserta/sinavika/janji-temu" className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:text-[#03974a] hover:bg-gray-50 rounded-md">
               <CalendarCheck className="w-4 h-4" />
               <span>Janji Temu</span>
             </Link>

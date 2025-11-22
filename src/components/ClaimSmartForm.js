@@ -24,17 +24,14 @@ export default function ClaimSmartForm({ claimData, onFormChange, aiFilledData }
     // DPJP
     dpjp: claimData?.doctor || '',
 
-    // Diagnosa (bisa multiple)
-    diagnosisPrimary: '', // Diagnosa Utama
+    // Diagnosa
+    diagnosis: '',
     icd10Primary: '',
-    diagnosisSecondary: '', // Diagnosa Sekunder
     icd10Secondary: '',
-    diagnosisTertiary: '', // Diagnosa Penyerta
-    icd10Tertiary: '',
 
-    // Prosedur/Tindakan (bisa multiple)
-    procedures: [],
-    icd9cmCodes: [],
+    // Prosedur/Tindakan
+    procedures: '',
+    icd9cm: '',
 
     // INA-CBG - KRUSIAL!
     inaCbgCode: '',
@@ -78,49 +75,97 @@ export default function ClaimSmartForm({ claimData, onFormChange, aiFilledData }
   // Update form when AI fills data
   useEffect(() => {
     if (aiFilledData) {
+      console.log("Received aiFilledData:", aiFilledData);
       const newFormData = { ...formData };
       const highlighted = [];
+      const suggestions = { ...aiSuggestions };
+
+      // Helper function to safely update form data and track highlights
+      const updateField = (field, value) => {
+        if (value !== undefined && value !== null) {
+          newFormData[field] = value;
+          highlighted.push(field);
+        }
+      };
+      
+      if (aiFilledData.patient) {
+        updateField('patientName', aiFilledData.patient.name);
+        updateField('noRM', aiFilledData.patient.medicalRecordNumber);
+        updateField('sepNumber', aiFilledData.patient.sepNumber || aiFilledData.patient.bpjsNumber); // Also check bpjsNumber
+        updateField('birthDate', aiFilledData.patient.dateOfBirth);
+        updateField('gender', aiFilledData.patient.gender);
+      }
+
+      if (aiFilledData.treatment) {
+        updateField('admissionDate', aiFilledData.treatment.admissionDate);
+        updateField('dischargeDate', aiFilledData.treatment.dischargeDate);
+        updateField('dpjp', aiFilledData.treatment.dpjp);
+        updateField('kelasRawat', aiFilledData.treatment.kelasRawat);
+        updateField('treatmentType', aiFilledData.treatment.type);
+      }
 
       if (aiFilledData.diagnosis) {
-        newFormData.diagnosis = aiFilledData.diagnosis;
-        highlighted.push('diagnosis');
+        const primary = aiFilledData.diagnosis.primary;
+        const secondary = aiFilledData.diagnosis.secondary;
+        const tertiary = aiFilledData.diagnosis.tertiary;
+        let fullDiagnosis = [];
+
+        if (primary && primary.name) {
+          updateField('icd10Primary', primary.icd10);
+          suggestions.icd10Primary = primary.icd10 ? `AI: ${primary.icd10}` : null;
+          fullDiagnosis.push(`Utama: ${primary.name} (${primary.icd10 || 'N/A'})`);
+        }
+        if (secondary && secondary.name) {
+          updateField('icd10Secondary', secondary.icd10);
+          suggestions.icd10Secondary = secondary.icd10 ? `AI: ${secondary.icd10}` : null;
+          fullDiagnosis.push(`Sekunder: ${secondary.name} (${secondary.icd10 || 'N/A'})`);
+        }
+        if (tertiary && tertiary.name) {
+            fullDiagnosis.push(`Penyerta: ${tertiary.name} (${tertiary.icd10 || 'N/A'})`);
+        }
+        
+        if (fullDiagnosis.length > 0) {
+            updateField('diagnosis', fullDiagnosis.join('\n'));
+        }
       }
-      if (aiFilledData.icd10Primary) {
-        newFormData.icd10Primary = aiFilledData.icd10Primary;
-        highlighted.push('icd10Primary');
+
+      if (aiFilledData.procedures && aiFilledData.procedures.length > 0) {
+        const procedureNames = aiFilledData.procedures.map(p => p.name).join(', ');
+        const procedureCodes = aiFilledData.procedures.map(p => p.icd9cm).filter(Boolean).join(', ');
+        updateField('procedures', procedureNames);
+        updateField('icd9cm', procedureCodes);
       }
-      if (aiFilledData.icd10Secondary) {
-        newFormData.icd10Secondary = aiFilledData.icd10Secondary;
-        highlighted.push('icd10Secondary');
-      }
+      
+      // Keep inaCbg and tarif logic if it exists
       if (aiFilledData.inaCbg) {
-        newFormData.inaCbgCode = aiFilledData.inaCbg;
-        highlighted.push('inaCbgCode');
+        updateField('inaCbgCode', aiFilledData.inaCbg);
+        suggestions.inaCbgCode = `AI mapping: ${aiFilledData.inaCbg}`;
       }
       if (aiFilledData.tarif) {
-        newFormData.tarif = formatRupiah(aiFilledData.tarif);
-        highlighted.push('tarif');
+        updateField('tarif', formatRupiah(aiFilledData.tarif));
+        suggestions.tarif = `AI estimate: Rp ${formatNumber(aiFilledData.tarif)}`;
       }
 
+      console.log("New form data:", newFormData);
+      console.log("Highlighted fields:", highlighted);
+
       setFormData(newFormData);
+      setAiSuggestions(suggestions);
       setHighlightedFields(highlighted);
 
-      // Set AI suggestions
-      setAiSuggestions({
-        icd10Primary: aiFilledData.icd10Primary ? `AI: ${aiFilledData.icd10Primary}` : null,
-        icd10Secondary: aiFilledData.icd10Secondary ? `AI: ${aiFilledData.icd10Secondary}` : null,
-        inaCbgCode: aiFilledData.inaCbg ? `AI mapping: ${aiFilledData.inaCbg}` : null,
-        tarif: aiFilledData.tarif ? `AI estimate: Rp ${formatNumber(aiFilledData.tarif)}` : null
-      });
-
-      // Clear highlight after 3 seconds
+      // Clear highlight after 5 seconds
       setTimeout(() => {
         setHighlightedFields([]);
-      }, 3000);
+      }, 5000);
     }
   }, [aiFilledData]);
 
+
   const formatRupiah = (number) => {
+    if (typeof number === 'string') {
+      number = parseFloat(number.replace(/[^0-9,-]+/g,""));
+    }
+    if (isNaN(number)) return '';
     return new Intl.NumberFormat('id-ID').format(number);
   };
 
@@ -206,9 +251,8 @@ export default function ClaimSmartForm({ claimData, onFormChange, aiFilledData }
               value={formData.diagnosis}
               onChange={(e) => handleChange('diagnosis', e.target.value)}
               placeholder="Contoh: Diabetes Mellitus Tipe 2 dengan Hipertensi"
-              rows={2}
-              className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#144782] text-sm transition-all ${
-                isFieldHighlighted('diagnosis')
+              rows={3}
+              className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#144782] text-sm transition-all ${isFieldHighlighted('diagnosis')
                   ? 'border-green-400 bg-green-50 ring-2 ring-green-200'
                   : 'border-gray-300'
               }`}
@@ -226,8 +270,7 @@ export default function ClaimSmartForm({ claimData, onFormChange, aiFilledData }
                 value={formData.icd10Primary}
                 onChange={(e) => handleChange('icd10Primary', e.target.value.toUpperCase())}
                 placeholder="Contoh: E11.9"
-                className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#144782] text-sm transition-all ${
-                  isFieldHighlighted('icd10Primary')
+                className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#144782] text-sm transition-all ${isFieldHighlighted('icd10Primary')
                     ? 'border-green-400 bg-green-50 ring-2 ring-green-200'
                     : 'border-gray-300'
                 }`}
@@ -250,12 +293,17 @@ export default function ClaimSmartForm({ claimData, onFormChange, aiFilledData }
                 value={formData.icd10Secondary}
                 onChange={(e) => handleChange('icd10Secondary', e.target.value.toUpperCase())}
                 placeholder="Contoh: I10"
-                className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#144782] text-sm transition-all ${
-                  isFieldHighlighted('icd10Secondary')
+                className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#144782] text-sm transition-all ${isFieldHighlighted('icd10Secondary')
                     ? 'border-green-400 bg-green-50 ring-2 ring-green-200'
                     : 'border-gray-300'
                 }`}
               />
+               {aiSuggestions.icd10Secondary && (
+                <p className="mt-1 text-xs text-blue-600 flex items-center gap-1">
+                  <Info className="w-3 h-3" />
+                  {aiSuggestions.icd10Secondary}
+                </p>
+              )}
             </div>
           </div>
 
@@ -268,7 +316,10 @@ export default function ClaimSmartForm({ claimData, onFormChange, aiFilledData }
               value={formData.procedures}
               onChange={(e) => handleChange('procedures', e.target.value)}
               placeholder="Contoh: Konsultasi, Pemeriksaan Lab"
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#144782] text-sm"
+              className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#144782] text-sm transition-all ${isFieldHighlighted('procedures')
+                  ? 'border-green-400 bg-green-50 ring-2 ring-green-200'
+                  : 'border-gray-300'
+              }`}
             />
           </div>
 
@@ -281,8 +332,11 @@ export default function ClaimSmartForm({ claimData, onFormChange, aiFilledData }
               type="text"
               value={formData.icd9cm}
               onChange={(e) => handleChange('icd9cm', e.target.value)}
-              placeholder="Contoh: 99.15"
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#144782] text-sm"
+              placeholder="Contoh: 99.15, 88.72"
+              className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#144782] text-sm transition-all ${isFieldHighlighted('icd9cm')
+                  ? 'border-green-400 bg-green-50 ring-2 ring-green-200'
+                  : 'border-gray-300'
+              }`}
             />
           </div>
         </div>
@@ -317,8 +371,7 @@ export default function ClaimSmartForm({ claimData, onFormChange, aiFilledData }
                 value={formData.inaCbgCode}
                 onChange={(e) => handleChange('inaCbgCode', e.target.value.toUpperCase())}
                 placeholder="Contoh: N-4-10-I"
-                className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 text-sm font-mono transition-all ${
-                  isFieldHighlighted('inaCbgCode')
+                className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 text-sm font-mono transition-all ${isFieldHighlighted('inaCbgCode')
                     ? 'border-green-400 bg-green-50 ring-2 ring-green-200'
                     : 'border-orange-300 bg-white'
                 }`}
@@ -395,8 +448,7 @@ export default function ClaimSmartForm({ claimData, onFormChange, aiFilledData }
                 value={formData.tarif}
                 onChange={(e) => handleChange('tarif', e.target.value)}
                 placeholder="300,000"
-                className={`w-full pl-12 pr-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#144782] text-sm transition-all ${
-                  isFieldHighlighted('tarif')
+                className={`w-full pl-12 pr-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#144782] text-sm transition-all ${isFieldHighlighted('tarif')
                     ? 'border-green-400 bg-green-50 ring-2 ring-green-200'
                     : 'border-gray-300'
                 }`}
@@ -421,7 +473,10 @@ export default function ClaimSmartForm({ claimData, onFormChange, aiFilledData }
             value={formData.dpjp}
             onChange={(e) => handleChange('dpjp', e.target.value)}
             placeholder="Contoh: dr. Budi"
-            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#144782] text-sm"
+             className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#144782] text-sm transition-all ${isFieldHighlighted('dpjp')
+                ? 'border-green-400 bg-green-50 ring-2 ring-green-200'
+                : 'border-gray-300'
+              }`}
           />
         </div>
 

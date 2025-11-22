@@ -1,7 +1,6 @@
 'use client';
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import PesertaNavbar from '@/components/PesertaNavbar';
 import {
   Calendar,
   Clock,
@@ -17,6 +16,7 @@ import {
   MapPin
 } from 'lucide-react';
 import Link from 'next/link';
+import MobileHeader from '@/components/MobileHeader';
 
 function RiwayatPageContent() {
   const searchParams = useSearchParams();
@@ -28,6 +28,43 @@ function RiwayatPageContent() {
   const [selectedTriage, setSelectedTriage] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterSeverity, setFilterSeverity] = useState('all');
+
+  const fetchHistory = async () => {
+    // Check cache first
+    const cacheKey = 'triage-history-demo-user';
+    const cached = sessionStorage.getItem(cacheKey);
+    const cacheTime = sessionStorage.getItem(`${cacheKey}-time`);
+    
+    // Use cached data if less than 30 seconds old
+    if (cached && cacheTime && (Date.now() - parseInt(cacheTime)) < 30000) {
+      const result = JSON.parse(cached);
+      setHistory(result.data);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch('/api/triage/history?userId=demo-user');
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Gagal mengambil riwayat');
+      }
+
+      // Cache the result
+      sessionStorage.setItem(cacheKey, JSON.stringify(result));
+      sessionStorage.setItem(`${cacheKey}-time`, Date.now().toString());
+
+      setHistory(result.data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchHistory();
@@ -42,26 +79,6 @@ function RiwayatPageContent() {
       }
     }
   }, [triageIdParam, history, selectedTriage]);
-
-  const fetchHistory = async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await fetch('/api/triage/history?userId=demo-user');
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Gagal mengambil riwayat');
-      }
-
-      setHistory(result.data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const getSeverityColor = (level) => {
     switch (level) {
@@ -114,11 +131,10 @@ function RiwayatPageContent() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <PesertaNavbar />
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center py-12">
             <Loader2 className="w-12 h-12 animate-spin text-[#03974a] mx-auto mb-4" />
-            <p className="text-gray-600">Memuat riwayat triase...</p>
+            <p className="text-gray-600">Memuat riwayat keluhan...</p>
           </div>
         </main>
       </div>
@@ -128,11 +144,12 @@ function RiwayatPageContent() {
   if (selectedTriage) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <PesertaNavbar />
-        <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+        <MobileHeader title="Detail Keluhan" />
+
+        <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <button
             onClick={() => setSelectedTriage(null)}
-            className="mb-6 flex items-center gap-2 text-gray-600 hover:text-gray-900"
+            className="mb-6 hidden md:flex items-center gap-2 text-gray-600 hover:text-gray-900"
           >
             <ChevronRight className="w-5 h-5 rotate-180" />
             Kembali ke Riwayat
@@ -142,7 +159,7 @@ function RiwayatPageContent() {
             <div className="mb-6">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Detail Hasil Triase</h2>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Detail Hasil Keluhan</h2>
                   <p className="text-sm text-gray-500">ID: {selectedTriage.triage_id}</p>
                   <p className="text-sm text-gray-500">
                     {formatDate(selectedTriage.created_at)} • {formatTime(selectedTriage.created_at)} WIB
@@ -241,7 +258,7 @@ function RiwayatPageContent() {
               <div className="pt-4">
                 {selectedTriage.appointment_status === 'Sudah Atur Janji Temu' ? (
                   <Link
-                    href="/peserta/janji-temu"
+                    href="/peserta/sinavika/janji-temu"
                     className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
                   >
                     <CalendarCheck className="w-5 h-5" />
@@ -249,11 +266,11 @@ function RiwayatPageContent() {
                   </Link>
                 ) : (
                   <Link
-                    href={`/peserta/triage/pilih-rumah-sakit?triageId=${selectedTriage.triage_id}&serviceType=${encodeURIComponent(selectedTriage.rekomendasi_layanan)}`}
+                    href={`/peserta/sinavika/triage/pilih-rumah-sakit?triageId=${selectedTriage.triage_id}&serviceType=${encodeURIComponent(selectedTriage.rekomendasi_layanan)}`}
                     className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#03974a] to-[#144782] text-white rounded-lg font-semibold hover:shadow-lg transition-all"
                   >
                     <MapPin className="w-5 h-5" />
-                    Cari Rumah Sakit Terdekat
+                    Cari Fasilitas Kesehatan Terdekat
                   </Link>
                 )}
               </div>
@@ -266,21 +283,12 @@ function RiwayatPageContent() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <PesertaNavbar />
+      <MobileHeader title="Riwayat Keluhan" />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
-        {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-            Riwayat Triase
-          </h1>
-          <p className="text-gray-600">
-            Lihat semua hasil triase kesehatan Anda sebelumnya
-          </p>
-        </div>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         {/* Filters */}
-        <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="mb-6 space-y-4">
           {/* Search */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -295,11 +303,11 @@ function RiwayatPageContent() {
 
           {/* Filter */}
           <div className="relative">
-            <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white z-10" />
             <select
               value={filterSeverity}
               onChange={(e) => setFilterSeverity(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#03974a] focus:border-transparent outline-none appearance-none"
+              className="w-full pl-10 pr-4 py-3 rounded-lg bg-gradient-to-r from-[#03974a] to-[#144782] text-white font-semibold border-0 focus:ring-2 focus:ring-[#03974a] focus:ring-offset-2 outline-none appearance-none shadow-md hover:shadow-lg transition-shadow cursor-pointer [&>option]:text-gray-900 [&>option]:bg-white"
             >
               <option value="all">Semua Tingkat Keparahan</option>
               <option value="emergency">Gawat Darurat</option>
@@ -333,16 +341,16 @@ function RiwayatPageContent() {
           <div className="text-center py-12 bg-white rounded-2xl border border-gray-200">
             <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              {searchTerm || filterSeverity !== 'all' ? 'Tidak ada hasil' : 'Belum ada riwayat triase'}
+              {searchTerm || filterSeverity !== 'all' ? 'Tidak ada hasil' : 'Belum ada riwayat keluhan'}
             </h3>
             <p className="text-gray-600 mb-4">
               {searchTerm || filterSeverity !== 'all'
                 ? 'Coba ubah filter atau kata kunci pencarian'
-                : 'Mulai cek keluhan Anda untuk membuat riwayat triase pertama'}
+                : 'Mulai cek keluhan Anda untuk membuat riwayat keluhan pertama'}
             </p>
             {!searchTerm && filterSeverity === 'all' && (
               <Link
-                href="/peserta/triage"
+                href="/peserta/sinavika/triage"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#03974a] to-[#144782] text-white rounded-lg font-semibold hover:shadow-lg transition-all"
               >
                 Mulai Cek Keluhan
@@ -405,7 +413,7 @@ function RiwayatPageContent() {
           <div className="mt-6 bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-4 border border-green-200">
             <p className="text-sm text-gray-700">
               Menampilkan <span className="font-semibold">{filteredHistory.length}</span> dari{' '}
-              <span className="font-semibold">{history.length}</span> triase
+              <span className="font-semibold">{history.length}</span> keluhan
             </p>
           </div>
         )}
@@ -418,11 +426,10 @@ export default function RiwayatPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen bg-gray-50">
-        <PesertaNavbar />
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-6">
           <div className="text-center py-12">
             <Loader2 className="w-12 h-12 animate-spin text-[#03974a] mx-auto mb-4" />
-            <p className="text-gray-600">Memuat riwayat triase...</p>
+            <p className="text-gray-600">Memuat riwayat keluhan...</p>
           </div>
         </main>
       </div>

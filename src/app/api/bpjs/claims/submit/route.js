@@ -5,6 +5,8 @@ import { supabase } from '@/lib/supabase';
 export async function POST(request) {
   try {
     const body = await request.json();
+    console.log("SUBMIT API - Received body:", JSON.stringify(body, null, 2));
+
     const {
       // Basic claim info
       hospitalName,
@@ -45,6 +47,8 @@ export async function POST(request) {
       aiRiskScore,
       aiFlags
     } = body;
+    
+    console.log("SUBMIT API - Parsed Tariffs:", { tarifRS, tarifInaCbg });
 
     // Generate a new unique claim ID
     const claimId = `CLM-${Date.now()}-${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
@@ -70,7 +74,6 @@ export async function POST(request) {
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       return diffDays;
     };
-
     // Calculate tariff difference
     const calculateTariffDiff = () => {
       const rs = parseFloat(tarifRS) || 0;

@@ -20,6 +20,7 @@ export async function POST(request) {
       tingkatKeparahan,
       labelKeparahan,
       rekomendasiLayanan,
+      namaSpesialis,
       tanggalKunjunganDisarankan,
       perluRujukan,
       alasan,
@@ -27,6 +28,9 @@ export async function POST(request) {
       gejalaBahaya,
       catatanTambahan,
       ringkasanKlinis,
+      ringkasanUntukRS,
+      estimasiWaktuTunggu,
+      jamOperasionalDisarankan,
       conversationSummary,
     } = triageData;
 
@@ -48,6 +52,7 @@ export async function POST(request) {
           tingkat_keparahan: tingkatKeparahan,
           label_keparahan: labelKeparahan,
           rekomendasi_layanan: rekomendasiLayanan,
+          nama_spesialis: namaSpesialis || null,
           tanggal_kunjungan_disarankan: tanggalKunjunganDisarankan,
           perlu_rujukan: perluRujukan || false,
           alasan: alasan,
@@ -55,6 +60,9 @@ export async function POST(request) {
           gejala_bahaya: gejalaBahaya || [],
           catatan_tambahan: catatanTambahan,
           ringkasan_klinis: ringkasanKlinis,
+          ringkasan_untuk_rs: ringkasanUntukRS || null,
+          estimasi_waktu_tunggu: estimasiWaktuTunggu || null,
+          jam_operasional_disarankan: jamOperasionalDisarankan || null,
           conversation_summary: conversationSummary || [],
         },
       ])

@@ -135,7 +135,7 @@ export default function ChatPanel({ claimData, onSuggestionApply, onDocumentUplo
         }]);
 
         // Notify parent page about uploaded document type and path
-        if (onDocumentUploaded && result.data.documentType && result.uploadPath) {
+        if (onDocumentUploaded && result.data.documentType) {
           onDocumentUploaded(result.data.documentType, file, result.uploadPath);
         }
       } else {
