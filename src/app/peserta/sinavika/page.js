@@ -24,54 +24,26 @@ export default function PesertaPage() {
     setError(null);
 
     try {
-      // Fetch triage history
-      const triageResponse = await fetch('/api/triage/history?userId=demo-user');
-      const triageResult = await triageResponse.json();
+      // Fetch all dashboard data in a single optimized API call
+      const response = await fetch('/api/dashboard?userId=demo-user');
+      const result = await response.json();
 
-      if (!triageResponse.ok) {
-        throw new Error(triageResult.error || 'Gagal mengambil data');
+      if (!response.ok) {
+        throw new Error(result.error || 'Gagal mengambil data');
       }
 
-      const triageHistory = triageResult.data || [];
-
-      // Fetch appointments
-      const appointmentsResponse = await fetch('/api/janji-temu?userId=demo-user');
-      const appointmentsResult = await appointmentsResponse.json();
-
-      if (!appointmentsResponse.ok) {
-        throw new Error(appointmentsResult.error || 'Gagal mengambil data janji temu');
-      }
-
-      const appointments = appointmentsResult.appointments || [];
-
-      // Calculate stats
-      const now = new Date();
-      const thisMonth = triageHistory.filter(item => {
-        const itemDate = new Date(item.created_at);
-        return itemDate.getMonth() === now.getMonth() && itemDate.getFullYear() === now.getFullYear();
-      }).length;
-
-      let lastTriageTime = '-';
-      if (triageHistory.length > 0) {
-        const lastTriageDate = new Date(triageHistory[0].created_at);
-        const diffTime = Math.abs(now - lastTriageDate);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        lastTriageTime = diffDays === 0 ? 'Hari ini' : `${diffDays} hari`;
-      }
-
+      // Update stats with server-calculated values
       setStats([
-        { label: "Total Keluhan", value: triageHistory.length.toString(), icon: Activity, color: "text-blue-600" },
-        { label: "Bulan Ini", value: thisMonth.toString(), icon: Calendar, color: "text-green-600" },
-        { label: "Keluhan Terakhir", value: lastTriageTime, icon: Clock, color: "text-orange-600" }
+        { label: "Total Keluhan", value: result.stats.total.toString(), icon: Activity, color: "text-blue-600" },
+        { label: "Bulan Ini", value: result.stats.monthly.toString(), icon: Calendar, color: "text-green-600" },
+        { label: "Keluhan Terakhir", value: result.stats.lastTriageTime, icon: Clock, color: "text-orange-600" }
       ]);
 
       // Set last triage
-      if (triageHistory.length > 0) {
-        setLastTriage(triageHistory[0]);
-      }
+      setLastTriage(result.lastTriage);
 
-      // Set recent appointments (limit to 3)
-      setRecentAppointments(appointments.slice(0, 3));
+      // Set recent appointments
+      setRecentAppointments(result.recentAppointments);
 
     } catch (err) {
       setError(err.message);
