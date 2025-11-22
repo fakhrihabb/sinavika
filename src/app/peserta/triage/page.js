@@ -14,7 +14,8 @@ import {
   User,
   Info,
   Check,
-  Square
+  Square,
+  Clock
 } from 'lucide-react';
 import Link from 'next/link';
 

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { notifyHospitalNewPatient } from '@/lib/notificationService';
 
 export async function POST(request) {
   try {
@@ -91,6 +92,18 @@ export async function POST(request) {
     if (updateError) {
       console.error('Error updating triage status:', updateError);
       // Don't fail the request, appointment was created successfully
+    }
+
+    // Create notification for hospital about new patient
+    // Fetch full triage data for the notification
+    const { data: fullTriageData, error: fullTriageError } = await supabase
+      .from('triage_history')
+      .select('*')
+      .eq('triage_id', triageId)
+      .single();
+
+    if (!fullTriageError && fullTriageData) {
+      await notifyHospitalNewPatient(fullTriageData, appointment);
     }
 
     return NextResponse.json({

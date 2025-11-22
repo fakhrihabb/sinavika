@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRoleModal } from '@/contexts/RoleModalContext';
@@ -7,7 +7,30 @@ import { LayoutDashboard, Users, FileCheck, Bell, Settings, Menu, X } from 'luci
 
 export default function RumahSakitNavbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const { openModal } = useRoleModal();
+
+  // Fetch unread notification count
+  useEffect(() => {
+    const fetchUnreadCount = async () => {
+      try {
+        const response = await fetch(
+          '/api/notifications?userId=rumah-sakit-demo&recipientType=rumah_sakit&countOnly=true'
+        );
+        const data = await response.json();
+        setUnreadCount(data.count || 0);
+      } catch (error) {
+        console.error('Error fetching unread count:', error);
+      }
+    };
+
+    fetchUnreadCount();
+
+    // Poll for new notifications every 30 seconds
+    const interval = setInterval(fetchUnreadCount, 30000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
@@ -46,8 +69,15 @@ export default function RumahSakitNavbar() {
               <FileCheck className="w-4 h-4" />
               <span>Klaim</span>
             </Link>
-            <Link href="/rumah-sakit/notifikasi" className="flex items-center gap-2 text-gray-700 hover:text-[#144782] transition-colors">
-              <Bell className="w-4 h-4" />
+            <Link href="/rumah-sakit/notifikasi" className="flex items-center gap-2 text-gray-700 hover:text-[#144782] transition-colors relative">
+              <div className="relative">
+                <Bell className="w-4 h-4" />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
+                )}
+              </div>
               <span>Notifikasi</span>
             </Link>
             <Link href="/rumah-sakit/pengaturan" className="flex items-center gap-2 text-gray-700 hover:text-[#144782] transition-colors">
@@ -90,8 +120,15 @@ export default function RumahSakitNavbar() {
               <FileCheck className="w-4 h-4" />
               <span>Klaim</span>
             </Link>
-            <Link href="/rumah-sakit/notifikasi" className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:text-[#144782] hover:bg-gray-50 rounded-md">
-              <Bell className="w-4 h-4" />
+            <Link href="/rumah-sakit/notifikasi" className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:text-[#144782] hover:bg-gray-50 rounded-md relative">
+              <div className="relative">
+                <Bell className="w-4 h-4" />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
+                )}
+              </div>
               <span>Notifikasi</span>
             </Link>
             <Link href="/rumah-sakit/pengaturan" className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:text-[#144782] hover:bg-gray-50 rounded-md">
