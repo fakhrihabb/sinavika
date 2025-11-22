@@ -1,6 +1,5 @@
 'use client';
 import {
-  Home, CreditCard, MessageCircle, User,
   Smartphone, MapPin, Building2, UserPlus,
   UserCircle, Settings, Stethoscope,
   Navigation, Wifi, Battery
@@ -191,39 +190,6 @@ export default function MobileJKNPage() {
               ></div>
             ))}
           </div>
-        </div>
-      </div>
-
-      {/* Bottom Navigation - sticky to bottom */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 max-w-[428px] mx-auto">
-        <div className="flex items-center justify-around py-2">
-          <Link
-            href="/peserta"
-            className="flex flex-col items-center gap-1 px-4 py-2 text-blue-600"
-          >
-            <Home className="w-6 h-6" />
-            <span className="text-xs font-medium">Home</span>
-          </Link>
-
-          <div className="flex flex-col items-center gap-1 px-4 py-2 text-gray-400 cursor-not-allowed">
-            <CreditCard className="w-6 h-6" />
-            <span className="text-xs font-medium">Kartu Peserta</span>
-          </div>
-
-          <div className="flex flex-col items-center gap-1 px-4 py-2 text-gray-400 cursor-not-allowed">
-            <MessageCircle className="w-6 h-6" />
-            <span className="text-xs font-medium">FAQ</span>
-          </div>
-
-          <div className="flex flex-col items-center gap-1 px-4 py-2 text-gray-400 cursor-not-allowed">
-            <User className="w-6 h-6" />
-            <span className="text-xs font-medium">Profil</span>
-          </div>
-        </div>
-
-        {/* iOS-style home indicator */}
-        <div className="flex justify-center pb-2 pointer-events-none">
-          <div className="w-32 h-1 bg-gray-900 rounded-full opacity-60"></div>
         </div>
       </div>
     </div>

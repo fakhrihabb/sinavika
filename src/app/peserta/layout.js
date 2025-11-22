@@ -1,3 +1,5 @@
+import BottomNavbar from '@/components/BottomNavbar';
+
 export default function PesertaLayout({ children }) {
   return (
     <div className="min-h-screen bg-gray-300 flex items-start justify-center">
@@ -7,6 +9,9 @@ export default function PesertaLayout({ children }) {
         <div className="w-full h-full">
           {children}
         </div>
+
+        {/* Bottom Navigation */}
+        <BottomNavbar />
       </div>
     </div>
   );
