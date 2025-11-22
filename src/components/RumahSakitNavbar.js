@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRoleModal } from '@/contexts/RoleModalContext';
-import { LayoutDashboard, Users, FileCheck, Bell, Settings, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Users, FileCheck, Bell, Menu, X } from 'lucide-react';
 
 export default function RumahSakitNavbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -80,10 +80,6 @@ export default function RumahSakitNavbar() {
               </div>
               <span>Notifikasi</span>
             </Link>
-            <Link href="/rumah-sakit/pengaturan" className="flex items-center gap-2 text-gray-700 hover:text-[#144782] transition-colors">
-              <Settings className="w-4 h-4" />
-              <span>Pengaturan</span>
-            </Link>
             <button 
               onClick={openModal}
               className="px-4 py-2 bg-gradient-to-r from-[#03974a] to-[#144782] text-white rounded-full hover:shadow-lg transition-all duration-300 text-sm"
@@ -130,10 +126,6 @@ export default function RumahSakitNavbar() {
                 )}
               </div>
               <span>Notifikasi</span>
-            </Link>
-            <Link href="/rumah-sakit/pengaturan" className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:text-[#144782] hover:bg-gray-50 rounded-md">
-              <Settings className="w-4 h-4" />
-              <span>Pengaturan</span>
             </Link>
             <button 
               onClick={openModal}
