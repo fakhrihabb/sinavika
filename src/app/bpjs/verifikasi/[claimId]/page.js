@@ -18,7 +18,8 @@ import {
   CheckSquare,
   Calculator,
   MessageSquare,
-  Loader2
+  Loader2,
+  ShieldAlert
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -31,12 +32,16 @@ export default function DetailVerifikasiKlaimPage({ params }) {
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
+  const [isAnalyzingFraud, setIsAnalyzingFraud] = useState(true);
+  const [fraudAnalysis, setFraudAnalysis] = useState(null);
+
   const [expandedSections, setExpandedSections] = useState({
     dataPasien: true,
     formEKlaim: true,
     dokumen: true,
     grouper: true,
-    verifikasi: true
+    verifikasi: true,
+    fraud: true,
   });
 
   const [verificationData, setVerificationData] = useState({
@@ -77,6 +82,33 @@ export default function DetailVerifikasiKlaimPage({ params }) {
 
     fetchClaimData();
   }, [claimId]);
+
+  // --- New: Fetch Fraud Analysis Data ---
+  useEffect(() => {
+    if (!claimId) return;
+
+    const fetchFraudAnalysis = async () => {
+      setIsAnalyzingFraud(true);
+      try {
+        const response = await fetch(`/api/bpjs/claims/${claimId}/analyze-fraud`);
+        const result = await response.json();
+        if (result.success) {
+          setFraudAnalysis(result.data);
+        } else {
+          console.error("Gagal melakukan analisis fraud:", result.error);
+          setFraudAnalysis(null); // Set to null on failure
+        }
+      } catch (err) {
+        console.error("Error fetching fraud analysis:", err);
+        setFraudAnalysis(null);
+      } finally {
+        setIsAnalyzingFraud(false);
+      }
+    };
+
+    fetchFraudAnalysis();
+  }, [claimId]);
+
 
   // Transform Supabase data to component format
   const transformClaimData = (data) => {
@@ -270,6 +302,32 @@ export default function DetailVerifikasiKlaimPage({ params }) {
     );
   }
 
+  const getScoreColor = (score) => {
+    if (score > 70) return 'text-red-500';
+    if (score > 40) return 'text-orange-500';
+    return 'text-yellow-500';
+  };
+  
+  const getScoreBgColor = (score) => {
+    if (score > 70) return 'bg-red-500';
+    if (score > 40) return 'bg-orange-500';
+    return 'bg-yellow-500';
+  };
+
+  const getSeverityBadge = (severity) => {
+    switch (severity) {
+      case 'HIGH':
+        return <span className="px-2 py-1 bg-red-100 text-red-700 text-xs font-semibold rounded-full">HIGH</span>;
+      case 'MEDIUM':
+        return <span className="px-2 py-1 bg-orange-100 text-orange-700 text-xs font-semibold rounded-full">MEDIUM</span>;
+      case 'LOW':
+        return <span className="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs font-semibold rounded-full">LOW</span>;
+      default:
+        return null;
+    }
+  };
+
+
   return (
     <div className="min-h-screen bg-gray-50">
       <BpjsNavbar />
@@ -352,6 +410,70 @@ export default function DetailVerifikasiKlaimPage({ params }) {
             </div>
           </div>
         </div>
+
+        {/* --- FRAUD ANALYSIS PANEL --- */}
+        {isAnalyzingFraud ? (
+          <div className="mb-6 bg-blue-50 border-2 border-blue-200 rounded-2xl p-6 flex items-center justify-center">
+            <Loader2 className="w-6 h-6 text-blue-600 animate-spin mr-3" />
+            <p className="text-blue-800 font-medium">Menganalisis potensi fraud...</p>
+          </div>
+        ) : fraudAnalysis && fraudAnalysis.confidenceScore > 10 && (
+          <div className="mb-6 bg-red-50 border-2 border-red-200 rounded-2xl shadow-lg">
+            <button
+                onClick={() => toggleSection('fraud')}
+                className="w-full px-8 py-6 bg-red-100 hover:bg-red-200/50 transition-colors flex items-center justify-between"
+              >
+              <h2 className="text-xl font-bold text-red-900 flex items-center gap-3">
+                <div className="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center">
+                  <ShieldAlert className="w-5 h-5 text-white" />
+                </div>
+                Analisis Potensi Fraud Terdeteksi
+              </h2>
+              {expandedSections.fraud ? (
+                  <ChevronUp className="w-6 h-6 text-red-700" />
+                ) : (
+                  <ChevronDown className="w-6 h-6 text-red-700" />
+                )}
+            </button>
+            
+            {expandedSections.fraud && (
+            <div className="p-8">
+              <div className="flex flex-col md:flex-row gap-8">
+                {/* Score Gauge */}
+                <div className="flex-shrink-0 text-center">
+                  <p className="text-sm text-gray-600 font-semibold mb-2">Confidence Score</p>
+                  <div className={`text-6xl font-bold mb-2 ${getScoreColor(fraudAnalysis.confidenceScore)}`}>
+                    {fraudAnalysis.confidenceScore}%
+                  </div>
+                  <div className="w-32 bg-gray-200 rounded-full h-4 mx-auto">
+                    <div
+                      className={`h-4 rounded-full transition-all ${getScoreBgColor(fraudAnalysis.confidenceScore)}`}
+                      style={{ width: `${fraudAnalysis.confidenceScore}%` }}
+                    ></div>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">{fraudAnalysis.summary}</p>
+                </div>
+
+                {/* Issues List */}
+                <div className="flex-1">
+                  <h3 className="font-bold text-gray-900 mb-3 text-lg">Detail Anomali yang Ditemukan:</h3>
+                  <div className="space-y-3">
+                    {fraudAnalysis.issues.map((issue, index) => (
+                      <div key={index} className="p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="font-semibold text-gray-800">{issue.code}</p>
+                          {getSeverityBadge(issue.severity)}
+                        </div>
+                        <p className="text-sm text-gray-700">{issue.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+            )}
+          </div>
+        )}
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
