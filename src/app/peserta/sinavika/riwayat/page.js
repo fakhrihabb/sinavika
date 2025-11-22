@@ -241,7 +241,7 @@ function RiwayatPageContent() {
               <div className="pt-4">
                 {selectedTriage.appointment_status === 'Sudah Atur Janji Temu' ? (
                   <Link
-                    href="/peserta/janji-temu"
+                    href="/peserta/sinavika/janji-temu"
                     className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
                   >
                     <CalendarCheck className="w-5 h-5" />
@@ -342,7 +342,7 @@ function RiwayatPageContent() {
             </p>
             {!searchTerm && filterSeverity === 'all' && (
               <Link
-                href="/peserta/triage"
+                href="/peserta/sinavika/triage"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#03974a] to-[#144782] text-white rounded-lg font-semibold hover:shadow-lg transition-all"
               >
                 Mulai Cek Keluhan

@@ -193,7 +193,7 @@ export default function PesertaPage() {
         {/* Primary Quick Actions - Mobile Friendly */}
         <div className="space-y-4">
           <Link
-            href="/peserta/triage"
+            href="/peserta/sinavika/triage"
             className="group flex items-center justify-between bg-gradient-to-r from-[#03974a] to-[#144782] rounded-xl p-6 shadow-md hover:shadow-lg transition-all"
           >
             <div className="flex items-center gap-4">
@@ -209,7 +209,7 @@ export default function PesertaPage() {
           </Link>
 
           <Link
-            href="/peserta/riwayat"
+            href="/peserta/sinavika/riwayat"
             className="group flex items-center justify-between bg-white rounded-xl p-6 border-2 border-[#03974a] shadow-md hover:shadow-lg transition-all"
           >
             <div className="flex items-center gap-4">
@@ -225,7 +225,7 @@ export default function PesertaPage() {
           </Link>
 
           <Link
-            href="/peserta/janji-temu"
+            href="/peserta/sinavika/janji-temu"
             className="group flex items-center justify-between bg-white rounded-xl p-6 border-2 border-blue-500 shadow-md hover:shadow-lg transition-all"
           >
             <div className="flex items-center gap-4">

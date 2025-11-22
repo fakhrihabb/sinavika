@@ -527,7 +527,7 @@ export default function TriagePage() {
                 </Link>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Link
-                    href="/peserta/riwayat"
+                    href="/peserta/sinavika/riwayat"
                     className="flex-1 px-6 py-3 bg-white border-2 border-[#03974a] text-[#03974a] rounded-lg font-semibold hover:bg-green-50 transition-all text-center"
                   >
                     Lihat Riwayat Triase

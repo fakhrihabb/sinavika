@@ -355,7 +355,7 @@ function JanjiTemuContent() {
               Anda belum memiliki janji temu dengan rumah sakit manapun.
             </p>
             <Link
-              href="/peserta/triage"
+              href="/peserta/sinavika/triage"
               className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#03974a] to-[#144782] text-white rounded-lg font-semibold hover:shadow-lg transition-all"
             >
               Mulai Cek Keluhan
