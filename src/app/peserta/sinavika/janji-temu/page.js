@@ -1,7 +1,6 @@
 'use client';
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import PesertaNavbar from '@/components/PesertaNavbar';
 import Link from 'next/link';
 import {
   Calendar,
@@ -123,8 +122,7 @@ function JanjiTemuContent() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <PesertaNavbar />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center">
               <Loader2 className="w-8 h-8 text-[#03974a] animate-spin mx-auto mb-4" />
@@ -139,8 +137,7 @@ function JanjiTemuContent() {
   if (error) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <PesertaNavbar />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-2xl mx-auto">
             <div className="flex items-start gap-3">
               <AlertCircle className="w-6 h-6 text-red-500 flex-shrink-0 mt-0.5" />
@@ -157,8 +154,7 @@ function JanjiTemuContent() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <PesertaNavbar />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Success Message */}
         {showSuccessMessage && (
           <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
@@ -372,8 +368,7 @@ export default function JanjiTemuPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen bg-gray-50">
-        <PesertaNavbar />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-6">
           <div className="flex items-center justify-center min-h-[400px]">
             <Loader2 className="w-8 h-8 text-[#03974a] animate-spin" />
           </div>

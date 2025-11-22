@@ -1,7 +1,6 @@
 'use client';
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import PesertaNavbar from '@/components/PesertaNavbar';
 import {
   Calendar,
   Clock,
@@ -114,8 +113,7 @@ function RiwayatPageContent() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <PesertaNavbar />
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center py-12">
             <Loader2 className="w-12 h-12 animate-spin text-[#03974a] mx-auto mb-4" />
             <p className="text-gray-600">Memuat riwayat keluhan...</p>
@@ -128,8 +126,7 @@ function RiwayatPageContent() {
   if (selectedTriage) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <PesertaNavbar />
-        <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+        <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <button
             onClick={() => setSelectedTriage(null)}
             className="mb-6 flex items-center gap-2 text-gray-600 hover:text-gray-900"
@@ -266,9 +263,8 @@ function RiwayatPageContent() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <PesertaNavbar />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
@@ -418,8 +414,7 @@ export default function RiwayatPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen bg-gray-50">
-        <PesertaNavbar />
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-6">
           <div className="text-center py-12">
             <Loader2 className="w-12 h-12 animate-spin text-[#03974a] mx-auto mb-4" />
             <p className="text-gray-600">Memuat riwayat keluhan...</p>

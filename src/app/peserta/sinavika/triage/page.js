@@ -1,6 +1,5 @@
 'use client';
 import { useState, useEffect } from 'react';
-import PesertaNavbar from '@/components/PesertaNavbar';
 import {
   ArrowLeft,
   ArrowRight,
@@ -372,9 +371,8 @@ export default function TriagePage() {
   if (triageResult) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <PesertaNavbar />
 
-        <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+        <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sm:p-8">
             <div className="text-center mb-6">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
@@ -550,9 +548,8 @@ export default function TriagePage() {
   // Render form interface
   return (
     <div className="min-h-screen bg-gray-50">
-      <PesertaNavbar />
 
-      <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+      <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Progress Bar */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
@@ -579,7 +576,17 @@ export default function TriagePage() {
               <p className="text-gray-600">Memuat pertanyaan...</p>
             </div>
           ) : currentQuestion ? (
-            <div className="space-y-6">
+            <div className="space-y-6 relative">
+              {/* Loading Overlay */}
+              {loading && (
+                <div className="absolute inset-0 bg-white/80 backdrop-blur-sm rounded-2xl flex items-center justify-center z-10">
+                  <div className="text-center">
+                    <Loader2 className="w-12 h-12 animate-spin text-[#03974a] mx-auto mb-3" />
+                    <p className="text-gray-700 font-medium">Memuat</p>
+                  </div>
+                </div>
+              )}
+
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">
                   {currentQuestion.nextQuestion}
