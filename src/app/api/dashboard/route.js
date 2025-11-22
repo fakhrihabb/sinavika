@@ -81,16 +81,24 @@ export async function GET(request) {
       lastTriageTime = diffDays === 0 ? 'Hari ini' : `${diffDays} hari`;
     }
 
-    return NextResponse.json({
-      success: true,
-      stats: {
-        total: totalCount,
-        monthly: monthlyCount,
-        lastTriageTime: lastTriageTime
+    return NextResponse.json(
+      {
+        success: true,
+        stats: {
+          total: totalCount,
+          monthly: monthlyCount,
+          lastTriageTime: lastTriageTime
+        },
+        lastTriage: lastTriageResult.data || null,
+        recentAppointments: appointmentsResult.data || []
       },
-      lastTriage: lastTriageResult.data || null,
-      recentAppointments: appointmentsResult.data || []
-    });
+      {
+        headers: {
+          // Cache for 30 seconds, serve stale for 60 seconds while revalidating
+          'Cache-Control': 'private, max-age=30, stale-while-revalidate=60',
+        },
+      }
+    );
 
   } catch (error) {
     console.error('Dashboard API error:', error);

@@ -5,21 +5,30 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 export default function PesertaPage() {
-  const [lastTriage, setLastTriage] = useState(null);
   const [stats, setStats] = useState([
     { label: "Total Keluhan", value: "0", icon: Activity, color: "text-blue-600" },
     { label: "Bulan Ini", value: "0", icon: Calendar, color: "text-green-600" },
     { label: "Keluhan Terakhir", value: "-", icon: Clock, color: "text-orange-600" }
   ]);
-  const [recentAppointments, setRecentAppointments] = useState([]);
+
+  const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
-
   const fetchDashboardData = async () => {
+    // Check cache first
+    const cacheKey = 'dashboard-demo-user';
+    const cached = sessionStorage.getItem(cacheKey);
+    const cacheTime = sessionStorage.getItem(`${cacheKey}-time`);
+    
+    // Use cached data if less than 30 seconds old
+    if (cached && cacheTime && (Date.now() - parseInt(cacheTime)) < 30000) {
+      const result = JSON.parse(cached);
+      updateDashboardState(result);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -32,18 +41,11 @@ export default function PesertaPage() {
         throw new Error(result.error || 'Gagal mengambil data');
       }
 
-      // Update stats with server-calculated values
-      setStats([
-        { label: "Total Keluhan", value: result.stats.total.toString(), icon: Activity, color: "text-blue-600" },
-        { label: "Bulan Ini", value: result.stats.monthly.toString(), icon: Calendar, color: "text-green-600" },
-        { label: "Keluhan Terakhir", value: result.stats.lastTriageTime, icon: Clock, color: "text-orange-600" }
-      ]);
+      // Cache the result
+      sessionStorage.setItem(cacheKey, JSON.stringify(result));
+      sessionStorage.setItem(`${cacheKey}-time`, Date.now().toString());
 
-      // Set last triage
-      setLastTriage(result.lastTriage);
-
-      // Set recent appointments
-      setRecentAppointments(result.recentAppointments);
+      updateDashboardState(result);
 
     } catch (err) {
       setError(err.message);
@@ -51,6 +53,22 @@ export default function PesertaPage() {
       setLoading(false);
     }
   };
+
+  const updateDashboardState = (result) => {
+    // Update stats with server-calculated values
+    setStats([
+      { label: "Total Keluhan", value: result.stats.total.toString(), icon: Activity, color: "text-blue-600" },
+      { label: "Bulan Ini", value: result.stats.monthly.toString(), icon: Calendar, color: "text-green-600" },
+      { label: "Keluhan Terakhir", value: result.stats.lastTriageTime, icon: Clock, color: "text-orange-600" }
+    ]);
+
+    setDashboardData(result);
+  };
+
+  useEffect(() => {
+    fetchDashboardData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);

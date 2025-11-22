@@ -29,6 +29,43 @@ function RiwayatPageContent() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterSeverity, setFilterSeverity] = useState('all');
 
+  const fetchHistory = async () => {
+    // Check cache first
+    const cacheKey = 'triage-history-demo-user';
+    const cached = sessionStorage.getItem(cacheKey);
+    const cacheTime = sessionStorage.getItem(`${cacheKey}-time`);
+    
+    // Use cached data if less than 30 seconds old
+    if (cached && cacheTime && (Date.now() - parseInt(cacheTime)) < 30000) {
+      const result = JSON.parse(cached);
+      setHistory(result.data);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch('/api/triage/history?userId=demo-user');
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Gagal mengambil riwayat');
+      }
+
+      // Cache the result
+      sessionStorage.setItem(cacheKey, JSON.stringify(result));
+      sessionStorage.setItem(`${cacheKey}-time`, Date.now().toString());
+
+      setHistory(result.data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchHistory();
   }, []);
@@ -42,26 +79,6 @@ function RiwayatPageContent() {
       }
     }
   }, [triageIdParam, history, selectedTriage]);
-
-  const fetchHistory = async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await fetch('/api/triage/history?userId=demo-user');
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Gagal mengambil riwayat');
-      }
-
-      setHistory(result.data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const getSeverityColor = (level) => {
     switch (level) {

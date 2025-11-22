@@ -11,10 +11,26 @@ export async function GET(request) {
     const userId = searchParams.get('userId') || 'demo-user';
     const limit = parseInt(searchParams.get('limit') || '50');
 
-    // Fetch triage history for user
+    // Optimized: Only select fields needed for the list view
+    // This significantly reduces payload size by excluding large JSON fields
     const { data, error } = await supabase
       .from('triage_history')
-      .select('*')
+      .select(`
+        id,
+        triage_id,
+        user_id,
+        tingkat_keparahan,
+        label_keparahan,
+        rekomendasi_layanan,
+        alasan,
+        tanggal_kunjungan_disarankan,
+        conversation_summary,
+        tindakan,
+        gejala_bahaya,
+        ringkasan_klinis,
+        appointment_status,
+        created_at
+      `)
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
       .limit(limit);
@@ -24,11 +40,19 @@ export async function GET(request) {
       throw new Error('Gagal mengambil riwayat triase');
     }
 
-    return NextResponse.json({
-      success: true,
-      data: data || [],
-      count: data?.length || 0,
-    });
+    // Set cache headers for better performance
+    return NextResponse.json(
+      {
+        success: true,
+        data: data || [],
+        count: data?.length || 0,
+      },
+      {
+        headers: {
+          'Cache-Control': 'private, max-age=30, stale-while-revalidate=60',
+        },
+      }
+    );
 
   } catch (error) {
     console.error('Get history error:', error);

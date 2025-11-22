@@ -32,17 +32,20 @@ function JanjiTemuContent() {
   const [showSuccessMessage, setShowSuccessMessage] = useState(successParam === 'true');
   const [expandedCards, setExpandedCards] = useState({});
 
-  useEffect(() => {
-    fetchAppointments();
-
-    // Hide success message after 5 seconds
-    if (showSuccessMessage) {
-      const timer = setTimeout(() => setShowSuccessMessage(false), 5000);
-      return () => clearTimeout(timer);
-    }
-  }, []);
-
   const fetchAppointments = async () => {
+    // Check cache first
+    const cacheKey = 'appointments-demo-user';
+    const cached = sessionStorage.getItem(cacheKey);
+    const cacheTime = sessionStorage.getItem(`${cacheKey}-time`);
+    
+    // Use cached data if less than 30 seconds old
+    if (cached && cacheTime && (Date.now() - parseInt(cacheTime)) < 30000) {
+      const data = JSON.parse(cached);
+      setAppointments(data.appointments || []);
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch('/api/janji-temu?userId=demo-user');
       const data = await response.json();
@@ -51,6 +54,10 @@ function JanjiTemuContent() {
         throw new Error(data.error || 'Gagal mengambil data janji temu');
       }
 
+      // Cache the result
+      sessionStorage.setItem(cacheKey, JSON.stringify(data));
+      sessionStorage.setItem(`${cacheKey}-time`, Date.now().toString());
+
       setAppointments(data.appointments || []);
     } catch (err) {
       setError(err.message);
@@ -58,6 +65,16 @@ function JanjiTemuContent() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchAppointments();
+
+    // Hide success message after 5 seconds
+    if (showSuccessMessage) {
+      const timer = setTimeout(() => setShowSuccessMessage(false), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [showSuccessMessage]);
 
   const handleOpenInMaps = (appointment) => {
     const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${appointment.hospital_lat},${appointment.hospital_lng}&query_place_id=${appointment.hospital_place_id}`;
