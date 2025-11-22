@@ -65,7 +65,7 @@ export default function RumahSakitNavbar() {
               <Users className="w-4 h-4" />
               <span>Antrian</span>
             </Link>
-            <Link href="/rumah-sakit/klaim" className="flex items-center gap-2 text-gray-700 hover:text-[#144782] transition-colors">
+            <Link href="/rumah-sakit/pre-check" className="flex items-center gap-2 text-gray-700 hover:text-[#144782] transition-colors">
               <FileCheck className="w-4 h-4" />
               <span>Klaim</span>
             </Link>
@@ -112,7 +112,7 @@ export default function RumahSakitNavbar() {
               <Users className="w-4 h-4" />
               <span>Antrian</span>
             </Link>
-            <Link href="/rumah-sakit/klaim" className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:text-[#144782] hover:bg-gray-50 rounded-md">
+            <Link href="/rumah-sakit/pre-check" className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:text-[#144782] hover:bg-gray-50 rounded-md">
               <FileCheck className="w-4 h-4" />
               <span>Klaim</span>
             </Link>
