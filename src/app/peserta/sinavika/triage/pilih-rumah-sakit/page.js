@@ -2,6 +2,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import PesertaNavbar from '@/components/PesertaNavbar';
+import MobileHeader from '@/components/MobileHeader';
 import {
   MapPin,
   Navigation,
@@ -167,8 +168,13 @@ function HospitalSelectionContent() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <PesertaNavbar />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+        <div className="md:block hidden">
+          <PesertaNavbar />
+        </div>
+        <div className="md:hidden">
+          <MobileHeader title="Pilih Faskes" />
+        </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:pt-24">
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center">
               <Loader2 className="w-8 h-8 text-[#03974a] animate-spin mx-auto mb-4" />
@@ -183,8 +189,13 @@ function HospitalSelectionContent() {
   if (error) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <PesertaNavbar />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+        <div className="md:block hidden">
+          <PesertaNavbar />
+        </div>
+        <div className="md:hidden">
+          <MobileHeader title="Pilih Faskes" />
+        </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:pt-24">
           <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-2xl mx-auto">
             <div className="flex items-start gap-3">
               <AlertCircle className="w-6 h-6 text-red-500 flex-shrink-0 mt-0.5" />
@@ -207,10 +218,15 @@ function HospitalSelectionContent() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <PesertaNavbar />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
-        {/* Header */}
-        <div className="mb-8">
+      <div className="md:block hidden">
+        <PesertaNavbar />
+      </div>
+      <div className="md:hidden">
+        <MobileHeader title={serviceType === 'Faskes Tingkat Pertama' ? 'Pilih Faskes' : 'Pilih Rumah Sakit'} />
+      </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:pt-24">
+        {/* Header - Hidden on mobile, shown on desktop */}
+        <div className="mb-8 hidden md:block">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             {serviceType === 'Faskes Tingkat Pertama' ? 'Pilih Faskes' : 'Pilih Rumah Sakit'}
           </h1>
@@ -222,6 +238,17 @@ function HospitalSelectionContent() {
           </p>
           <p className="text-sm text-gray-500 mt-1">
             Menampilkan {hospitals.length} {serviceType === 'Faskes Tingkat Pertama' ? 'faskes' : 'rumah sakit'} terdekat
+          </p>
+        </div>
+
+        {/* Mobile Summary */}
+        <div className="mb-6 md:hidden bg-white rounded-lg p-4 border border-gray-200">
+          <p className="text-sm text-gray-600 mb-1">Rekomendasi untuk Anda:</p>
+          <p className="font-semibold text-[#03974a] mb-2">
+            {getServiceTypeLabel(serviceType)}
+          </p>
+          <p className="text-xs text-gray-500">
+            {hospitals.length} {serviceType === 'Faskes Tingkat Pertama' ? 'faskes' : 'rumah sakit'} terdekat
           </p>
         </div>
 

@@ -17,6 +17,7 @@ import {
   Clock
 } from 'lucide-react';
 import Link from 'next/link';
+import MobileHeader from '@/components/MobileHeader';
 
 export default function TriagePage() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -371,6 +372,9 @@ export default function TriagePage() {
   if (triageResult) {
     return (
       <div className="min-h-screen bg-gray-50">
+        <div className="md:hidden">
+          <MobileHeader title="Hasil Triase" showBackButton={false} />
+        </div>
 
         <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sm:p-8">
@@ -548,6 +552,9 @@ export default function TriagePage() {
   // Render form interface
   return (
     <div className="min-h-screen bg-gray-50">
+      <div className="md:hidden">
+        <MobileHeader title="Cek Keluhan" showBackButton={false} />
+      </div>
 
       <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Progress Bar */}

@@ -16,6 +16,7 @@ import {
   MapPin
 } from 'lucide-react';
 import Link from 'next/link';
+import MobileHeader from '@/components/MobileHeader';
 
 function RiwayatPageContent() {
   const searchParams = useSearchParams();
@@ -126,10 +127,14 @@ function RiwayatPageContent() {
   if (selectedTriage) {
     return (
       <div className="min-h-screen bg-gray-50">
+        <div className="md:hidden">
+          <MobileHeader title="Detail Keluhan" />
+        </div>
+
         <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <button
             onClick={() => setSelectedTriage(null)}
-            className="mb-6 flex items-center gap-2 text-gray-600 hover:text-gray-900"
+            className="mb-6 hidden md:flex items-center gap-2 text-gray-600 hover:text-gray-900"
           >
             <ChevronRight className="w-5 h-5 rotate-180" />
             Kembali ke Riwayat
@@ -263,10 +268,13 @@ function RiwayatPageContent() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <div className="md:hidden">
+        <MobileHeader title="Riwayat Keluhan" />
+      </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-6">
+        {/* Header - Hidden on mobile, shown on desktop */}
+        <div className="mb-6 hidden md:block">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
             Riwayat Keluhan
           </h1>
