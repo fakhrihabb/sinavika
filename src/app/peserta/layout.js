@@ -6,7 +6,7 @@ export default function PesertaLayout({ children }) {
       {/* Mobile Container - Max width 428px (iPhone 14 Pro Max) */}
       <div className="w-full max-w-[428px] min-h-screen bg-gray-50 shadow-2xl relative overflow-hidden">
         {/* Mobile Content */}
-        <div className="w-full h-full">
+        <div className="w-full h-full pb-24">
           {children}
         </div>
 
