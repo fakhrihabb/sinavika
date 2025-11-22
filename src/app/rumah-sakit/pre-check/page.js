@@ -210,61 +210,51 @@ export default function PreCheckKlaimPage() {
   };
 
   // Handle document uploaded notification
-  const handleDocumentUploaded = (documentType, fileName) => {
-    console.log('📄 [DEBUG] Document uploaded:', { documentType, fileName });
+  const handleDocumentUploaded = (documentType, file, path) => {
+    console.log('📄 [DEBUG] Document uploaded to parent:', { documentType, file, path });
 
     setDocumentChecklist(prev => {
       const updated = { ...prev };
+      const fileData = { name: file.name, size: file.size, path: path };
 
+      const updateLogic = (category, itemId) => {
+        if (updated[category]) {
+          updated[category].items = updated[category].items.map(item => {
+            if (item.id === itemId) {
+              return { ...item, status: 'complete', file: fileData };
+            }
+             // Also mark related items as complete
+            if (category === 'resume' && (item.id === 'resume_icd' || item.id === 'resume_ttd')) {
+                return { ...item, status: 'complete', file: fileData };
+            }
+            if (category === 'penunjang' && item.id === 'penunjang_tanggal') {
+                return { ...item, status: 'complete', file: fileData };
+            }
+            return item;
+          });
+        }
+      };
+      
       // Update checklist based on document type
       if (documentType === 'resume_medis') {
-        if (updated.resume) {
-          updated.resume.items = updated.resume.items.map(item => ({
-            ...item,
-            status: item.id === 'resume_lengkap' || item.id === 'resume_icd' ? 'complete' : item.status,
-            file: item.id === 'resume_lengkap' ? fileName : item.file
-          }));
-        }
+        updateLogic('resume', 'resume_lengkap');
       } else if (documentType === 'lab_result') {
-        if (updated.penunjang) {
-          updated.penunjang.items = updated.penunjang.items.map(item => ({
-            ...item,
-            status: item.id === 'lab_required' || item.id === 'penunjang_tanggal' ? 'complete' : item.status,
-            file: item.id === 'lab_required' ? fileName : item.file
-          }));
-        }
+        updateLogic('penunjang', 'lab_required');
       } else if (documentType === 'radiology') {
-        if (updated.penunjang) {
-          updated.penunjang.items = updated.penunjang.items.map(item => ({
-            ...item,
-            status: item.id === 'radiologi' || item.id === 'penunjang_tanggal' ? 'complete' : item.status,
-            file: item.id === 'radiologi' ? fileName : item.file
-          }));
-        }
+        updateLogic('penunjang', 'radiologi');
       } else if (documentType === 'sep' || documentType === 'surat_eligibilitas_peserta') {
-        if (updated.formulir) {
-          updated.formulir.items = updated.formulir.items.map(item => ({
-            ...item,
-            status: item.id === 'sep' ? 'complete' : item.status,
-            file: item.id === 'sep' ? fileName : item.file
-          }));
-        }
+        updateLogic('formulir', 'sep');
       } else if (documentType === 'surat_rujukan') {
-        if (updated.rujukan) {
+        // Mark all rujukan items as complete
+         if (updated.rujukan) {
           updated.rujukan.items = updated.rujukan.items.map(item => ({
             ...item,
             status: 'complete',
-            file: fileName
+            file: fileData
           }));
         }
       } else if (documentType === 'resep_obat') {
-        if (updated.formulir) {
-          updated.formulir.items = updated.formulir.items.map(item => ({
-            ...item,
-            status: item.id === 'resep' ? 'complete' : item.status,
-            file: item.id === 'resep' ? fileName : item.file
-          }));
-        }
+        updateLogic('formulir', 'resep');
       }
 
       return updated;
@@ -368,13 +358,17 @@ export default function PreCheckKlaimPage() {
       // Collect documents from checklist
       Object.entries(documentChecklist).forEach(([category, section]) => {
         section.items.forEach(item => {
-          if (item.status === 'complete' && item.file) {
-            submitData.documents.push({
-              type: item.name,
-              fileName: item.file.name || item.name,
-              fileSize: item.file.size || null,
-              verified: true
-            });
+          if (item.status === 'complete' && item.file && item.file.path) {
+            // Avoid duplicate entries
+            if (!submitData.documents.some(d => d.fileUrl === item.file.path)) {
+              submitData.documents.push({
+                type: item.name,
+                fileName: item.file.name,
+                fileSize: item.file.size,
+                fileUrl: item.file.path, // Send the path to the backend
+                verified: true
+              });
+            }
           }
         });
       });

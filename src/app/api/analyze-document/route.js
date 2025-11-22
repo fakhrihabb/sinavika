@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { NextResponse } from 'next/server';
+import { supabase } from '@/lib/supabase';
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY);
 
@@ -16,19 +17,32 @@ export async function POST(request) {
       );
     }
 
-    // Convert file to base64
+    // Convert file to buffer for both upload and base64 conversion
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
+
+    // --- 1. Upload to Supabase Storage ---
+    const filePath = `public/${Date.now()}-${file.name.replace(/\s/g, '_')}`;
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from('documents')
+      .upload(filePath, buffer, {
+        contentType: file.type,
+        upsert: true, // Overwrite file if it exists, good for retries
+      });
+
+    if (uploadError) {
+      console.error('Supabase upload error:', uploadError);
+      throw new Error(`Gagal mengupload file ke Supabase: ${uploadError.message}`);
+    }
+     console.log('📄 Supabase upload success:', uploadData);
+
+
+    // --- 2. Analyze with Gemini AI ---
     const base64Data = buffer.toString('base64');
-
-    // Determine file type
     const mimeType = file.type;
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-    // Use Gemini 2.0 Flash for multimodal document analysis (supports vision)
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
-
-    // UNIVERSAL PROMPT - Auto-detect document type from visual content
-    // No longer relying on filename - AI detects from document content
+    // UNIVERSAL PROMPT (existing prompt)
     const prompt = `Anda adalah AI medis expert yang membantu mengidentifikasi dan mengekstrak data dari dokumen medis untuk sistem E-Klaim BPJS Indonesia.
 
 TUGAS:
@@ -247,7 +261,6 @@ LANGKAH VERIFIKASI SEBELUM OUTPUT:
 
 Berikan JSON yang valid tanpa tambahan teks apapun.`;
 
-    // Generate content with image
     const result = await model.generateContent([
       prompt,
       {
@@ -260,34 +273,26 @@ Berikan JSON yang valid tanpa tambahan teks apapun.`;
 
     const response = result.response;
     let text = await response.text();
-
-    // Try to parse JSON from response
     let jsonData = null;
-    try {
-      // Remove markdown code blocks if present
-      text = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-      console.log('🤖 AI Raw Response:', text);
-      jsonData = JSON.parse(text);
 
-      // Log extracted patient data for debugging
-      console.log('👤 Extracted Patient Data:', JSON.stringify(jsonData.patient, null, 2));
-      console.log('🏥 Extracted Treatment Data:', JSON.stringify(jsonData.treatment, null, 2));
-      console.log('💊 Extracted Diagnosis:', JSON.stringify(jsonData.diagnosis, null, 2));
-      console.log('🔧 Extracted Procedures:', JSON.stringify(jsonData.procedures, null, 2));
+    try {
+      text = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      jsonData = JSON.parse(text);
     } catch (e) {
-      // If parsing fails, return raw text
       console.error('❌ JSON parse error:', e);
       return NextResponse.json({
         success: false,
         rawText: text,
-        error: 'Failed to parse structured data'
+        error: 'Failed to parse structured data from AI'
       });
     }
 
+    // --- 3. Return Combined Result ---
     return NextResponse.json({
       success: true,
       data: jsonData,
-      rawText: text
+      rawText: text,
+      uploadPath: uploadData.path, // Include the upload path in the response
     });
 
   } catch (error) {

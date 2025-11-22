@@ -570,21 +570,21 @@ export default function DetailVerifikasiKlaimPage({ params }) {
                             <FileText className="w-6 h-6 text-blue-600" />
                           </div>
                           <div>
-                            <p className="font-semibold text-gray-900">{doc.type}</p>
-                            <p className="text-sm text-gray-600">{doc.name} • {doc.size}</p>
+                            <p className="font-semibold text-gray-900">{doc.name}</p>
+                            <p className="text-sm text-gray-600">{doc.type} • {doc.size}</p>
                             <p className="text-xs text-gray-500">Diupload: {doc.uploaded}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
                           {doc.verified && (
-                            <CheckCircle className="w-5 h-5 text-green-600" />
+                            <CheckCircle className="w-5 h-5 text-green-600" title="Terverifikasi" />
                           )}
-                          <button className="p-2 hover:bg-gray-200 rounded-lg transition-colors">
+                          <a href={doc.url} target="_blank" rel="noopener noreferrer" className="p-2 hover:bg-gray-200 rounded-lg transition-colors" title="Lihat Dokumen">
                             <Eye className="w-5 h-5 text-[#144782]" />
-                          </button>
-                          <button className="p-2 hover:bg-gray-200 rounded-lg transition-colors">
+                          </a>
+                          <a href={doc.url} download className="p-2 hover:bg-gray-200 rounded-lg transition-colors" title="Unduh Dokumen">
                             <Download className="w-5 h-5 text-[#144782]" />
-                          </button>
+                          </a>
                         </div>
                       </div>
                     ))}

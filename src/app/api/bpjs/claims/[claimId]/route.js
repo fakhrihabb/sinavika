@@ -57,6 +57,26 @@ export async function GET(request, { params }) {
 
     if (documentsError) throw documentsError;
 
+    // Generate signed URLs for documents as they are likely in a private bucket
+    const documentsWithUrls = await Promise.all(
+      documents.map(async (doc) => {
+        if (doc.file_url) {
+          const { data, error: urlError } = await supabase.storage
+            .from('documents')
+            .createSignedUrl(doc.file_url, 3600); // URL valid for 1 hour
+
+          if (urlError) {
+            console.error(`Error creating signed URL for ${doc.file_url}:`, urlError);
+            return { ...doc, file_url: null }; // Return with null URL on error
+          }
+
+          return { ...doc, file_url: data.signedUrl };
+        }
+        return doc;
+      })
+    );
+
+
     // Fetch verification history
     const { data: verifications, error: verificationsError } = await supabase
       .from('claim_verifications')
@@ -71,7 +91,7 @@ export async function GET(request, { params }) {
       ...claim,
       diagnoses: diagnoses || [],
       procedures: procedures || [],
-      documents: documents || [],
+      documents: documentsWithUrls || [],
       verifications: verifications || [],
     };
 

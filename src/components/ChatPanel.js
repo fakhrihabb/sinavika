@@ -134,9 +134,9 @@ export default function ChatPanel({ claimData, onSuggestionApply, onDocumentUplo
           timestamp: new Date()
         }]);
 
-        // Notify parent page about uploaded document type
-        if (onDocumentUploaded && result.data.documentType) {
-          onDocumentUploaded(result.data.documentType, file.name);
+        // Notify parent page about uploaded document type and path
+        if (onDocumentUploaded && result.data.documentType && result.uploadPath) {
+          onDocumentUploaded(result.data.documentType, file, result.uploadPath);
         }
       } else {
         // Handle API failure
