@@ -21,26 +21,42 @@ export async function POST(request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // --- 1. Upload to Supabase Storage ---
-    const filePath = `public/${Date.now()}-${file.name.replace(/\s/g, '_')}`;
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from('documents')
-      .upload(filePath, buffer, {
-        contentType: file.type,
-        upsert: true, // Overwrite file if it exists, good for retries
-      });
+    // --- 1. Upload to Supabase Storage (OPTIONAL) ---
+    let uploadData = null;
+    let uploadPath = null;
 
-    if (uploadError) {
-      console.error('Supabase upload error:', uploadError);
-      throw new Error(`Gagal mengupload file ke Supabase: ${uploadError.message}`);
+    try {
+      const filePath = `public/${Date.now()}-${file.name.replace(/\s/g, '_')}`;
+      const { data, error: uploadError } = await supabase.storage
+        .from('documents')
+        .upload(filePath, buffer, {
+          contentType: file.type,
+          upsert: true,
+        });
+
+      if (uploadError) {
+        console.warn('⚠️ Supabase upload skipped:', uploadError.message);
+        console.warn('   Dokumen akan dianalisis tanpa disimpan ke storage.');
+        // Don't throw error, just skip upload
+      } else {
+        uploadData = data;
+        uploadPath = data.path;
+        console.log('✅ Supabase upload success:', uploadData);
+      }
+    } catch (storageError) {
+      console.warn('⚠️ Storage upload failed (non-blocking):', storageError.message);
+      // Continue without storage upload
     }
-     console.log('📄 Supabase upload success:', uploadData);
 
 
     // --- 2. Analyze with Gemini AI ---
     const base64Data = buffer.toString('base64');
     const mimeType = file.type;
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+
+    // Use Gemini 2.5 Flash (latest stable model that supports multimodal)
+    const modelName = 'gemini-2.5-flash';
+    const model = genAI.getGenerativeModel({ model: modelName });
+    console.log(`✅ Using Gemini model: ${modelName}`);
 
     // UNIVERSAL PROMPT (existing prompt)
     const prompt = `Anda adalah AI medis expert yang membantu mengidentifikasi dan mengekstrak data dari dokumen medis untuk sistem E-Klaim BPJS Indonesia.
@@ -292,7 +308,8 @@ Berikan JSON yang valid tanpa tambahan teks apapun.`;
       success: true,
       data: jsonData,
       rawText: text,
-      uploadPath: uploadData.path, // Include the upload path in the response
+      uploadPath: uploadPath || null, // null if storage upload failed
+      storageStatus: uploadPath ? 'uploaded' : 'skipped',
     });
 
   } catch (error) {

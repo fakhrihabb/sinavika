@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Medis - Test FRAUD COMBINED</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', serif;
+            margin: 40px;
+            line-height: 1.6;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #000;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .hospital-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .document-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+            text-decoration: underline;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .section-title {
+            font-weight: bold;
+            font-size: 16px;
+            background-color: #f0f0f0;
+            padding: 5px 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid #144782;
+        }
+        .field {
+            margin-bottom: 8px;
+            display: flex;
+        }
+        .field-label {
+            font-weight: bold;
+            min-width: 200px;
+        }
+        .field-value {
+            flex: 1;
+        }
+        .diagnosis-box {
+            border: 2px solid #144782;
+            padding: 15px;
+            margin: 10px 0;
+            background-color: #f9f9f9;
+        }
+        .footer {
+            margin-top: 50px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .signature-box {
+            text-align: center;
+            width: 200px;
+        }
+        .signature-line {
+            margin-top: 60px;
+            border-top: 2px solid #000;
+            padding-top: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        table td {
+            padding: 5px;
+            vertical-align: top;
+        }
+        .stamp-area {
+            width: 150px;
+            height: 150px;
+            border: 2px dashed #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            margin: 10px auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="hospital-name">RUMAH SAKIT BUDI SEHAT</div>
+        <div>Jl. Kesehatan Raya No. 123, Jakarta Selatan 12345</div>
+        <div>Telp: (021) 55512345 | Email: info@rsbudisehat.co.id</div>
+        <div class="document-title">RESUME MEDIS RAWAT INAP</div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">I. DATA PASIEN</div>
+        <table>
+            <tr>
+                <td style="width: 25%;"><strong>Nama Pasien</strong></td>
+                <td style="width: 25%;">Ahmad Fauzi</td>
+                <td style="width: 25%;"><strong>No. Rekam Medis</strong></td>
+                <td style="width: 25%;">RS-2024-98765</td>
+            </tr>
+            <tr>
+                <td><strong>Tanggal Lahir</strong></td>
+                <td>28 Maret 1985 (39 tahun)</td>
+                <td><strong>Jenis Kelamin</strong></td>
+                <td>Laki-laki</td>
+            </tr>
+            <tr>
+                <td><strong>No. BPJS</strong></td>
+                <td>0009876543210</td>
+                <td><strong>No. SEP</strong></td>
+                <td>0301R0011024Y999999</td>
+            </tr>
+            <tr>
+                <td><strong>Alamat</strong></td>
+                <td colspan="3">Jl. Kenanga No. 88, RT 05/RW 08, Kelurahan Kebayoran, Jakarta Selatan</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-title">II. DATA PERAWATAN</div>
+        <table>
+            <tr>
+                <td style="width: 25%;"><strong>Tanggal Masuk</strong></td>
+                <td style="width: 25%;">10 Oktober 2024, 09:00 WIB</td>
+                <td style="width: 25%;"><strong>Tanggal Keluar</strong></td>
+                <td style="width: 25%;">12 Oktober 2024, 16:00 WIB</td>
+            </tr>
+            <tr>
+                <td><strong>Lama Rawat</strong></td>
+                <td>3 Hari</td>
+                <td><strong>Ruang Perawatan</strong></td>
+                <td>Anggrek 2 - Kelas 3</td>
+            </tr>
+            <tr>
+                <td><strong>Cara Masuk</strong></td>
+                <td>IGD</td>
+                <td><strong>Cara Keluar</strong></td>
+                <td>Atas Persetujuan Dokter</td>
+            </tr>
+            <tr>
+                <td><strong>DPJP</strong></td>
+                <td colspan="3">dr. Siti Rahmawati, Sp.PD</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-title">III. ANAMNESIS & PEMERIKSAAN FISIK</div>
+        <div class="field">
+            <div class="field-label">Keluhan Utama:</div>
+            <div class="field-value">Batuk pilek ringan, bersin-bersin</div>
+        </div>
+        <div class="field">
+            <div class="field-label">Riwayat Penyakit Sekarang:</div>
+            <div class="field-value">
+                Pasien datang dengan keluhan batuk pilek ringan sejak 2 hari yang lalu.
+                Bersin-bersin, hidung tersumbat, tidak ada demam tinggi. Keluhan sangat ringan.
+            </div>
+        </div>
+        <div class="field">
+            <div class="field-label">Tanda Vital:</div>
+            <div class="field-value">
+                TD: 120/80 mmHg, Nadi: 78 x/menit, RR: 18 x/menit, Suhu: 36.8°C, SpO2: 99% (room air)
+            </div>
+        </div>
+        <div class="field">
+            <div class="field-label">Pemeriksaan Fisik:</div>
+            <div class="field-value">
+                Kesadaran: Compos Mentis, Keadaan Umum: Baik, tidak ada distress.
+                Thorax: Suara napas vesikuler normal, ronki (-), wheezing (-).
+                Cor: BJ I-II reguler, murmur (-).
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">IV. PEMERIKSAAN PENUNJANG</div>
+        <div class="field">
+            <div class="field-label">Laboratorium (14 Oktober 2024):</div>
+            <div class="field-value">
+                • Hb: 14.5 g/dL (Normal) <br>
+                • Leukosit: 7.200/mm³ (Normal) <br>
+                • Trombosit: 285.000/mm³ (Normal) <br>
+                • GDS: 98 mg/dL (Normal) <br>
+                • Ureum: 28 mg/dL (Normal) <br>
+                • Kreatinin: 0.9 mg/dL (Normal) <br>
+                • SGOT: 32 U/L (Normal) <br>
+                • SGPT: 28 U/L (Normal)
+            </div>
+        </div>
+        <div class="field">
+            <div class="field-label">Rontgen Thorax AP (10 Okt 2024):</div>
+            <div class="field-value">
+                Cor dan pulmo dalam batas normal. Tidak tampak infiltrat.
+                Kesan: Tidak ada kelainan radiologis.
+            </div>
+        </div>
+        <div class="field">
+            <div class="field-label">CT Scan Abdomen (11 Okt 2024):</div>
+            <div class="field-value">
+                Seluruh organ intra-abdomen dalam batas normal. Tidak tampak massa atau kelainan.
+            </div>
+        </div>
+        <div class="field">
+            <div class="field-label">USG Whole Abdomen (11 Okt 2024):</div>
+            <div class="field-value">
+                Hepar, lien, ginjal bilateral, pankreas, vesica urinaria dalam batas normal.
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">V. DIAGNOSIS</div>
+        <div class="diagnosis-box">
+            <div class="field">
+                <div class="field-label">Diagnosis Utama:</div>
+                <div class="field-value"><strong>Common Cold / Flu Biasa</strong> (ICD-10: <strong>J00</strong>)</div>
+            </div>
+            <div class="field">
+                <div class="field-label">Diagnosis Sekunder:</div>
+                <div class="field-value">-</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">VI. TINDAKAN & PROSEDUR</div>
+        <div class="field">
+            <div class="field-value">
+                • Appendectomy / Appendectomi (ICD-9-CM: <strong>47.0</strong>)<br>
+                • Open Heart Surgery / Bedah Jantung Terbuka (ICD-9-CM: <strong>36.1</strong>)<br>
+                • Foto Rontgen Thorax AP (ICD-9-CM: <strong>87.44</strong>)<br>
+                • CT Scan Abdomen dengan kontras<br>
+                • USG Whole Abdomen<br>
+                • EKG 12 Lead<br>
+                • Echocardiography<br>
+                • Pemasangan infus line<br>
+                • Nebulisasi 6x sehari<br>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">VII. TERAPI YANG DIBERIKAN</div>
+        <div class="field">
+            <div class="field-value">
+                • IVFD NaCl 0.9% 20 tpm<br>
+                • Inj. Ceftriaxone 2x2 gram IV<br>
+                • Inj. Meropenem 3x1 gram IV<br>
+                • Inj. Metronidazole 3x500 mg IV<br>
+                • Inj. Ranitidine 2x50 mg IV<br>
+                • Inj. Ketorolac 3x30 mg IV<br>
+                • Paracetamol 3x500 mg PO<br>
+                • Ambroxol Syr 3x1 cth<br>
+                • Multivitamin 2x1 tab<br>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">VIII. BIAYA PERAWATAN</div>
+        <div class="field">
+            <div class="field-label">Tarif INA-CBG (J00):</div>
+            <div class="field-value">Rp 3.200.000,-</div>
+        </div>
+        <div class="field">
+            <div class="field-label">Total Tagihan RS:</div>
+            <div class="field-value"><strong>Rp 8.500.000,-</strong></div>
+        </div>
+        <div class="field">
+            <div class="field-label">Selisih:</div>
+            <div class="field-value">Rp 5.300.000,- (165.6% lebih tinggi)</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">IX. KONDISI KELUAR & RENCANA TINDAK LANJUT</div>
+        <div class="field">
+            <div class="field-label">Kondisi Keluar:</div>
+            <div class="field-value">Membaik, tidak ada keluhan</div>
+        </div>
+        <div class="field">
+            <div class="field-label">Instruksi Pulang:</div>
+            <div class="field-value">
+                • Tidak perlu kontrol<br>
+                • Obat oral: Paracetamol 3x500mg bila perlu<br>
+                • Istirahat cukup di rumah
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="signature-box">
+            <div>Jakarta, 12 Oktober 2024</div>
+            <div style="margin-top: 10px;">Dokter Penanggung Jawab</div>
+            <div class="stamp-area">
+                [CAP RUMAH SAKIT]
+            </div>
+            <div class="signature-line">dr. Siti Rahmawati, Sp.PD</div>
+        </div>
+    </div>
+
+    <div style="margin-top: 50px; font-size: 12px; color: #666; text-align: center;">
+        <hr style="border: 1px solid #ccc; margin: 20px 0;">
+        <strong style="color: red;">⚠️ DOKUMEN TEST - FRAUD DETECTION ⚠️</strong><br>
+        File ini berisi data suspicious untuk testing fraud detection system.<br><br>
+        <strong>FRAUD INDICATORS:</strong><br>
+        ✗ Timeline: Lab test (14 Okt) dilakukan SETELAH pasien pulang (12 Okt)<br>
+        ✗ Medical Upcoding: Common Cold (J00) dengan prosedur Appendectomy (47.0) dan Open Heart Surgery (36.1)<br>
+        ✗ Overcharging: Tarif RS Rp 8.5jt vs INA-CBG Rp 3.2jt (165.6% lebih tinggi)<br>
+        ✗ Excessive Procedures: 9 prosedur untuk diagnosis ringan<br>
+        ✗ Extended Stay: 3 hari rawat inap untuk common cold<br>
+    </div>
+</body>
+</html>

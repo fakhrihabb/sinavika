@@ -72,7 +72,11 @@ async function getMockFraudulentData(claimId) {
     const basePath = process.cwd();
     let resumePath, sepPath;
 
-    if (claimId.includes('TIMELINE')) {
+    if (claimId.includes('COMBINED')) {
+        // Combined fraud test: Timeline + Patient Mismatch + Upcoding + ML Tariff overcharging
+        resumePath = path.join(basePath, 'test-resume-medis-fraud-combined.html');
+        sepPath = path.join(basePath, 'test-sep-fraud-combined.html');
+    } else if (claimId.includes('TIMELINE')) {
         resumePath = path.join(basePath, 'test-resume-medis-fraud-timeline.html');
         sepPath = path.join(basePath, 'test-sep-fraud-timeline.html');
     } else if (claimId.includes('MISMATCH')) {
@@ -143,11 +147,98 @@ export async function GET(request, { params }) {
     };
 
 
-    const analysisResult = analyzeClaimForFraud(richClaimObject);
+    // ========================================
+    // GABUNGAN FRAUD DETECTION
+    // Sistem Lama: Document-based (timeline, patient mismatch, upcoding)
+    // Sistem Baru: ML-based (tariff overcharging, provider patterns)
+    // ========================================
+
+    // 1. Sistem Lama - Document Analysis
+    const documentAnalysis = analyzeClaimForFraud(richClaimObject);
+
+    // 2. Sistem Baru - ML Tariff Analysis
+    let mlAnalysis = null;
+    try {
+      // Calculate LOS
+      const calculateLOS = () => {
+        const admission = claim.admission_date ? new Date(claim.admission_date) : null;
+        const discharge = claim.discharge_date ? new Date(claim.discharge_date) : null;
+        if (!admission || !discharge) return 1;
+        const diffTime = Math.abs(discharge - admission);
+        return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
+      };
+
+      const los = calculateLOS();
+
+      // Call ML fraud detection API
+      const mlResponse = await fetch('http://localhost:3000/api/ml/fraud-detection', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tarif_rs: parseFloat(claim.tarif_rs) || 0,
+          tarif_inacbg: parseFloat(claim.tarif_ina_cbg) || 0,
+          los_days: los,
+          num_procedures: claim.procedures?.length || 0,
+          care_class: claim.care_class || '3',
+          diagnosis_severity: 'normal',
+          provider_claims_count: 1,
+          provider_fraud_history_rate: 0,
+          hospital_fraud_history_rate: 0,
+        }),
+      });
+
+      if (mlResponse.ok) {
+        const mlResult = await mlResponse.json();
+        if (mlResult.success) {
+          mlAnalysis = mlResult.fraud_detection;
+        }
+      }
+    } catch (mlError) {
+      console.error('⚠️ ML fraud detection failed:', mlError);
+      // Continue with document analysis only
+    }
+
+    // 3. Combine both analyses
+    const combinedAnalysis = {
+      // Document-based confidence (0-100)
+      documentConfidence: documentAnalysis.confidenceScore,
+      documentIssues: documentAnalysis.issues,
+      documentSummary: documentAnalysis.summary,
+
+      // ML-based confidence (0-100)
+      mlConfidence: mlAnalysis?.risk_score || 0,
+      mlRiskLevel: mlAnalysis?.risk_level || 'low',
+      mlRiskFactors: mlAnalysis?.risk_factors || [],
+      mlRecommendation: mlAnalysis?.recommendation || null,
+
+      // Combined score (weighted average: 50% document + 50% ML)
+      confidenceScore: Math.round(
+        (documentAnalysis.confidenceScore * 0.5) +
+        ((mlAnalysis?.risk_score || 0) * 0.5)
+      ),
+
+      // All issues combined
+      issues: [
+        ...documentAnalysis.issues,
+        ...(mlAnalysis?.risk_factors || []).map(rf => ({
+          code: 'ML_TARIFF',
+          description: rf.detail || rf.factor,
+          severity: rf.severity?.toUpperCase() || 'MEDIUM',
+          score: Math.round((mlAnalysis?.risk_score || 0) / (mlAnalysis?.risk_factors?.length || 1))
+        }))
+      ],
+
+      // Summary combines both
+      summary: documentAnalysis.confidenceScore > 0 || (mlAnalysis?.risk_score || 0) > 0
+        ? `Terdeteksi ${documentAnalysis.issues.length} masalah dokumen dan ${mlAnalysis?.risk_factors?.length || 0} indikator fraud tarif/provider.`
+        : 'Tidak ada indikasi fraud yang terdeteksi.'
+    };
 
     return NextResponse.json({
       success: true,
-      data: analysisResult,
+      data: combinedAnalysis,
     });
 
   } catch (error) {

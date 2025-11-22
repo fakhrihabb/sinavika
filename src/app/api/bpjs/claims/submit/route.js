@@ -85,6 +85,57 @@ export async function POST(request) {
     const los = calculateLOS();
     const tariffCalc = calculateTariffDiff();
 
+    // ========================================
+    // FRAUD DETECTION ANALYSIS
+    // ========================================
+    let fraudDetectionResult = null;
+    try {
+      // Call ML fraud detection API
+      const fraudResponse = await fetch('http://localhost:3000/api/ml/fraud-detection', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tarif_rs: parseFloat(tarifRS) || 0,
+          tarif_inacbg: parseFloat(tarifInaCbg) || 0,
+          los_days: los || 1,
+          num_procedures: procedures?.length || 0,
+          care_class: careClass || '3',
+          diagnosis_severity: 'normal', // Could be inferred from ICD-10
+          provider_claims_count: 1, // TODO: Get from database
+          provider_fraud_history_rate: 0, // TODO: Calculate from history
+          hospital_fraud_history_rate: 0, // TODO: Calculate from history
+        }),
+      });
+
+      if (fraudResponse.ok) {
+        const fraudResult = await fraudResponse.json();
+        if (fraudResult.success) {
+          fraudDetectionResult = fraudResult.fraud_detection;
+          console.log('✅ Fraud detection completed:', fraudDetectionResult);
+        }
+      }
+    } catch (fraudError) {
+      console.error('⚠️ Fraud detection failed (non-blocking):', fraudError);
+      // Don't block claim submission if fraud detection fails
+    }
+
+    // Determine priority based on fraud risk or tariff
+    let priority = 'normal';
+    if (fraudDetectionResult) {
+      if (fraudDetectionResult.risk_level === 'critical') priority = 'urgent';
+      else if (fraudDetectionResult.risk_level === 'high') priority = 'high';
+      else if (fraudDetectionResult.risk_level === 'medium') priority = 'normal';
+    } else if (tariffCalc.diff > 1000000) {
+      priority = 'high';
+    }
+
+    // Prepare AI flags
+    const compiledAiFlags = fraudDetectionResult
+      ? fraudDetectionResult.risk_factors.map(rf => rf.factor)
+      : (aiFlags || []);
+
     // Insert main claim
     const { data: claim, error: claimError } = await supabase
       .from('claims')
@@ -120,11 +171,13 @@ export async function POST(request) {
           tarif_difference: tariffCalc.diff,
           tarif_difference_percentage: tariffCalc.percentage,
 
-          // Status
+          // Status & Priority
           status: 'pending',
-          priority: tariffCalc.diff > 1000000 ? 'high' : 'normal',
-          ai_risk_score: aiRiskScore || null,
-          ai_flags: aiFlags || null,
+          priority: priority,
+
+          // ML Fraud Detection Results
+          ai_risk_score: fraudDetectionResult?.risk_score || aiRiskScore || null,
+          ai_flags: compiledAiFlags,
 
           submitted_at: new Date().toISOString()
         }
@@ -202,7 +255,13 @@ export async function POST(request) {
       data: {
         claimId: claim.id,
         status: claim.status,
-        submittedAt: claim.submitted_at
+        priority: claim.priority,
+        submittedAt: claim.submitted_at,
+        fraudDetection: fraudDetectionResult ? {
+          riskScore: fraudDetectionResult.risk_score,
+          riskLevel: fraudDetectionResult.risk_level,
+          recommendation: fraudDetectionResult.recommendation.message
+        } : null
       }
     });
 

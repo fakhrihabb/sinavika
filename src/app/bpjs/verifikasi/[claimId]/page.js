@@ -441,7 +441,7 @@ export default function DetailVerifikasiKlaimPage({ params }) {
               <div className="flex flex-col md:flex-row gap-8">
                 {/* Score Gauge */}
                 <div className="flex-shrink-0 text-center">
-                  <p className="text-sm text-gray-600 font-semibold mb-2">Confidence Score</p>
+                  <p className="text-sm text-gray-600 font-semibold mb-2">Combined Score</p>
                   <div className={`text-6xl font-bold mb-2 ${getScoreColor(fraudAnalysis.confidenceScore)}`}>
                     {fraudAnalysis.confidenceScore}%
                   </div>
@@ -452,22 +452,89 @@ export default function DetailVerifikasiKlaimPage({ params }) {
                     ></div>
                   </div>
                   <p className="text-xs text-gray-500 mt-2">{fraudAnalysis.summary}</p>
+
+                  {/* Breakdown Scores */}
+                  <div className="mt-4 space-y-2 text-left bg-white p-3 rounded-lg border border-gray-200">
+                    <div className="flex justify-between text-xs">
+                      <span className="text-gray-600">📄 Dokumen:</span>
+                      <span className="font-bold">{fraudAnalysis.documentConfidence || 0}%</span>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                      <span className="text-gray-600">🤖 ML Tarif:</span>
+                      <span className="font-bold">{fraudAnalysis.mlConfidence || 0}%</span>
+                    </div>
+                    {fraudAnalysis.mlRiskLevel && (
+                      <div className="flex justify-between text-xs pt-2 border-t border-gray-200">
+                        <span className="text-gray-600">Risk Level:</span>
+                        <span className={`font-bold uppercase ${
+                          fraudAnalysis.mlRiskLevel === 'critical' ? 'text-red-600' :
+                          fraudAnalysis.mlRiskLevel === 'high' ? 'text-orange-600' :
+                          fraudAnalysis.mlRiskLevel === 'medium' ? 'text-yellow-600' :
+                          'text-green-600'
+                        }`}>{fraudAnalysis.mlRiskLevel}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* ML Recommendation */}
+                  {fraudAnalysis.mlRecommendation && (
+                    <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200 text-left">
+                      <p className="text-xs font-semibold text-blue-900 mb-1">Rekomendasi AI:</p>
+                      <p className="text-xs text-blue-800">{fraudAnalysis.mlRecommendation.message}</p>
+                      <p className="text-xs text-blue-600 mt-1 font-medium">
+                        Aksi: {fraudAnalysis.mlRecommendation.action}
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Issues List */}
                 <div className="flex-1">
                   <h3 className="font-bold text-gray-900 mb-3 text-lg">Detail Anomali yang Ditemukan:</h3>
-                  <div className="space-y-3">
-                    {fraudAnalysis.issues.map((issue, index) => (
-                      <div key={index} className="p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
-                        <div className="flex items-center justify-between mb-1">
-                          <p className="font-semibold text-gray-800">{issue.code}</p>
-                          {getSeverityBadge(issue.severity)}
-                        </div>
-                        <p className="text-sm text-gray-700">{issue.description}</p>
+
+                  {/* Document Issues */}
+                  {fraudAnalysis.documentIssues && fraudAnalysis.documentIssues.length > 0 && (
+                    <div className="mb-4">
+                      <p className="text-sm font-semibold text-gray-700 mb-2">📄 Masalah Dokumen ({fraudAnalysis.documentIssues.length}):</p>
+                      <div className="space-y-2">
+                        {fraudAnalysis.documentIssues.map((issue, index) => (
+                          <div key={index} className="p-3 bg-white rounded-lg border border-gray-200 shadow-sm">
+                            <div className="flex items-center justify-between mb-1">
+                              <p className="font-semibold text-gray-800 text-sm">{issue.code}</p>
+                              {getSeverityBadge(issue.severity)}
+                            </div>
+                            <p className="text-xs text-gray-700">{issue.description}</p>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  )}
+
+                  {/* ML Issues */}
+                  {fraudAnalysis.mlRiskFactors && fraudAnalysis.mlRiskFactors.length > 0 && (
+                    <div>
+                      <p className="text-sm font-semibold text-gray-700 mb-2">🤖 Indikator ML Tarif/Provider ({fraudAnalysis.mlRiskFactors.length}):</p>
+                      <div className="space-y-2">
+                        {fraudAnalysis.mlRiskFactors.map((rf, index) => (
+                          <div key={index} className="p-3 bg-white rounded-lg border border-blue-200 shadow-sm">
+                            <div className="flex items-center justify-between mb-1">
+                              <p className="font-semibold text-blue-800 text-sm">{rf.factor}</p>
+                              {getSeverityBadge(rf.severity)}
+                            </div>
+                            <p className="text-xs text-gray-700">{rf.detail}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* No issues found */}
+                  {(!fraudAnalysis.documentIssues || fraudAnalysis.documentIssues.length === 0) &&
+                   (!fraudAnalysis.mlRiskFactors || fraudAnalysis.mlRiskFactors.length === 0) && (
+                    <div className="p-4 bg-green-50 rounded-lg border border-green-200 text-center">
+                      <p className="text-sm text-green-800">✅ Tidak ada anomali terdeteksi</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

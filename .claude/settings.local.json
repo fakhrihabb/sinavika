@@ -6,7 +6,10 @@
       "Bash(npm run dev:*)",
       "Bash(node:*)",
       "Bash(curl -s -X GET \"https://xiqcpytcvubmypevflme.supabase.co/rest/v1/claim_procedures?claim_id=eq.CLM-2025-1847&select=*\" -H \"apikey: sb_publishable_SWDLX4xJagjBCYmxJdvZGQ_Us3shB7J\" -H \"Authorization: Bearer sb_publishable_SWDLX4xJagjBCYmxJdvZGQ_Us3shB7J\")",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(pip3 install:*)",
+      "Bash(python3:*)",
+      "Bash(lsof:*)"
     ],
     "deny": [],
     "ask": []
