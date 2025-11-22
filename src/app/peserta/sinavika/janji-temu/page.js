@@ -17,6 +17,8 @@ import {
   Activity,
   FileText,
   ChevronRight,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import MobileHeader from '@/components/MobileHeader';
 
@@ -28,6 +30,7 @@ function JanjiTemuContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showSuccessMessage, setShowSuccessMessage] = useState(successParam === 'true');
+  const [expandedCards, setExpandedCards] = useState({});
 
   useEffect(() => {
     fetchAppointments();
@@ -120,14 +123,22 @@ function JanjiTemuContent() {
     return conversationSummary[0]?.answer || 'Tidak ada data';
   };
 
+  const toggleCard = (appointmentId) => {
+    setExpandedCards(prev => ({
+      ...prev,
+      [appointmentId]: !prev[appointmentId]
+    }));
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-center justify-center min-h-[400px]">
+        <MobileHeader title="Janji Temu Saya" />
+        <div className="px-4 py-8">
+          <div className="flex items-center justify-center min-h-[300px]">
             <div className="text-center">
-              <Loader2 className="w-8 h-8 text-[#03974a] animate-spin mx-auto mb-4" />
-              <p className="text-gray-600">Memuat janji temu...</p>
+              <Loader2 className="w-8 h-8 text-[#03974a] animate-spin mx-auto mb-3" />
+              <p className="text-gray-600 text-sm">Memuat janji temu...</p>
             </div>
           </div>
         </div>
@@ -138,13 +149,14 @@ function JanjiTemuContent() {
   if (error) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-2xl mx-auto">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="w-6 h-6 text-red-500 flex-shrink-0 mt-0.5" />
+        <MobileHeader title="Janji Temu Saya" />
+        <div className="px-4 py-4">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 shadow-sm">
+            <div className="flex items-start gap-2.5">
+              <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
               <div>
-                <h3 className="font-semibold text-red-800 mb-1">Terjadi Kesalahan</h3>
-                <p className="text-red-700">{error}</p>
+                <h3 className="font-semibold text-red-800 mb-1 text-sm">Terjadi Kesalahan</h3>
+                <p className="text-red-700 text-xs leading-relaxed">{error}</p>
               </div>
             </div>
           </div>
@@ -157,15 +169,15 @@ function JanjiTemuContent() {
     <div className="min-h-screen bg-gray-50">
       <MobileHeader title="Janji Temu Saya" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="px-4 py-4">
         {/* Success Message */}
         {showSuccessMessage && (
-          <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
-            <div className="flex items-center gap-3">
-              <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0" />
+          <div className="mb-3 bg-green-50 border border-green-300 rounded-lg p-3 shadow-sm">
+            <div className="flex items-start gap-2.5">
+              <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
               <div>
-                <h3 className="font-semibold text-green-800">Janji Temu Berhasil Dibuat!</h3>
-                <p className="text-green-700 text-sm">
+                <h3 className="font-semibold text-green-800 text-sm mb-0.5">Janji Temu Berhasil Dibuat!</h3>
+                <p className="text-green-700 text-xs leading-relaxed">
                   Janji temu Anda telah terdaftar. Pastikan untuk datang tepat waktu.
                 </p>
               </div>
@@ -175,182 +187,212 @@ function JanjiTemuContent() {
 
         {/* Appointments List */}
         {appointments.length > 0 ? (
-          <div className="space-y-6">
+          <div className="space-y-3">
             {appointments.map((appointment) => {
               const StatusBadge = getStatusBadge(appointment.status);
               const triage = appointment.triage;
+              const isExpanded = expandedCards[appointment.id];
 
               return (
                 <div
                   key={appointment.id}
-                  className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md hover:border-gray-300 transition-all"
+                  className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
                 >
-                  <div className="p-8">
-                    {/* Header with Status */}
-                    <div className="mb-6">
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className={`px-3 py-1.5 rounded-full text-xs font-semibold border-2 flex items-center gap-1.5 ${StatusBadge.className}`}>
-                          <StatusBadge.icon className="w-3.5 h-3.5" />
-                          {StatusBadge.label}
-                        </span>
-                        {triage && (
-                          <span className={`px-3 py-1.5 rounded-full text-xs font-semibold border-2 ${getSeverityColor(triage.tingkat_keparahan)}`}>
-                            {triage.label_keparahan}
+                  {/* Collapsible Header */}
+                  <div 
+                    className="p-4 cursor-pointer active:bg-gray-50 transition-colors"
+                    onClick={() => toggleCard(appointment.id)}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5 mb-2 flex-wrap">
+                          <span className={`px-2.5 py-1 rounded-full text-xs font-semibold border flex items-center gap-1 ${StatusBadge.className}`}>
+                            <StatusBadge.icon className="w-3 h-3" />
+                            {StatusBadge.label}
                           </span>
-                        )}
-                      </div>
-                      <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                        {appointment.hospital_name}
-                      </h3>
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <Activity className="w-4 h-4 text-[#03974a]" />
-                        <span className="font-medium">{appointment.appointment_type}</span>
-                        {appointment.specialty && (
-                          <>
-                            <span className="text-gray-400">•</span>
-                            <span>{appointment.specialty}</span>
-                          </>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Triage Summary */}
-                    {triage && (
-                      <div className="mb-5 p-5 bg-gradient-to-br from-green-50 via-emerald-50 to-blue-50 border-2 border-green-300 rounded-xl">
-                        <h4 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                          <FileText className="w-5 h-5 text-[#03974a]" />
-                          Ringkasan Triage
-                        </h4>
-                        <div className="space-y-3 text-sm">
-                          <div className="flex gap-3">
-                            <span className="font-semibold text-gray-700 min-w-[140px]">Keluhan utama:</span>
-                            <p className="text-gray-800">{getMainComplaint(triage.conversation_summary)}</p>
-                          </div>
-                          <div className="flex gap-3">
-                            <span className="font-semibold text-gray-700 min-w-[140px]">Rekomendasi:</span>
-                            <p className="text-gray-800 font-medium">{triage.rekomendasi_layanan}</p>
-                          </div>
-                          <div className="flex gap-3">
-                            <span className="font-semibold text-gray-700 min-w-[140px]">Alasan:</span>
-                            <p className="text-gray-800">{triage.alasan}</p>
-                          </div>
-                          <div className="flex gap-3">
-                            <span className="font-semibold text-gray-700 min-w-[140px]">Waktu kunjungan:</span>
-                            <p className="text-gray-800">{triage.tanggal_kunjungan_disarankan}</p>
-                          </div>
+                          {triage && (
+                            <span className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${getSeverityColor(triage.tingkat_keparahan)}`}>
+                              {triage.label_keparahan}
+                            </span>
+                          )}
+                        </div>
+                        <h3 className="text-lg font-bold text-gray-900 mb-1 leading-tight">
+                          {appointment.hospital_name}
+                        </h3>
+                        <div className="flex items-center gap-1.5 text-xs text-gray-600">
+                          <Activity className="w-3.5 h-3.5 text-[#03974a]" />
+                          <span className="font-medium">{appointment.appointment_type}</span>
+                          {appointment.specialty && (
+                            <>
+                              <span className="text-gray-400">•</span>
+                              <span className="truncate">{appointment.specialty}</span>
+                            </>
+                          )}
                         </div>
                       </div>
-                    )}
-
-                    {/* Clinical Summary for Hospital */}
-                    {appointment.clinical_summary && (
-                      <div className="mb-5 p-5 bg-purple-50 border-2 border-purple-200 rounded-xl">
-                        <h4 className="font-bold text-purple-900 mb-3 flex items-center gap-2">
-                          <FileText className="w-5 h-5 text-purple-600" />
-                          Ringkasan Klinis yang Dikirim ke Faskes
-                        </h4>
-                        <p className="text-sm text-purple-800 leading-relaxed whitespace-pre-line">
-                          {appointment.clinical_summary}
-                        </p>
-                        <p className="text-xs text-purple-600 mt-3 italic">
-                          Ringkasan ini telah dibagikan ke rumah sakit/faskes untuk mempercepat proses pelayanan Anda.
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Hospital Details */}
-                    <div className="space-y-3 mb-5 p-5 bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-xl">
-                      <h4 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                        <Building2 className="w-5 h-5 text-[#144782]" />
-                        Detail Rumah Sakit
-                      </h4>
-                      <div className="space-y-3 text-sm">
-                        <div className="flex items-start gap-3 text-gray-700">
-                          <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5 text-[#03974a]" />
-                          <span className="leading-relaxed">{appointment.hospital_address}</span>
-                        </div>
-                        {appointment.hospital_phone && (
-                          <div className="flex items-center gap-3 text-gray-700">
-                            <Phone className="w-4 h-4 flex-shrink-0 text-[#03974a]" />
-                            <span>{appointment.hospital_phone}</span>
-                          </div>
-                        )}
-                        {appointment.estimated_wait_time && (
-                          <div className="flex items-center gap-3 text-gray-700">
-                            <Clock className="w-4 h-4 flex-shrink-0 text-[#03974a]" />
-                            <span>Estimasi tunggu: <span className="font-semibold">{appointment.estimated_wait_time}</span></span>
-                          </div>
-                        )}
-                        {appointment.operational_hours && (
-                          <div className="flex items-start gap-3 text-gray-700">
-                            <Clock className="w-4 h-4 flex-shrink-0 mt-0.5 text-[#03974a]" />
-                            <span>Jam operasional: {appointment.operational_hours}</span>
-                          </div>
-                        )}
-                        <div className="flex items-center gap-6 text-gray-700 pt-2 border-t border-gray-200">
-                          <div className="flex items-center gap-2">
-                            <Navigation className="w-4 h-4 flex-shrink-0 text-[#03974a]" />
-                            <span className="font-semibold">{appointment.distance_km} km</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Clock className="w-4 h-4 flex-shrink-0 text-gray-500" />
-                            <span>{appointment.duration_text}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Metadata */}
-                    <div className="mb-5 p-4 bg-gradient-to-r from-gray-50 to-slate-50 border border-gray-200 rounded-lg">
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <Calendar className="w-4 h-4 flex-shrink-0 text-[#144782]" />
-                        <span>Dibuat: {formatDate(appointment.created_at)} • {formatTime(appointment.created_at)}</span>
-                      </div>
-                      <div className="mt-2 text-xs text-gray-500">
-                        <span>ID Triage: </span>
-                        <span className="font-mono font-semibold text-gray-700">{appointment.triage_id}</span>
-                      </div>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex gap-3">
-                      <button
-                        onClick={() => handleOpenInMaps(appointment)}
-                        className="flex-1 flex items-center justify-center gap-2 px-5 py-3 border-2 border-[#03974a] text-[#03974a] rounded-xl hover:bg-green-50 hover:shadow-sm transition-all font-semibold"
+                      
+                      {/* Toggle Icon */}
+                      <button 
+                        className="shrink-0 p-1 rounded-full hover:bg-gray-100 transition-colors"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleCard(appointment.id);
+                        }}
                       >
-                        <ExternalLink className="w-4 h-4" />
-                        <span>Buka di Maps</span>
+                        {isExpanded ? (
+                          <ChevronUp className="w-5 h-5 text-gray-600" />
+                        ) : (
+                          <ChevronDown className="w-5 h-5 text-gray-600" />
+                        )}
                       </button>
-                      {triage && (
-                        <Link
-                          href={`/peserta/sinavika/riwayat?triageId=${appointment.triage_id}`}
-                          className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-[#144782] to-[#0d3461] text-white rounded-xl hover:shadow-md transition-all font-semibold"
-                        >
-                          <FileText className="w-4 h-4" />
-                          <span>Lihat Detail Keluhan</span>
-                        </Link>
-                      )}
                     </div>
                   </div>
+
+                  {/* Collapsible Content */}
+                  {isExpanded && (
+                    <div className="px-4 pb-4 border-t border-gray-100">
+                      {/* Triage Summary */}
+                      {triage && (
+                        <div className="mt-3 mb-3 p-3 bg-gradient-to-br from-green-50 via-emerald-50 to-blue-50 border border-green-300 rounded-lg">
+                          <h4 className="font-bold text-gray-900 mb-2 flex items-center gap-1.5 text-sm">
+                            <FileText className="w-4 h-4 text-[#03974a]" />
+                            Ringkasan Triage
+                          </h4>
+                          <div className="space-y-2 text-xs">
+                            <div>
+                              <span className="font-semibold text-gray-700 block mb-0.5">Keluhan utama:</span>
+                              <p className="text-gray-800 leading-relaxed">{getMainComplaint(triage.conversation_summary)}</p>
+                            </div>
+                            <div>
+                              <span className="font-semibold text-gray-700 block mb-0.5">Rekomendasi:</span>
+                              <p className="text-gray-800 font-medium">{triage.rekomendasi_layanan}</p>
+                            </div>
+                            <div>
+                              <span className="font-semibold text-gray-700 block mb-0.5">Alasan:</span>
+                              <p className="text-gray-800 leading-relaxed">{triage.alasan}</p>
+                            </div>
+                            <div>
+                              <span className="font-semibold text-gray-700 block mb-0.5">Waktu kunjungan:</span>
+                              <p className="text-gray-800">{triage.tanggal_kunjungan_disarankan}</p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Clinical Summary for Hospital */}
+                      {appointment.clinical_summary && (
+                        <div className="mb-3 p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                          <h4 className="font-bold text-purple-900 mb-2 flex items-center gap-1.5 text-sm">
+                            <FileText className="w-4 h-4 text-purple-600" />
+                            Ringkasan Klinis untuk Faskes
+                          </h4>
+                          <p className="text-xs text-purple-800 leading-relaxed whitespace-pre-line">
+                            {appointment.clinical_summary}
+                          </p>
+                          <p className="text-[10px] text-purple-600 mt-2 italic leading-relaxed">
+                            Ringkasan ini telah dibagikan ke rumah sakit/faskes untuk mempercepat proses pelayanan Anda.
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Hospital Details */}
+                      <div className="mb-3 p-3 bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-lg">
+                        <h4 className="font-bold text-gray-900 mb-2 flex items-center gap-1.5 text-sm">
+                          <Building2 className="w-4 h-4 text-[#144782]" />
+                          Detail Rumah Sakit
+                        </h4>
+                        <div className="space-y-2 text-xs">
+                          <div className="flex items-start gap-2 text-gray-700">
+                            <MapPin className="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-[#03974a]" />
+                            <span className="leading-relaxed">{appointment.hospital_address}</span>
+                          </div>
+                          {appointment.hospital_phone && (
+                            <div className="flex items-center gap-2 text-gray-700">
+                              <Phone className="w-3.5 h-3.5 flex-shrink-0 text-[#03974a]" />
+                              <span>{appointment.hospital_phone}</span>
+                            </div>
+                          )}
+                          {appointment.estimated_wait_time && (
+                            <div className="flex items-center gap-2 text-gray-700">
+                              <Clock className="w-3.5 h-3.5 flex-shrink-0 text-[#03974a]" />
+                              <span>Estimasi tunggu: <span className="font-semibold">{appointment.estimated_wait_time}</span></span>
+                            </div>
+                          )}
+                          {appointment.operational_hours && (
+                            <div className="flex items-start gap-2 text-gray-700">
+                              <Clock className="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-[#03974a]" />
+                              <span>Jam operasional: {appointment.operational_hours}</span>
+                            </div>
+                          )}
+                          <div className="flex items-center gap-4 text-gray-700 pt-2 border-t border-blue-200/50">
+                            <div className="flex items-center gap-1.5">
+                              <Navigation className="w-3.5 h-3.5 flex-shrink-0 text-[#03974a]" />
+                              <span className="font-semibold">{appointment.distance_km} km</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <Clock className="w-3.5 h-3.5 flex-shrink-0 text-gray-500" />
+                              <span>{appointment.duration_text}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Metadata */}
+                      <div className="mb-3 p-2.5 bg-gradient-to-r from-gray-50 to-slate-50 border border-gray-200 rounded-lg">
+                        <div className="flex items-center gap-1.5 text-xs text-gray-600">
+                          <Calendar className="w-3.5 h-3.5 flex-shrink-0 text-[#144782]" />
+                          <span className="text-[11px]">Dibuat: {formatDate(appointment.created_at)} • {formatTime(appointment.created_at)}</span>
+                        </div>
+                        <div className="mt-1.5 text-[10px] text-gray-500">
+                          <span>ID: </span>
+                          <span className="font-mono font-semibold text-gray-700">{appointment.triage_id}</span>
+                        </div>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenInMaps(appointment);
+                          }}
+                          className="flex items-center justify-center gap-1.5 px-3 py-2.5 border-2 border-[#03974a] text-[#03974a] rounded-lg active:bg-green-50 transition-colors font-semibold text-xs"
+                        >
+                          <ExternalLink className="w-3.5 h-3.5" />
+                          <span>Maps</span>
+                        </button>
+                        {triage && (
+                          <Link
+                            href={`/peserta/sinavika/riwayat?triageId=${appointment.triage_id}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="flex items-center justify-center gap-1.5 px-3 py-2.5 bg-gradient-to-r from-[#144782] to-[#0d3461] text-white rounded-lg active:opacity-90 transition-opacity font-semibold text-xs"
+                          >
+                            <FileText className="w-3.5 h-3.5" />
+                            <span>Detail</span>
+                          </Link>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               );
             })}
           </div>
         ) : (
-          <div className="text-center py-12 bg-white rounded-lg shadow-sm">
-            <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <div className="text-center py-10 bg-white rounded-xl shadow-sm border border-gray-200 mt-6">
+            <Calendar className="w-14 h-14 text-gray-300 mx-auto mb-3" />
+            <h3 className="text-base font-semibold text-gray-900 mb-1.5">
               Belum Ada Janji Temu
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-sm text-gray-600 mb-5 px-6">
               Anda belum memiliki janji temu dengan rumah sakit manapun.
             </p>
             <Link
               href="/peserta/sinavika/triage"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#03974a] to-[#144782] text-white rounded-lg font-semibold hover:shadow-lg transition-all"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#03974a] to-[#144782] text-white rounded-lg font-semibold text-sm active:scale-95 transition-transform"
             >
               Mulai Cek Keluhan
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
         )}
@@ -363,8 +405,9 @@ export default function JanjiTemuPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-6">
-          <div className="flex items-center justify-center min-h-[400px]">
+        <MobileHeader title="Janji Temu Saya" />
+        <div className="px-4 py-8">
+          <div className="flex items-center justify-center min-h-[300px]">
             <Loader2 className="w-8 h-8 text-[#03974a] animate-spin" />
           </div>
         </div>
