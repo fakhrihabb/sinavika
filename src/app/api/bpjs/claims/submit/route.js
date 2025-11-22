@@ -7,7 +7,6 @@ export async function POST(request) {
     const body = await request.json();
     const {
       // Basic claim info
-      claimId,
       hospitalName,
       hospitalCode,
 
@@ -47,8 +46,12 @@ export async function POST(request) {
       aiFlags
     } = body;
 
+    // Generate a new unique claim ID
+    const claimId = `CLM-${Date.now()}-${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
+
+
     // Validate required fields
-    if (!claimId || !patientName || !patientBpjsNumber || !sepNumber || !hospitalName) {
+    if (!patientName || !patientBpjsNumber || !sepNumber || !hospitalName) {
       return NextResponse.json(
         {
           success: false,

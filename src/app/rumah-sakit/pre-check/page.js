@@ -24,10 +24,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
-export default function PreCheckKlaimPage({ params }) {
-  // Unwrap params Promise for Next.js 16
-  const unwrappedParams = use(params);
-  const claimId = unwrappedParams.claimId;
+export default function PreCheckKlaimPage() {
   const [expandedSections, setExpandedSections] = useState({
     rujukan: true,
     resume: true,
@@ -44,67 +41,62 @@ export default function PreCheckKlaimPage({ params }) {
   const [submitError, setSubmitError] = useState(null);
 
   useEffect(() => {
-    // Simulate fetching data
-    const fetchClaimData = async () => {
-      setLoading(true);
-      // In a real app, you would fetch this from an API
-      // const response = await fetch(`/api/claims/${params.claimId}`);
-      // const data = await response.json();
-      const mockData = {
-        id: "CLM-2025-1847",
-        patientName: "Ahmad Fauzi",
-        patientId: "0001234567890",
-        sepNumber: "0301R0011024Y000001",
-        hospital: "RS Cipto Mangunkusumo",
-        admissionDate: "2020-09-05",
-        dischargeDate: "2020-09-05",
-        los: "0 hari",
-        diagnosis: "Diabetes Type 2 + Komplikasi",
-        treatmentType: "Rawat Jalan",
-        doctor: "dr. Budi",
-        amount: "Rp 300,000"
-      };
-      const mockChecklist = {
-        rujukan: {
-          title: "Surat Rujukan",
-          items: [
-            { id: 'rujukan_valid', name: 'Surat rujukan tersedia dan masih berlaku', status: 'incomplete', file: null },
-            { id: 'rujukan_sesuai', name: 'Diagnosa rujukan sesuai dengan klaim', status: 'incomplete', file: null },
-            { id: 'rujukan_tanggal', name: 'Tanggal rujukan valid (tidak kadaluarsa)', status: 'incomplete', file: null }
-          ]
-        },
-        resume: {
-          title: "Resume Medis",
-          items: [
-            { id: 'resume_lengkap', name: 'Resume medis lengkap dan terbaca', status: 'incomplete', file: null },
-            { id: 'resume_ttd', name: 'Tanda tangan dokter dan stempel RS', status: 'incomplete', file: null },
-            { id: 'resume_icd', name: 'Kode ICD-10 tercantum dan sesuai', status: 'incomplete', file: null }
-          ]
-        },
-        penunjang: {
-          title: "Hasil Penunjang",
-          items: [
-            { id: 'lab_required', name: 'Hasil laboratorium (wajib untuk diagnosis ini)', status: 'incomplete', file: null },
-            { id: 'radiologi', name: 'Hasil radiologi (jika diperlukan)', status: 'na', file: null },
-            { id: 'penunjang_tanggal', name: 'Tanggal hasil penunjang sesuai masa rawat', status: 'incomplete', file: null }
-          ]
-        },
-        formulir: {
-          title: "Formulir Lain",
-          items: [
-            { id: 'sep', name: 'SEP (Surat Elegibilitas Peserta)', status: 'incomplete', file: null },
-            { id: 'informed_consent', name: 'Informed consent (jika ada tindakan)', status: 'na', file: null },
-            { id: 'resep', name: 'Resep obat', status: 'incomplete', file: null }
-          ]
-        }
-      };
-      setClaimData(mockData);
-      setDocumentChecklist(mockChecklist);
-      setLoading(false);
+    // This page is for creating a new claim, so we start with a blank slate.
+    setLoading(true);
+
+    const initialClaimData = {
+      id: "(akan dibuat saat submit)",
+      patientName: "",
+      patientId: "",
+      sepNumber: "",
+      hospital: "RS Mitra Keluarga", // Example default, can be fetched from user session
+      admissionDate: "",
+      dischargeDate: "",
+      los: "0 hari",
+      diagnosis: "",
+      treatmentType: "Rawat Jalan",
+      doctor: "",
+      amount: "Rp 0"
     };
 
-    fetchClaimData();
-  }, [claimId]);
+    const initialChecklist = {
+      rujukan: {
+        title: "Surat Rujukan",
+        items: [
+          { id: 'rujukan_valid', name: 'Surat rujukan tersedia dan masih berlaku', status: 'incomplete', file: null },
+          { id: 'rujukan_sesuai', name: 'Diagnosa rujukan sesuai dengan klaim', status: 'incomplete', file: null },
+          { id: 'rujukan_tanggal', name: 'Tanggal rujukan valid (tidak kadaluarsa)', status: 'incomplete', file: null }
+        ]
+      },
+      resume: {
+        title: "Resume Medis",
+        items: [
+          { id: 'resume_lengkap', name: 'Resume medis lengkap dan terbaca', status: 'incomplete', file: null },
+          { id: 'resume_ttd', name: 'Tanda tangan dokter dan stempel RS', status: 'incomplete', file: null },
+          { id: 'resume_icd', name: 'Kode ICD-10 tercantum dan sesuai', status: 'incomplete', file: null }
+        ]
+      },
+      penunjang: {
+        title: "Hasil Penunjang",
+        items: [
+          { id: 'lab_required', name: 'Hasil laboratorium (wajib untuk diagnosis ini)', status: 'incomplete', file: null },
+          { id: 'radiologi', name: 'Hasil radiologi (jika diperlukan)', status: 'na', file: null },
+          { id: 'penunjang_tanggal', name: 'Tanggal hasil penunjang sesuai masa rawat', status: 'incomplete', file: null }
+        ]
+      },
+      formulir: {
+        title: "Formulir Lain",
+        items: [
+          { id: 'sep', name: 'SEP (Surat Elegibilitas Peserta)', status: 'incomplete', file: null },
+          { id: 'informed_consent', name: 'Informed consent (jika ada tindakan)', status: 'na', file: null },
+          { id: 'resep', name: 'Resep obat', status: 'incomplete', file: null }
+        ]
+      }
+    };
+    setClaimData(initialClaimData);
+    setDocumentChecklist(initialChecklist);
+    setLoading(false);
+  }, []);
 
   // Calculate readiness score
   const calculateReadinessScore = () => {
@@ -307,7 +299,6 @@ export default function PreCheckKlaimPage({ params }) {
       // Transform formData to API format
       const submitData = {
         // Basic info
-        claimId: claimData.id,
         hospitalName: claimData.hospital || 'RS Cipto Mangunkusumo',
         hospitalCode: 'RS003',
 
@@ -487,7 +478,7 @@ export default function PreCheckKlaimPage({ params }) {
                     <FileText className="w-5 h-5 text-[#144782]" />
                     <div>
                       <p className="text-xs text-gray-500">ID Klaim</p>
-                      <p className="font-semibold text-gray-900 font-mono">{claimData.id}</p>
+                      <p className="font-semibold text-gray-900 font-mono">(akan dibuat saat submit)</p>
                     </div>
                   </div>
                 </div>
