@@ -291,6 +291,13 @@ export default function PreCheckKlaimPage() {
       const tarifRSNumber = parseFloat(String(formData.totalTarifRS).replace(/[^0-9]/g, '')) || 0;
       const tarifInaCbgNumber = parseFloat(String(formData.tarifInaCbg).replace(/[^0-9]/g, '')) || 0;
 
+      // Validate GROUPER data
+      if (!formData.inaCbgCode || formData.inaCbgCode === 'N/A' || tarifInaCbgNumber === 0) {
+        alert('⚠️ Harap jalankan GROUPER terlebih dahulu!\n\nPastikan Anda telah mengisi:\n- ICD-10 Primary\n- Kelas Rawat\n\nGROUPER akan otomatis berjalan setelah field tersebut diisi.');
+        setSubmitting(false);
+        return;
+      }
+
       // Transform formData to API format
       const submitData = {
         // Basic info
@@ -322,10 +329,8 @@ export default function PreCheckKlaimPage() {
         // GROUPER result & Tariffs
         inaCbgCode: formData.inaCbgCode,
         inaCbgDescription: formData.inaCbgDescription,
-        tarif_inacbg: tarifInaCbgNumber,
-        tarif_rs: tarifRSNumber,
-        tarif_difference: tarifRSNumber - tarifInaCbgNumber,
-        tarif_difference_percentage: ((tarifRSNumber - tarifInaCbgNumber) / tarifInaCbgNumber) * 100,
+        tarifInaCbg: tarifInaCbgNumber,
+        tarifRS: tarifRSNumber,
 
 
         // Documents from checklist
@@ -360,7 +365,7 @@ export default function PreCheckKlaimPage() {
       }
 
       // Collect documents from checklist
-      Object.entries(documentChecklist).forEach(([category, section]) => {
+      Object.values(documentChecklist).forEach(section => {
         section.items.forEach(item => {
           if (item.status === 'complete' && item.file) {
             submitData.documents.push({

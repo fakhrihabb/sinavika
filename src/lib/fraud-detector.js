@@ -43,14 +43,110 @@ const RULES = {
     severity: 'LOW',
     score: 10,
   },
+  MEDICAL_EXCESSIVE_PROCEDURES: {
+    code: 'MEDICAL_03',
+    description: 'Jumlah prosedur/tindakan berlebihan untuk diagnosis dan lama rawat yang ada.',
+    severity: 'MEDIUM',
+    score: 20,
+  },
 };
 
-// Simplified dictionary of highly unlikely Diagnosis-Procedure pairs
-const UNLIKELY_PAIRS = {
-  // Key: ICD-10 Code (Diagnosis), Value: Array of unlikely ICD-9-CM Codes (Procedures)
-  'J00': ['47.11', '47.0'], // Common Cold -> Appendectomy
-  'L03': ['36.1'],       // Cellulitis -> Open Heart Surgery
+// ICD-10 Chapter Mapping (first letter of code)
+const ICD10_CHAPTERS = {
+  'A': 'infectious', 'B': 'infectious',
+  'C': 'neoplasm', 'D': 'blood',
+  'E': 'endocrine',
+  'F': 'mental',
+  'G': 'nervous',
+  'H': 'eye_ear',
+  'I': 'circulatory',
+  'J': 'respiratory',
+  'K': 'digestive',
+  'L': 'skin',
+  'M': 'musculoskeletal',
+  'N': 'genitourinary',
+  'O': 'pregnancy',
+  'P': 'perinatal',
+  'Q': 'congenital',
+  'R': 'symptoms',
+  'S': 'injury', 'T': 'injury',
+  'V': 'external', 'W': 'external', 'X': 'external', 'Y': 'external',
+  'Z': 'health_status'
 };
+
+// ICD-9-CM Procedure Categories (based on code ranges)
+const ICD9_PROCEDURE_CATEGORIES = {
+  // Cardiovascular procedures (35-39)
+  cardiovascular: ['35', '36', '37', '38', '39'],
+  // Digestive system (42-54)
+  digestive: ['42', '43', '44', '45', '46', '47', '48', '49', '50', '51', '52', '53', '54'],
+  // Respiratory (30-34)
+  respiratory: ['30', '31', '32', '33', '34'],
+  // Nervous system (01-05)
+  nervous: ['01', '02', '03', '04', '05'],
+  // Musculoskeletal (76-84)
+  musculoskeletal: ['76', '77', '78', '79', '80', '81', '82', '83', '84'],
+  // Genitourinary (55-71)
+  genitourinary: ['55', '56', '57', '58', '59', '60', '61', '62', '63', '64', '65', '66', '67', '68', '69', '70', '71'],
+  // Obstetric (72-75)
+  obstetric: ['72', '73', '74', '75'],
+  // Eye (08-16)
+  eye: ['08', '09', '10', '11', '12', '13', '14', '15', '16'],
+  // Ear (18-20)
+  ear: ['18', '19', '20'],
+  // Diagnostic/imaging (87-88)
+  diagnostic: ['87', '88'],
+  // Therapeutic (93-99)
+  therapeutic: ['93', '94', '95', '96', '97', '98', '99']
+};
+
+// Compatible diagnosis-procedure category pairs
+const COMPATIBLE_PAIRS = {
+  'respiratory': ['respiratory', 'diagnostic', 'therapeutic'],
+  'circulatory': ['cardiovascular', 'diagnostic', 'therapeutic'],
+  'digestive': ['digestive', 'diagnostic', 'therapeutic'],
+  'nervous': ['nervous', 'diagnostic', 'therapeutic'],
+  'musculoskeletal': ['musculoskeletal', 'diagnostic', 'therapeutic'],
+  'genitourinary': ['genitourinary', 'diagnostic', 'therapeutic'],
+  'pregnancy': ['obstetric', 'diagnostic', 'therapeutic'],
+  'infectious': ['diagnostic', 'therapeutic'], // Infectious diseases rarely need surgery
+  'endocrine': ['diagnostic', 'therapeutic'],
+  'skin': ['diagnostic', 'therapeutic'],
+  'injury': ['musculoskeletal', 'nervous', 'cardiovascular', 'diagnostic', 'therapeutic'], // Injuries can affect multiple systems
+  'symptoms': ['diagnostic', 'therapeutic'], // Symptoms need diagnosis
+};
+
+// Get procedure category from ICD-9-CM code
+function getProcedureCategory(icd9Code) {
+  if (!icd9Code) return 'unknown';
+
+  // Extract first 2 digits
+  const prefix = icd9Code.split('.')[0].substring(0, 2);
+
+  for (const [category, prefixes] of Object.entries(ICD9_PROCEDURE_CATEGORIES)) {
+    if (prefixes.includes(prefix)) {
+      return category;
+    }
+  }
+
+  return 'unknown';
+}
+
+// Get diagnosis category from ICD-10 code
+function getDiagnosisCategory(icd10Code) {
+  if (!icd10Code) return 'unknown';
+  const chapter = icd10Code.charAt(0).toUpperCase();
+  return ICD10_CHAPTERS[chapter] || 'unknown';
+}
+
+// Check if diagnosis-procedure pair is compatible
+function isProcedureCompatible(diagnosisCategory, procedureCategory) {
+  // Unknown categories are allowed (benefit of doubt)
+  if (diagnosisCategory === 'unknown' || procedureCategory === 'unknown') return true;
+
+  const compatibleCategories = COMPATIBLE_PAIRS[diagnosisCategory] || [];
+  return compatibleCategories.includes(procedureCategory);
+}
 
 
 // --- Rule Execution Functions ---
@@ -117,25 +213,57 @@ function checkMedicalCoding(claim) {
   const primaryDiagnosis = claim.diagnoses?.find(d => d.diagnosis_type === 'primary');
   const procedures = claim.procedures || [];
 
-  // Check for suspicious diagnosis-procedure pairs
+  // Check for diagnosis-procedure category mismatches
   if (primaryDiagnosis && procedures.length > 0) {
-    const primaryIcd10 = primaryDiagnosis.icd10_code;
-    const unlikelyProcedures = UNLIKELY_PAIRS[primaryIcd10] || [];
+    const diagnosisCategory = getDiagnosisCategory(primaryDiagnosis.icd10_code);
+
+    console.log(`[Fraud Check] Primary diagnosis: ${primaryDiagnosis.diagnosis_name} (${primaryDiagnosis.icd10_code}) -> Category: ${diagnosisCategory}`);
 
     procedures.forEach(proc => {
-      if (unlikelyProcedures.includes(proc.icd9cm_code)) {
+      const procedureCategory = getProcedureCategory(proc.icd9cm_code);
+      console.log(`[Fraud Check] Procedure: ${proc.procedure_name} (${proc.icd9cm_code}) -> Category: ${procedureCategory}`);
+
+      // Skip diagnostic/therapeutic procedures - they're usually compatible
+      if (procedureCategory === 'diagnostic' || procedureCategory === 'therapeutic') {
+        return; // Continue to next procedure
+      }
+
+      // Check compatibility
+      if (!isProcedureCompatible(diagnosisCategory, procedureCategory)) {
         const issue = { ...RULES.MEDICAL_UPCODING_SUSPICION };
-        issue.description = `Kombinasi diagnosa ${primaryDiagnosis.diagnosis_name} (${primaryIcd10}) dengan prosedur ${proc.procedure_name} (${proc.icd9cm_code}) mencurigakan.`;
+        issue.description = `Kombinasi diagnosa ${primaryDiagnosis.diagnosis_name} (kategori: ${diagnosisCategory}) dengan prosedur ${proc.procedure_name} (kategori: ${procedureCategory}) mencurigakan - tidak sesuai dengan sistem organ yang sama.`;
         issues.push(issue);
       }
     });
   }
-  
+
+  // Check for excessive procedures
+  const los = claim.los_days || claim.dataRawat?.losHari || 1;
+  const majorProcedureCount = procedures.filter(proc => {
+    const category = getProcedureCategory(proc.icd9cm_code);
+    // Count non-diagnostic, non-therapeutic procedures as "major"
+    return category !== 'diagnostic' && category !== 'therapeutic' && category !== 'unknown';
+  }).length;
+
+  // Rule: More than 2 major surgical procedures in short stay (<=3 days) is suspicious
+  if (majorProcedureCount >= 3 && los <= 3) {
+    const issue = { ...RULES.MEDICAL_EXCESSIVE_PROCEDURES };
+    issue.description = `${majorProcedureCount} prosedur bedah mayor dilakukan dalam ${los} hari rawat inap - kemungkinan unbundling atau prosedur tidak perlu.`;
+    issues.push(issue);
+  }
+
+  // Rule: Total procedures (including diagnostic) > 8 is excessive for most cases
+  if (procedures.length >= 8 && los <= 5) {
+    const issue = { ...RULES.MEDICAL_EXCESSIVE_PROCEDURES };
+    issue.description = `Total ${procedures.length} prosedur dalam ${los} hari rawat - jumlah tindakan berlebihan.`;
+    issues.push(issue);
+  }
+
   // Check inconsistency between initial and final diagnosis
   const initialDiagnosisName = claim.sep_data?.diagnosisAwal?.toLowerCase().trim();
   if (initialDiagnosisName && primaryDiagnosis?.diagnosis_name) {
       const primaryDiagnosisName = primaryDiagnosis.diagnosis_name.toLowerCase().trim();
-      
+
       // Simple check: if the names don't contain each other, flag as low severity issue.
       if (!primaryDiagnosisName.includes(initialDiagnosisName) && !initialDiagnosisName.includes(primaryDiagnosisName)) {
           const issue = { ...RULES.MEDICAL_DIAGNOSIS_INCONSISTENCY };

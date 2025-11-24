@@ -339,6 +339,9 @@ export default function EKlaimForm({ claimData, onFormChange, aiFilledData }) {
       }
 
       if (formData.icd10Primary) {
+        // Extract ICD-10 chapter (first letter)
+        const icdChapter = formData.icd10Primary.charAt(0).toUpperCase();
+
         if (formData.icd10Primary.startsWith('I10')) {
           inaCbgCode = 'K-3-10-I';
           description = 'Hipertensi Esensial';
@@ -351,6 +354,62 @@ export default function EKlaimForm({ claimData, onFormChange, aiFilledData }) {
           inaCbgCode = 'E-4-10-I';
           description = 'Pneumonia';
           baseRate += 1200000;
+        } else if (formData.icd10Primary.startsWith('I25')) {
+          inaCbgCode = 'I-4-20-I';
+          description = 'Penyakit Jantung Koroner';
+          baseRate += 2500000;
+        } else if (formData.icd10Primary.startsWith('N18')) {
+          inaCbgCode = 'L-4-10-I';
+          description = 'Gagal Ginjal Kronik';
+          baseRate += 3000000;
+        } else {
+          // Generic grouping based on ICD-10 chapter
+          switch(icdChapter) {
+            case 'A': case 'B': // Infectious diseases
+              inaCbgCode = 'A-4-10-I';
+              description = 'Penyakit Infeksi';
+              baseRate += 600000;
+              break;
+            case 'C': case 'D': // Neoplasms / Blood disorders
+              inaCbgCode = 'C-4-10-I';
+              description = 'Gangguan Neoplasma/Darah';
+              baseRate += 1500000;
+              break;
+            case 'E': // Endocrine
+              inaCbgCode = 'O-2-10-I';
+              description = 'Gangguan Endokrin';
+              baseRate += 700000;
+              break;
+            case 'I': // Circulatory
+              inaCbgCode = 'K-3-10-I';
+              description = 'Gangguan Sirkulasi';
+              baseRate += 800000;
+              break;
+            case 'J': // Respiratory
+              inaCbgCode = 'E-4-10-I';
+              description = 'Gangguan Pernapasan';
+              baseRate += 900000;
+              break;
+            case 'K': // Digestive
+              inaCbgCode = 'G-4-10-I';
+              description = 'Gangguan Pencernaan';
+              baseRate += 700000;
+              break;
+            case 'N': // Genitourinary
+              inaCbgCode = 'L-4-10-I';
+              description = 'Gangguan Urogenital';
+              baseRate += 800000;
+              break;
+            case 'S': case 'T': // Injury
+              inaCbgCode = 'Z-4-10-I';
+              description = 'Cedera/Trauma';
+              baseRate += 600000;
+              break;
+            default:
+              inaCbgCode = 'X-4-10-I';
+              description = 'Diagnosis Lainnya';
+              baseRate += 500000;
+          }
         }
       }
 

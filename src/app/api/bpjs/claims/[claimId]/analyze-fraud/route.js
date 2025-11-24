@@ -105,39 +105,77 @@ async function getMockFraudulentData(claimId) {
 
 export async function GET(request, { params }) {
   try {
-    const claimId = params.claimId;
+    // Next.js 15+ requires awaiting the entire params object
+    const resolvedParams = await params;
+    const claimId = resolvedParams.claimId;
 
+    console.log('🔍 Analyze-fraud: Looking for claim ID:', claimId);
+
+    if (!claimId) {
+      return NextResponse.json(
+        { success: false, error: 'Claim ID missing' },
+        { status: 400 }
+      );
+    }
+
+    // Use maybeSingle() instead of single() for better error handling
     const { data: claim, error: claimError } = await supabase
       .from('claims')
       .select('*')
       .eq('id', claimId)
-      .single();
+      .maybeSingle();
 
-    if (claimError || !claim) {
+    if (claimError) {
+      console.error('❌ Database error:', claimError);
       return NextResponse.json(
-        { success: false, error: 'Klaim tidak ditemukan' },
+        { success: false, error: 'Database error', details: claimError.message },
+        { status: 500 }
+      );
+    }
+
+    if (!claim) {
+      console.error('❌ Claim not found:', claimId);
+      return NextResponse.json(
+        { success: false, error: 'Klaim tidak ditemukan', claimId },
         { status: 404 }
       );
     }
-    
+
+    console.log('✅ Claim found:', claim.id);
+
+    // Fetch diagnoses from database
+    const { data: diagnoses } = await supabase
+      .from('claim_diagnoses')
+      .select('*')
+      .eq('claim_id', claimId);
+
+    // Fetch procedures from database
+    const { data: procedures } = await supabase
+      .from('claim_procedures')
+      .select('*')
+      .eq('claim_id', claimId);
+
+    console.log(`📊 Found ${diagnoses?.length || 0} diagnoses and ${procedures?.length || 0} procedures`);
+
     const mockData = await getMockFraudulentData(claimId);
-    
+
     const richClaimObject = {
         ...claim,
         patient_name: mockData?.resumeData?.nama || claim.patient_name,
         dataRawat: {
-            tanggalMasuk: mockData?.resumeData?.tanggalMasuk,
-            tanggalKeluar: mockData?.resumeData?.tanggalKeluar,
+            tanggalMasuk: mockData?.resumeData?.tanggalMasuk || claim.admission_date,
+            tanggalKeluar: mockData?.resumeData?.tanggalKeluar || claim.discharge_date,
         },
-        diagnoses: mockData?.resumeData?.diagnosisUtama ? [{
+        diagnoses: diagnoses && diagnoses.length > 0 ? diagnoses : (mockData?.resumeData?.diagnosisUtama ? [{
             diagnosis_type: 'primary',
             diagnosis_name: mockData.resumeData.diagnosisUtama,
             icd10_code: mockData.resumeData.icd10Utama,
-        }] : [],
-        procedures: mockData?.resumeData?.tindakan ? [{
+        }] : []),
+        procedures: procedures && procedures.length > 0 ? procedures : (mockData?.resumeData?.tindakan ? [{
             procedure_name: mockData.resumeData.tindakan,
             icd9cm_code: mockData.resumeData.icd9cm,
-        }] : [],
+        }] : []),
+        los_days: claim.los_days,
         pemeriksaanPenunjang: {
             laboratorium: {
                 tanggal: mockData?.resumeData?.labTanggal,

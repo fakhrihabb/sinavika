@@ -12,36 +12,43 @@ export default function FraudDashboardPage() {
 
   const analyzeClaimForFraud = async (claim) => {
     try {
-      // For num_procedures, we'd ideally get this from a relation, but we'll use a placeholder
-      const body = {
-        tarif_rs: claim.tarif_rs,
-        tarif_inacbg: claim.tarif_ina_cbg,
-        los_days: claim.los_days,
-        num_procedures: claim.procedures?.length || 2, // Placeholder
-        care_class: claim.care_class,
-        diagnosis_severity: 'normal', // Placeholder
-        provider_claims_count: 50, // Placeholder
-        provider_fraud_history_rate: 0.1, // Placeholder
-        hospital_fraud_history_rate: 0.05, // Placeholder
-      };
-
-      const response = await fetch('/api/ml/fraud-detection', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
-      });
-
+      // Call the combined fraud analysis API (document + ML)
+      const response = await fetch(`/api/bpjs/claims/${claim.id}/analyze-fraud`);
       const result = await response.json();
 
       if (result.success) {
-        return result.fraud_detection;
+        // Convert combined analysis to display format
+        return {
+          risk_score: result.data.confidenceScore || 0,
+          risk_level: result.data.confidenceScore >= 70 ? 'high' :
+                      result.data.confidenceScore >= 40 ? 'medium' : 'low',
+          risk_factors: [
+            // Document issues
+            ...(result.data.documentIssues || []).map(issue => ({
+              factor: issue.code,
+              detail: issue.description
+            })),
+            // ML issues
+            ...(result.data.mlRiskFactors || [])
+          ]
+        };
       }
-      return null;
+
+      return {
+        risk_score: 0,
+        risk_level: 'low',
+        risk_factors: []
+      };
     } catch (err) {
       console.error(`Error analyzing claim ${claim.id}:`, err);
-      return null;
+      return {
+        risk_score: 0,
+        risk_level: 'low',
+        risk_factors: [{
+          factor: 'Error',
+          detail: 'Gagal menganalisis klaim'
+        }]
+      };
     }
   };
 
